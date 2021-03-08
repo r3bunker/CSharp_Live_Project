@@ -1,0 +1,146 @@
+﻿@model TheatreCMS.Models.Production
+
+@{
+    ViewBag.Title = "Create";
+}
+
+<h2>Create</h2>
+
+
+@using (Html.BeginForm("Create", "Productions", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="formContainer2 ">
+        <div class="form-horizontal">
+            <h4 class="formHeader">Production</h4>
+            <hr />
+            <div class="inputBox2">
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label col-md-4 inputLabel" })
+                    <div class="col-md-10 formBox">
+                        @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-white" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Playwright, htmlAttributes: new { @class = "control-label col-md-4 inputLabel" })
+                    <div class="col-md-10 formBox">
+                        @Html.EditorFor(model => model.Playwright, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Playwright, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-labelcol-md-4 inputLabel" })
+                    <div class="col-md-10 formBox">
+                        @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Runtime, htmlAttributes: new { @class = "control-label col-md-2 inputLabel" })
+                    <div class="col-md-10 formBox">
+                        @Html.EditorFor(model => model.Runtime, new { htmlAttributes = new { @class = "form-control", @Value = "120" } })
+                        @Html.ValidationMessageFor(model => model.Runtime, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.OpeningDay, htmlAttributes: new { @class = "control-label col-md-2 inputLabel" })
+                    <div class="col-md-10 formBox">
+                        @Html.EditorFor(model => model.OpeningDay, new { htmlAttributes = new { @class = "form-control", @type = "date" } })
+                        @Html.ValidationMessageFor(model => model.OpeningDay, "", new { @class = "text-white" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ClosingDay, htmlAttributes: new { @class = "control-label col-md-4 inputLabel" })
+                    <div class="col-md-10 formBox">
+                        @Html.EditorFor(model => model.ClosingDay, new { htmlAttributes = new { @class = "form-control", @type = "date" } })
+                        @Html.ValidationMessageFor(model => model.ClosingDay, "", new { @class = "text-white" })
+                    </div>
+                </div>
+                <!--===== DEFAULT PHOTO =====-->
+                <div class="form-group">
+                    @Html.LabelFor(model => model.DefaultPhoto, htmlAttributes: new { @class = "control-label col-md-4 inputLabel" })
+                    <div class="col-md-10 formBox text-center">
+                        <!--=== Manual validation of the photo upload handled in ProductionsController -->
+                        @Html.TextBox("uploadFile", null, new { type = "file", @class = "text-black" })
+                        <!--=== Hidden required to validate DefaultPhoto (foreignkey reference) that is a non-file datatype -->
+                        @Html.HiddenFor(m => m.DefaultPhoto)
+                        <!--=== Puts validation message on new line -->
+                        <div>@Html.ValidationMessageFor(model => model.DefaultPhoto, "", new { @class = "text-white" })</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ShowtimeEve, htmlAttributes: new { @class = "control-label col-md-4 inputLabel" })
+                    <div class="col-md-10 formBox">
+                        @Html.EditorFor(model => model.ShowtimeEve, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.ShowtimeEve, "", new { @class = "text-white" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ShowtimeMat, htmlAttributes: new { @class = "control-label col-md-4 inputLabel" })
+                    <div class="col-md-10 formBox">
+                        @Html.EditorFor(model => model.ShowtimeMat, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.ShowtimeMat, "", new { @class = "text-white" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.TicketLink, htmlAttributes: new { @class = "control-label col-md-4 inputLabel" })
+                    <div class="col-md-10 formBox">
+                        @Html.EditorFor(model => model.TicketLink, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.TicketLink, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <!--===== SEASON =====-->
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Season, htmlAttributes: new { @class = "control-label col-md-4 inputLabel" })
+                    <div class="col-md-10 formBox">
+                        <!--=== Check if return after failed validation (use form data filled in), else new Create view will use currentSeason as default===-->
+                        @if (Model != null)
+                        {
+                            @Html.EditorFor(model => model.Season, new { htmlAttributes = new { @class = "form-control" } })
+                        }
+                        else
+                        {
+                            @Html.EditorFor(model => model.Season, new { htmlAttributes = new { @class = "form-control", @Value = (int)ViewData["current_season"] } })
+                        }
+                        @Html.ValidationMessageFor(model => model.Season, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IsWorldPremiere, htmlAttributes: new { @class = "control-label" })
+                    <div class="col-md-10 formBox">
+                        <div>
+                            @Html.CheckBoxFor(model => model.IsWorldPremiere, new { @class = "big-checkbox mt-1" })
+                            @Html.ValidationMessageFor(model => model.IsWorldPremiere, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+   
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10 formBox">
+                        <input type="submit" value="Create" class="btn btn-main mt-3" /> <!-- btn-main originally btn-default, save for possible reversion -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

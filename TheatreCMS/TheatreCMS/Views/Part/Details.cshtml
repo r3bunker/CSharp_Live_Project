@@ -1,0 +1,70 @@
+﻿@model TheatreCMS.Models.Part
+
+@{
+    ViewBag.Title = "Details";
+}
+<h1 class="text-center mt-5">Details</h1>
+
+<div class="container-lg mt-5" id="partDetailsBorder">
+
+    <h3 class="mt-1">Part</h3>
+
+    <dl class="dl-horizontal">
+
+        <dt class="mt-4">
+            @Html.DisplayNameFor(model => model.Production)
+        </dt>
+
+        <dd>
+            <a href="@Url.Action("Details", "Productions", new { id = Model.Production.ProductionId})" id="part-details-link">@Html.DisplayFor(model => model.Production.Title)</a>
+
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Person)
+        </dt>
+
+        <dd>
+            @if (Model.Person != null)
+            {
+                <a href="@Url.Action("Details", "CastMembers", new { id = Model.Person.CastMemberID })" id="par-details-link">@Html.DisplayFor(model => model.Person.Name)</a>
+            } else
+            {
+                <span>Uncast</span>
+            }
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Character)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Character)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Type)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Type)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Details)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Details)
+        </dd>
+
+    </dl>
+        <p>
+            @if (Request.IsAuthenticated && User.IsInRole("Admin"))
+            {
+                @Html.ActionLink("Edit", "Edit", new { id = Model.PartID }) @: |
+            }
+       
+            @Html.ActionLink("Back to List", "Index")
+        </p>
+</div>

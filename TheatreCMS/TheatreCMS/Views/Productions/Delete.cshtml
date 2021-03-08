@@ -1,0 +1,230 @@
+﻿@model TheatreCMS.Models.Production
+@using TheatreCMS.Controllers
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<div class="pt-5">
+  @*  Center image and text using a card with border. *@
+  <div class="card mx-auto col-lg-6 bg-black text-center prod-delete-page-border">
+    <h3 class="pt-3 pb-2">Are you sure you want to delete this production?</h3>
+    @*  Display the photo for each production as long as there is an image to display. *@
+    @if (Model.DefaultPhoto != null)
+    {
+      <img class="card-img-top" src='@Url.Action("DisplayPhoto", "Photo", new { id = Model.DefaultPhoto.PhotoId })' alt="Production promo photo" />
+    }
+    <div class="card-body">
+      @*  Display the title and playwright for each production. *@
+      <h4 class="card-title">@Html.DisplayFor(model => model.Title)</h4>
+      <h5 class="card-title font-italic">@Html.DisplayFor(model => model.Playwright)</h5>
+      @*  Display the season for each production in a pill badge. *@
+      <span class="badge badge-pill badge-secondary mb-2">Season # @Html.DisplayFor(model => model.Season)</span>
+      @*  Display a pill badge for each production that is a world premiere. *@
+      @if (Model.IsWorldPremiere)
+      {
+        <span class="badge badge-pill badge-primary">World Premiere</span>
+      }
+      @* Display a table with properties and values for each production. *@
+      <div class="row justify-content-center">
+        <div class="col-auto">
+          <table class="w-100">
+            <tr class="production-index-tr-styling">
+              <th class="productions-index-th-styling">
+                @Html.DisplayNameFor(model => model.OpeningDay)
+              </th>
+              <td class="productions-index-td-styling">
+                @Model.OpeningDay.ToShortDateString()
+              </td>
+            </tr>
+            <tr class="production-index-tr-styling">
+              <th class="productions-index-th-styling">
+                @Html.DisplayNameFor(model => model.ClosingDay)
+              </th>
+              <td class="productions-index-td-styling">
+                @Model.ClosingDay.ToShortDateString()
+              </td>
+            </tr>
+            @if (Model.ShowtimeMat.HasValue)
+            {
+              <tr class="production-index-tr-styling">
+                <th class="productions-index-th-styling">
+                  @Html.DisplayNameFor(model => model.ShowtimeMat)
+                </th>
+                <td class="productions-index-td-styling">
+                  @Model.ShowtimeMat.GetValueOrDefault().ToShortTimeString()
+                </td>
+              </tr>
+            }
+
+            @if (Model.ShowtimeEve.HasValue)
+            {
+              <tr class="production-index-tr-styling">
+                <th class="productions-index-th-styling">
+                  @Html.DisplayNameFor(model => model.ShowtimeEve)
+                </th>
+                <td class="productions-index-td-styling">
+                  @Model.ShowtimeEve.GetValueOrDefault().ToShortTimeString()
+                </td>
+              </tr>
+            }
+            <tr class="production-index-tr-styling">
+              <th class="productions-index-th-styling prod-delete-th-width">
+                @Html.DisplayNameFor(model => model.Runtime)
+              </th>
+              <td class="productions-index-td-styling">
+                @Model.Runtime
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      @*  Display a horizontal line separating the card text in the card body from the delete button. *@
+      <hr class="mt-4 mb-4 prod-delete-horizonal-divider" />
+
+      <div class="row">
+        <div class="dropdown  col-6  mx-auto">
+          <button type="button" class="btn text-center prod-delete-delete-btn dropdown-toggle" id="dropdownMenuDelete" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="-70, 0">
+            Delete
+          </button>
+          <div class="dropdown-menu prod-delete-dropdown-menu" aria-labelledby="dropdownMenuDelete">
+            @Html.ActionLink("Production", "DeleteProduction", "Productions", new { id = Model.ProductionId }, new { @class = "dropdown-item prod-delete-dropdown-item w-100 text-center" })
+            @Html.ActionLink("Production & Photos", "DeleteProductionWithPhotos", "Productions", new { id = Model.ProductionId }, new { @class = "dropdown-item prod-delete-dropdown-item w-100 text-center" })
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  
+  
+  <div class="py-3">
+    @using (Html.BeginForm())
+    { 
+      @Html.AntiForgeryToken()
+
+      <div class="container text-center">
+
+        @Html.ActionLink("Current Productions", "Current") |
+        @Html.ActionLink("Back to List", "Index")
+      </div>
+    }
+  </div>
+</div>
+
+@*
+  <dl class="dl-horizontal">
+      <dt>
+          @Html.DisplayNameFor(model => model.Title)
+      </dt>
+
+      <dd>
+          @Html.DisplayFor(model => model.Title)
+      </dd>
+
+      <dt>
+          @Html.DisplayNameFor(model => model.Playwright)
+      </dt>
+
+      <dd>
+          @Html.DisplayFor(model => model.Playwright)
+      </dd>
+
+      <dt>
+          @Html.DisplayNameFor(model => model.Description)
+      </dt>
+
+      <dd>
+          @Html.DisplayFor(model => model.Description)
+      </dd>
+      <dt>
+          @Html.DisplayNameFor(model => model.Runtime)
+      </dt>
+
+      <dd>
+          @Html.DisplayFor(model => model.Runtime)
+      </dd>
+
+      <dt>
+          @Html.DisplayNameFor(model => model.OpeningDay)
+      </dt>
+
+      <dd>
+          @Html.DisplayFor(model => model.OpeningDay)
+      </dd>
+
+      <dt>
+          @Html.DisplayNameFor(model => model.ClosingDay)
+      </dt>
+
+      <dd>
+          @Html.DisplayFor(model => model.ClosingDay)
+      </dd>
+
+      <dt>
+          @Html.DisplayNameFor(model => model.DefaultPhoto)
+      </dt>
+
+      <dd>
+          @{
+              if (Model.DefaultPhoto != null)
+              {
+                  <img src='@Url.Action("DisplayPhoto", "Photo", new { id = Model.DefaultPhoto.PhotoId})' alt="Production promo photo" />
+
+                  @*<img src="data:image;base64,@System.Convert.ToBase64String(Model.DefaultPhoto.Photo)" />*@
+
+@*//byte[] thumbBytes = ImageUploadController.ImageThumbnail(item.PromoPhoto, 370, 250);
+                          //var base64 = System.Convert.ToBase64String(thumbBytes);
+                          //img = String.Format("data:image/png;base64,{0}", base64);
+                          }
+                          else
+                          {
+  <p>No image yet</p>
+                          }
+                      }
+                 </dd>
+
+  <dt>
+      @Html.DisplayNameFor(model => model.ShowtimeEve)
+
+  </dt>
+
+  <dd>
+      @Html.DisplayFor(model => model.ShowtimeEve)
+
+  </dd>
+
+  <dt>
+      @Html.DisplayNameFor(model => model.ShowtimeMat)
+
+  </dt>
+
+  <dd>
+      @Html.DisplayFor(model => model.ShowtimeMat)
+  </dd>
+
+  <dt>
+      @Html.DisplayNameFor(model => model.TicketLink)
+
+  </dt>
+
+  <dd>
+      @Html.DisplayFor(model => model.TicketLink)
+  </dd>
+
+
+
+          </dl>
+
+  @using (Html.BeginForm())
+  {
+      @Html.AntiForgeryToken()
+
+      <div class="form-actions no-color">
+          <input type="submit" value="Delete" class="btn" /> |
+          @Html.ActionLink("Current Productions", "Current") |
+          @Html.ActionLink("Back to List", "Index")
+      </div>
+  }
+      </div>*@

@@ -1,0 +1,3 @@
+DO NOT DELETE THIS FILE
+
+This file exists to fix a bug where the App_Data folder does not get created in newly cloned projects.

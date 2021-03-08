@@ -1,0 +1,45 @@
+﻿/* Method to seed mock entities into the RentalRequest table. */
+private void SeedRentalRequests()
+{
+    var rentalRequests = new List<RentalRequest>
+    {
+        new RentalRequest
+        {
+            ContactPerson = "Tim Smith",
+            ContactPhoneNumber = "(555)-123-4567",
+            ContactEmail = "timsmith@act.com",
+            Company = "Act Pack",
+            StartTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, ThirdWedOfMonth(), 11, 00, 00),
+            EndTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, ThirdWedOfMonth(), 12, 30, 00),
+            ProjectInfo = "Rehearsal space needed for the afternoon for an upcoming production.",
+            Requests = "Borrow lighting equipment.",
+            RentalCode = 10000,
+            Accepted = true,
+            ContractSigned = true,
+        },
+        new RentalRequest
+        {
+            ContactPerson = "Sarah Parker",
+            ContactPhoneNumber = "(555)-654-4567",
+            ContactEmail = "sarahjparker@director.com",
+            Company = "Direct Directors",
+            StartTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, SecondFridayOfMonth(), 10, 00, 00),
+            EndTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, SecondFridayOfMonth(), 11, 30, 00),
+            ProjectInfo = "Meeting space to interview potential directors.",
+            Requests = "none",
+            RentalCode = 10001,
+            Accepted = true,
+            ContractSigned = true,
+        }
+    };
+    rentalRequests.ForEach(RentalRequest =>
+    {
+        var tempRentalReq = context.RentalRequests.Where(c => c.ContactPerson == RentalRequest.ContactPerson && c.StartTime == RentalRequest.StartTime).FirstOrDefault();
+        if (tempRentalReq != null)
+        {
+            RentalRequest.RentalRequestId = tempRentalReq.RentalRequestId;
+        }
+        context.RentalRequests.AddOrUpdate(c => c.RentalRequestId, RentalRequest);
+    });
+    context.SaveChanges();
+}

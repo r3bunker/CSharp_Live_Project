@@ -1,0 +1,153 @@
+﻿@using TheatreCMS.Controllers
+@model TheatreCMS.Models.ProductionPhotos
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>Edit</h2>
+
+
+@using (Html.BeginForm("Edit", "ProductionPhotos", null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+
+
+{
+    @Html.AntiForgeryToken()
+    <div class="formContainer2 ">
+        <div class="form-horizontal">
+            <h4 class="formHeader prod-photo-edit-header">Production Photos</h4>
+            <hr />
+            <div class="inputBox2">
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                @Html.HiddenFor(Model => Model.ProPhotoId)
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Production, htmlAttributes: new { @class = "control-label col-md-4 inputLabel" })
+                    <div class="col-md-10 formBox">
+                        @Html.DropDownList("ProductionsList", (IEnumerable<SelectListItem>)ViewData["Productions"], htmlAttributes: new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Production)
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    Current @Html.LabelFor(model => model.PhotoId, htmlAttributes: new { @class = "control-label inputLabel" })
+                  <div class=" col-12 col-md-9 col-xl-6 formBox">
+                    <img class="w-100" id="currentImg"src='@Url.Action("DisplayPhoto", "Photo", new { id = Model.PhotoId })' />
+                    <!--This <p> displays the dimensions of the current production image-->
+                    <p><span class="text-black" id="currentwrdheight"></span> <span class="text-white" id="currentimgheight"></span>&nbsp; <span class="text-black" id="currentwrdwidth"></span> <span class="text-white" id="currentimgwidth"></span></p>
+
+                    <hr />
+                    @Html.ValidationMessageFor(model => model.PhotoId, "", new { @class = "text-danger" })
+                  </div>
+                </div>
+
+                <div class="form-group">
+                    Choose New @Html.LabelFor(model => model.PhotoId, htmlAttributes: new { @class = "control-label inputLabel" })
+                    <div class="col-12 col-md-9 col-xl-6 formBox">
+                        <input class="fileSelect" type="file" name="file" id="input1" accept="image/*" />
+                          <img id="imagepreview1" class="w-100" />
+                          <p><span class="text-black" id="wrdheight"></span> <span class="text-white" id="imgheight"></span>&nbsp; <span class="text-black" id="wrdwidth"></span> <span class="text-white" id="imgwidth"></span></p>
+                        <hr />
+                        @Html.ValidationMessageFor(model => model.PhotoId, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label col-md-4 inputLabel" })
+                    <div class="col-md-10 formBox">
+                        @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-4 inputLabel" })
+                    <div class="col-md-10 formBox">
+                        @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10 formBox">
+                        <input type="submit" value="Confirm Edit" class="submitButton2" />
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script>
+  const EL_input1 = document.getElementById('input1');
+
+
+  function readURL(input) {
+
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            $('#imagepreview1').prop('src', e.target.result).show();
+        }
+
+        reader.readAsDataURL(input.files[0]);      
+    }
+}                                                     @*Detect uploaded image when a file is input*@
+
+
+
+  var _URL = window.URL || window.webkitURL;
+  $("#input1").change(function (e) {
+    var file, img;
+    if ((file = this.files[0])) {
+      img = new Image();
+      var objectUrl = _URL.createObjectURL(file);
+      img.onload = function () {
+        document.getElementById("wrdheight").innerHTML = ("Height:");
+        document.getElementById("wrdwidth").innerHTML = ("Width:");
+        document.getElementById("imgheight").innerHTML = (this.height);
+        document.getElementById("imgwidth").innerHTML = (this.width);
+        _URL.revokeObjectURL(objectUrl);
+      };                                                                @* If there is a change and a file is detected, create height/width elements based on image dimensions *@
+      img.src = objectUrl;
+    }
+  });
+
+  /*This function displays the dimensions on the current photo to the page*/
+
+  var currentImg = document.getElementById('currentImg');
+  window.onload = function () {
+    document.getElementById("currentwrdheight").innerHTML = ("Height:");
+    document.getElementById("currentwrdwidth").innerHTML = ("Width:");
+    document.getElementById("currentimgheight").innerHTML = (currentImg.naturalHeight);
+    document.getElementById("currentimgwidth").innerHTML = (currentImg.naturalWidth);
+  };
+
+  $("#input1").change(function () {
+    readURL(this);
+    $('#imagepreview1').toggle();            @*If there is a change and file is detected, show detected file*@
+  });
+
+  EL_input1.addEventListener('change', ev => {
+    const files = ev.target.files;
+    if (!files || !files[0]) {
+      document.getElementById("wrdheight").innerHTML = ("");
+      document.getElementById("wrdwidth").innerHTML = ("");
+      document.getElementById("imgheight").innerHTML = ("");
+      document.getElementById("imgwidth").innerHTML = ("");
+    }
+  });                                                          @* If there is a change and no file is detected, hide dimension elements *@
+
+
+</script>

@@ -1,0 +1,59 @@
+﻿@using TheatreCMS.Controllers
+@model TheatreCMS.Models.DisplayInfo
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>DisplayImage</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TextContent)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TextContent)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Photo)
+        </dt>
+       <img src="@Url.Action("DisplayPhoto", "Photo", new { id = Model.PhotoId})" class="thumbnail_size" alt="New Info Image" />
+        @*<dd>
+            @{
+                var img = Model.Image;
+                //displays the image using inline <img tag
+                byte[] thumbBytes = ImageUploadController.ImageThumbnail(img, 200, 200);
+                var thumbBase64 = Convert.ToBase64String(thumbBytes);
+                var imgSrc = String.Format("data:image/png;base64,{0}", thumbBase64);
+            }
+
+            <img src="@imgSrc" />
+        </dd>*@
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PhotoId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PhotoId)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.InfoId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

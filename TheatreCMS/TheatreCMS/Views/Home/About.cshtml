@@ -1,0 +1,296 @@
+﻿@using TheatreCMS.Models
+@model List<Award>
+@*@using TheatreCMS.Controllers*@
+
+@{
+    ViewBag.Title = "About";
+}
+
+<div id="about" class="text-responsive">
+
+    <div class="jumbotron ab-jumbo">
+
+
+
+        <div id="about_page_hello">
+            <p class="ab-title">
+                <h2><u>ABOUT</u></h2>
+                <h1>THEATRE VERTIGO</h1>
+            </p>
+        </div>
+        <!--new code for new menu-->
+
+        <div class="about_page-wrap">
+            <div id="menu_two" class="menue container">
+                <h3><u>MENU</u></h3>
+
+                <a href="#history" id="menu_item">
+                    <div class="about_page-hovered"><i>HISTORY and MISSION</i></div>
+
+                    <div class="about_page-unhovered"><h3>| THEATRE VERTIGO'S HISTORY and MISSION |</h3></div>
+                </a>
+
+
+                <a href="#awards" id="menu_item">
+                    <div class="about_page-hovered"><i>AWARDS</i></div>
+                    <div class="about_page-unhovered"><h4> | AWARDS and ACHIEVEMENTS |</h4></div>
+
+
+                </a>
+                <a href="#rental" id="menu_item">
+                    <div class="about_page-hovered"><i>RENT our THEATRE</i></div>
+                    <div class="about_page-unhovered"><h4> | RENT |</h4></div>
+                </a>
+                <a href="#rental_location" id="menu_item">
+                    <div class="about_page-hovered"><i>FIND us HERE</i></div>
+                    <div class="about_page-unhovered"><h4> | LOCATION |</h4></div>
+                </a>
+                <a href="#rental_location" id="menu_item">
+                    <div class="about_page-hovered"><i>THIRSTY/HUNGRY</i></div>
+                    <div class="about_page-unhovered"><h4> | DINING and DRINKS |</h4></div>
+                </a>
+                <a href="#members" id="menu_item">
+                    <div class="about_page-hovered"><i>OUR MEMBERS</i></div>
+                    <div class="about_page-unhovered"><h4> | ESTEAMED MEMBERS of "THEATRE VERTIGO" |</h4></div>
+                </a>
+                <a href="#contact" id="menu_item">
+
+                    <h6> | CONTACT US |</h6>
+
+                </a>
+                <a href="#sponsers" id="menu_item">
+
+                    <h6> | SPONSERS |</h6>
+
+                </a>
+
+
+
+            </div>
+        </div>
+
+
+        @*DONATE AND TICKET LINK BUTTONS*@
+        <div class="card-body">
+            <!--Displaying each item in "ViewBag.Buttons".-->
+            @foreach (DisplayLinks display in ViewBag.Buttons)
+            {
+                <a href="@display.Link" target="_blank" type="button" class="btn btn-main ab-card-red ab-btns">@display.Text</a>
+            }
+            <!--<a href="https://app.arts-people.com/index.php?donation=verti" target="_blank" type="button" class="btn btn-main ab-card-red ab-btns">DONATE TO THEATRE VERTIGO</a> <!-- btn-main originally btn-lg, save for possible reversion  -->
+            <!-- <a href="https://app.arts-people.com/index.php?ticketing=verti" target="_blank" type="button" class="btn btn-main ab-card-red ab-btns">TICKETING</a> btn-main originally btn-lg, save for possible reversion -->
+        </div>
+
+
+        @*COMPANY HISTORY*@
+        <div id="history">
+            <div class="ab-text">
+                <h3 class="ab-title">Company History</h3>
+                <br />
+                <h5>
+                    @*Created a foreach loops to search through the DisplayInfo model and search for ViewBag.History and show it*@
+                    @*Could not format according to HTML line breaks and italics below*@
+                    @Html.Raw(ViewData["History"])                        
+                    
+                </h5>
+            </div>
+        </div>
+        <!-- MISSION STATEMENT-->
+
+        <div class="ab-text">
+            <h2>
+                @*Created a ViewData in the HomeController About ActionResult*@
+                @ViewData["Mission"]
+
+            </h2>
+        </div>
+
+        <div id="rental_location">
+            @*SHOWBOX THEATRE INFO AND CARDS*@
+            @*SHOEBOX INFO WITH IMAGE*@
+            <div class="card-deck m-lg-5">
+                <div class="card ab-card mr-lg-5">
+                    <div class="card-body">
+                        <h5 class="card-title ab-card-title">The Shoebox</h5>
+                        <br />
+                        <h6 class="card-text">
+                            Theatre Vertigo's current place of production is Portland's ShoeBox Theatre!
+                        </h6>
+                        <br />
+                        <img src="~/Content/Images/shoebox.jpg" alt="shoebox" class="img-fluid ab-border" />
+                        <br /><br />
+                        <h5 class="underline">RENTALS</h5>
+
+                        <h6>
+                            Rental packages available, hourly, daily, and weekly,
+                            For performance, rehearsals, and events!
+                        </h6>
+                        <br />
+                        <a href="" class="underline ab-red"><h5>CLICK FOR MORE RENTAL INFO</h5></a>
+                    </div>
+                </div>
+
+                @*GOOGLE LOCATION AND DINING LINKS*@
+                <div class="card ab-card ml-lg-5">
+                    <div class="card-body">
+                        <h5 class="card-title ab-card-title">Location</h5>
+                        <br />
+                        <h6 class="card-text">
+                            An intimate black-box theatre,<br />
+                            located in the Southeast industrial area of Portland, Oregon.
+                        </h6>
+                        <br />
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2796.1275080732185!2d-122.65739478444112!3d45.50751177910148!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x54950a76856f95b5%3A0x60c15680c8175b9d!2sShoe%20Box%20Theater!5e0!3m2!1sen!2sus!4v1591210522311!5m2!1sen!2sus" width="400" height="450" frameborder="0" style="border-radius:15px;border:0;" allowfullscreen="" aria-hidden="false" tabindex="0" class="card-img"></iframe>
+                        <br />
+                        <br />
+                        <h5 class="underline">NEARBY DRINKS AND DINING</h5>
+                        <!--Displays all seeded info from the ViewBag.DisplayLinks-->
+                        @foreach (DisplayLinks dl in ViewBag.DisplayLinks)
+                        {
+                            <a href="@dl.Link" style="color:#f04d44;"><h6>@dl.Text</h6></a>
+                        }
+                        <!--<a href="http://www.deadshotpdx.com" style="color:#f04d44;"><h6>Deadshot</h6></a>
+                    <a href="http://www.thefirkintavern.com/" style="color:#f04d44;"><h6>Firkin Tavern</h6></a>
+                    <a href="http://www.fordfoodanddrink.com/" style="color:#f04d44;"><h6>Ford Food and Drink</h6></a>
+                    <a href="http://www.doubledragonpdx.com/" style="color:#f04d44;"><h6>Double Dragon</h6></a>
+                    <a href="https://www.cellardoorcoffee.com/" style="color:#f04d44;"><h6>Cellar Door Coffee Roasters</h6></a>-->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        @*AWARDS AND ACHIEVEMENTS - THIS WILL BE RENDERED ONCE MVC IS CREATED*@
+        <div id="awards">
+            <div class="card-deck m-lg-5">
+                <div class="card ab-card">
+                    <div class="card-body">
+                        <h5 class="card-title ab-card-red">AWARDS &amp; ACHIEVEMENTS</h5>
+
+                        @{ var previousYear = ""; }
+                        @* Created foreach loop to loop through items in the Awards table and display Awards.*@
+                        @foreach (var item in Model)
+                        {
+                            if (previousYear != item.Year.ToString())
+                            {
+                                previousYear = item.Year.ToString();
+                                <a class="card-subtitle font-weight-bold"><u>@Html.DisplayFor(modelItem => item.Year)</u></a><br />
+                            }
+
+                            <a class="card-text text-uppercase">@Html.DisplayFor(modelItem => item.Name) @Html.DisplayFor(modelItem => item.Type) FOR @Html.DisplayFor(modelItem => item.Category) </a> <br />
+
+                            if (item.Recipient != null)
+                            {
+                                <p><a class="card-text font-weight-bold">@Html.DisplayFor(modelItem => item.Recipient) </a> - <a class="card-text font-italic">@Html.DisplayFor(modelItem => item.Production.Title)</a></p>
+                            }
+                            else
+                            {
+                                <a class="card-text font-italic">@Html.DisplayFor(modelItem => item.Production.Title)</a>
+                            }
+
+                            if (item.OtherInfo != null)
+                            {
+                                <p class="card-text">(@Html.DisplayFor(modelItem => item.OtherInfo))</p>
+                            }
+                            else
+                            {
+                                <p></p>
+                            }
+                        }
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="contact">
+            <div class="card-deck m-lg-5">
+                <div class="card ab-card">
+                    <div class="card-body">
+                        <h5 class="card-title ab-card-title">Contact</h5>
+                        <h6 style="font-weight: 700">Vertigo Theatre</h6>
+                        <!--Calling the AdminSettingsReader to parse through the AdminSettings JSON file to get the FooterInfo-->
+                        @{ var footerContent = TheatreCMS.Helpers.AdminSettingsReader.CurrentSettings().FooterInfo; }
+                        <h6>@footerContent.AddressStreet<br />@footerContent.AddressCityStateZip<br />@footerContent.PhoneSales<br />Email: @footerContent.EmailAddress</h6>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="members">
+        <div class="jumbotron ab-black m-lg-5 text-responsive">
+            <h5 class="ab-card-title mt-0 mb-5">Who's Who at Theatre Vertigo</h5>
+            <div class="card-deck">
+
+                <div class="card ab-card-red mt-md-4">
+                    <div class="card-body">
+                        <h6 class="card-title ab-card-title"><a href="/CastMembers" style="color:black;">Company Members</a></h6>
+                        @foreach (CastMember cm in ViewBag.CastMembers)
+                        {
+                            <a class="text-light" href="/CastMembers/Details/@cm.CastMemberID">@cm.Name</a><br />
+                        }
+                        @*<h7>
+                                <a href="/CastMembers" style="color:white;">London Bauman</a><br />
+                                <a href="/CastMembers" style="color:white;">Jacquelle Davis</a><br />
+                                <a href="/CastMembers" style="color:white;">Adriana Gantzer</a><br />
+                                <a href="/CastMembers" style="color:white;">Clara-Liis Hillier</a><br />
+                                <a href="/CastMembers" style="color:white;">Kaia Maarja Hillier</a><br />
+                                <a href="/CastMembers" style="color:white;">Heath Hyun Houghton</a><br />
+                                <a href="/CastMembers" style="color:white;">Tom Mounsey</a><br />
+                                <a href="/CastMembers" style="color:white;">Devon Roberts</a><br />
+                            </h7>*@
+                    </div>
+                </div>
+
+                <div class="card ab-card-red mt-md-4 mt-sm-4">
+                    <div class="card-body">
+                        <h6 class="card-title ab-card-title">Company Associates</h6>
+                        <h7>
+                            Asae Deann<br />
+                            Autumn Buck<br />
+                            Breydon Little<br />
+                            Emma Bridges<br />
+                            Heath Koerschgen<br />
+                            Joel Harmon<br />
+                            Kate Belden<br />
+                            Kristen Kraklow<br />
+                            Matt Pavik<br />
+                            Nate Crosby<br />
+                            Robert Wyllie<br />
+                            Vana O’Brien<br />
+                        </h7>
+                    </div>
+                </div>
+
+                <div class="card ab-card-red mt-md-4 mt-sm-4">
+                    <div class="card-body">
+                        <h6 class="card-title ab-card-title">Company Board Members</h6>
+                        <h7>
+                            Jamie Floyd (President)<br />
+                            Scott Stephens<br />
+                            Marcia Reyes<br />
+                            Lena-Liis Kiesel<br />
+                            Gary Strong<br />
+                        </h7>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="sponsers">
+    <div class="jumbotron-fluid">
+        <img src="~/Content/Images/thatreBanner.jpg" style="width:100%" />
+
+        <div class="mt-5">
+            @{
+                Html.RenderAction("List", "Sponsors");
+            }
+        </div>
+    </div>
+
+
+</div>
+</div>

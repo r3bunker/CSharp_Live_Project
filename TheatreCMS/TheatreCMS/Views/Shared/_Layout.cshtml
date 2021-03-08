@@ -1,0 +1,341 @@
+﻿@using System.Security.Claims
+@using TheatreCMS.Models
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <!-- Lines below (style) added by Dagmar 20200312; submenus functionality changed from hover to click, submenus are stable and do not disappear anymore -->
+    <style>
+        .dropdown-submenu {
+            position: relative;
+        }
+
+            .dropdown-submenu a::after {
+                transform: rotate(-90deg);
+                position: absolute;
+                right: 6px;
+                top: .8em;
+            }
+
+            .dropdown-submenu .dropdown-menu {
+                top: 0;
+                left: 100%;
+                margin-left: .1rem;
+                margin-right: .1rem;
+            }
+    </style>
+</head>
+<body class="palette-body">
+    @Scripts.Render("~/bundles/jquery")
+
+    <!-- Moved loading of jquery to start of body to resolve error-->
+
+    <nav class="palette-navbar navbar fixed-top navbar-expand-xl navbar-light" id="menu">
+        <a class="navbar-brand palette-navbar-header" href="@Url.Action("Index", "Home")">
+            <img class="logoImg" src="~/Content/Images/cropped-logo.png" id="logo" />
+        </a>
+        <!--Drop down menu button -->
+        <button class="navbar-toggler bg-light" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <!--Events-->
+                <li class="nav-item dropdown">
+                    <a class="nav-button dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Events
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <li class="dropdown-submenu">
+                            <a class="dropdown-item dropdown-toggle" href="@Url.Action("Index", "Productions")">Productions</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="@Url.Action("Index", "Productions")">All</a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("Current", "Productions")">Current</a></li>
+                            </ul>
+                        </li>
+                        <li><a class="dropdown-item" href="@Url.Action("Index", "CalendarEvents")">Calendar of Events</a></li>
+                    </ul>
+                </li>
+                <!--Company-->
+                <li class="nav-item dropdown">
+                    <a class="nav-button dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Company
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <li><a class="dropdown-item" href="@Url.Action("About", "Home")">About</a></li>
+                        <li><a class="dropdown-item" href="@Url.Action("Archive", "Home")">Archive Dashboard</a></li>
+                        <li><a class="dropdown-item" href="@Url.Action("Index", "CastMembers")">Current Members</a></li>
+                        <li><a class="dropdown-item" href="@Url.Action("Published", "News")">News</a></li>
+                        <li><a class="dropdown-item" href="@Url.Action("Index", "Awards")">Awards</a></li>
+
+                    </ul>
+                </li>
+
+                <!--Admin-->
+                <!--Admin button made dynamic-->
+
+
+                @if (User.IsInRole("Admin"))
+
+                {
+                    <li class="nav-item dropdown">
+                        <a class="nav-button dropdown-toggle" href="" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Admin
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            <li><a class="dropdown-item" href="@Url.Action("Dashboard", "Admin")">Dashboard</a></li>
+                            <li class="dropdown-submenu">
+                                <a class="dropdown-item dropdown-toggle" href="@Url.Action("Index", "Manage")">Manage Productions</a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="@Url.Action("Index", "Productions")">Productions</a></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("Index", "CastMembers")">Cast Members</a></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("Index", "Part")">Roles</a></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("Index", "ProductionPhotos")">Images</a></li>
+                                </ul>
+                            </li>
+                            <li class="dropdown-submenu">
+                                <a class="dropdown-item dropdown-toggle" href="#">Manage Content</a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="@Url.Action("Index", "Photo")">All Photos</a></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("Index", "Sponsors")">Sponsors</a></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("Index", "DisplayInfo")">Info</a></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("Index", "DisplayLinks")">Links</a></li>
+                                </ul>
+                            </li>
+                            <li><a class="dropdown-item" href="@Url.Action("UserList", "Admin")">User List</a></li>
+                            <li><a class="dropdown-item" href="@Url.Action("BulkAdd", "CalendarEvents")">Add Bulk Events</a></li>
+                            <li><a class="dropdown-item" href="@Url.Action("Index", "Subscriber", new { area = "Subscribers" })">Manage Subscribers</a></li>
+                            <li><a class="dropdown-item" href="@Url.Action("Templates", "Developer")">Templates</a></li>
+                        </ul>
+                    </li>
+                }
+
+                <!--Subscriber-->
+                <!--Restrict to when subscriber is logged in and if they are not in the "User" role -->
+
+                @if (User.Identity.IsAuthenticated && !User.IsInRole("User"))
+                {
+                    <li class="nav-item dropdown">
+                        <a class="nav-button dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Subscriber
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+
+                            <li><a class="dropdown-item" href="@Url.Action("Index", "Dashboard", new { area = "Subscribers" })">Dashboard</a></li>
+                            <li><a class="dropdown-item" href="@Url.Action("Index", "SeasonManager", new { area = "Subscribers" })">Season Manager</a></li>
+                            <li><a class="dropdown-item" href="@Url.Action("Details", "Subscriber", new { area = "Subscribers" })">Manage Subscription</a></li>
+
+
+                            @*<li>@Html.ActionLink("Dashboard", "Index", "Subscribers/Dashboard", new { @class = "dropdown-item" })</li>
+                                <li>@Html.ActionLink("Season Manager", "Index", "Subscribers/SeasonManager", new { @class = "dropdown-item" })</li>
+                                <li>@Html.ActionLink("Subscriber", "Index", "Subscribers/Subscriber", new { @class = "dropdown-item" })</li>*@
+
+                        </ul>
+                    </li>
+                }
+
+
+            </ul>
+            <div class="nav-login text-center">
+
+                @{ // This code block is added to accommodate TheatreCMS_B version and to auto logoff when switching between versions
+                    // Not necessary for deployment, but also won't hurt
+                    if (Request.IsAuthenticated)
+                    {
+                        var userId = ((ClaimsIdentity)this.User.Identity).FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value;
+                        var db = new ApplicationDbContext();
+                        if (db.Users.Find(userId) == null)
+                        {
+                            using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoff" }))
+                            {
+                                @Html.AntiForgeryToken()
+                            }
+                            <script>document.getElementById('logoff').submit();</script>
+                        }
+                    }
+                }
+
+                @*@Html.Partial("_LoginPartial")*@
+                @Html.Action("LoginNav", "Home")
+            </div>
+        </div>
+
+    </nav>
+
+    <div class="palette-container body-content">
+
+        @RenderBody()
+
+    </div>
+    <footer class="footer mt-auto py-3 md">
+        <div class="container-fluid ml-md-auto mr-md-auto py-2 pl-md-5 pl-lg-0" id="footer--container">
+            <div class="row" id="footerInner">
+                <div class="col-md-4 socialMediaContainer order-lg-last px-0">
+                    @*this has bootstrap class's that gets rid of padding and puts the stuff on the right on a large screen*@
+                    <ul class="list-group list-group-horizontal justify-content-lg-end" id="socialMediaLinks" style="background-color: black">
+                        <li class="list-group-item"><a href="https://www.facebook.com/theatrevertigo/" class="facebook"><i class="fab fa-facebook-f"></i></a></li>
+                        <li class="list-group-item"><a href="https://www.youtube.com/channel/UCFErectW0eXjMFJbBTOk0DA" class="youtube"><i class="fab fa-youtube"></i></a></li>
+                        <li class="list-group-item"><a href="https://twitter.com/theatrevertigo?lang=en" class="twitter"><i class="fab fa-twitter"></i></a></li>
+                        <li class="list-group-item"><a href="https://www.instagram.com/theatrevertigo/" class="instagram"><i class="fab fa-instagram"></i></a></li>
+                        <li class="list-group-item pr-0"><a href="https://www.patreon.com/theatrevertigo" class="patreon"><i class="fab fa-patreon"></i></a></li> @*bootstrap gets rid of the padding on the left*@
+                    </ul>
+                </div>
+                <div class="w-100 d-none d-md-block "></div>    @*This stacks the icons on top of the links*@
+                <div class="footerNavContainer col-md-8 mr-auto float-left order-lg-1">
+                    <ul class="list-group" id="navBar">
+                        <li class="list-group-item pt-0 ">
+                            <a class="navLink" href="@Url.Action("About", "Home")">Opportunities</a>
+                        </li>
+                        <li class="list-group-item pt-0 ">
+                            <a class="navLink" href="@Url.Action("Published", "News")">News Items</a>
+                        </li>
+                        <li class="list-group-item pt-0">
+                            <a class="navLink" href="@Url.Action("Contact", "Home")">Contact Info</a>
+                        </li>
+                        <li class="list-group-item pt-0  pr-0 mr-0">
+                            <a class="navLink" href="https://app.arts-people.com/index.php?donation=verti">Donate</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            @* Get footer information from AdminSettings *@
+            @{ var footerContent = TheatreCMS.Helpers.AdminSettingsReader.CurrentSettings().FooterInfo; }
+
+            <div class="float-lg-left text-left" id="contactInfo">
+                @*bootstrap classes that align text*@
+                <div id="address">
+                    <p id="addressPadding">
+                        @*Added for css styling*@
+                        @footerContent.AddressStreet <br />
+                        @footerContent.AddressCityStateZip
+                    </p>
+                </div>
+
+                <div id="phoneNumbers">
+                    <p id="phoneNumbersPadding">
+                        @*Added for css styling*@
+                        @footerContent.PhoneGeneral (General)<br />
+                        @footerContent.PhoneSales (Sales)
+                    </p>
+                </div>
+            </div>
+            <div class="float-lg-right text-left mt-lg-4">
+                @*Boot strap text aligning*@
+                <p class="my-0">&copy; @footerContent.CopyrightYear</p>
+            </div>
+
+
+            @* BUG ANIMATION JQUERY -- Performs the sliding animation *@
+            <script>
+                $(document).ready(function () {
+                    $(".bug-slide-left").click(function () {
+                        $(".bug_icon_fixed_button").animate({
+                            right: -187
+                        }, "slow");
+                    });
+                    $(".bug-slide-right").click(function () {
+                        $(".bug_icon_fixed_button").animate({
+                            right: 0
+                        }, "slow");
+                    });
+                });
+            </script>
+
+            @* BUG REPORT HTML *@
+            <div class="bug_icon_fixed_button">
+                <a class="bug-slide-right" id="bug_icon_btn_leftarrow" onclick="reappear_icon()"><i class="fas fa-chevron-left"></i></a>
+                <a class="bug-slide-left" id="bug_icon_btn_rightarrow" onclick="disappear_icon()"><i class="fas fa-chevron-right"></i></a>
+                <a id="bug_icon_btn_txt" href="https://docs.google.com/document/d/1nJhdvfNsYz0fu7w8qwY13LENJ30_H3bDbqwY3iq74n0/edit" target="_blank"><i id="bug_icon_btn" class="fas fa-bug"></i>Bug Report</a>
+            </div>
+
+            @{
+                var bugreport = TheatreCMS.Helpers.AdminSettingsReader.CurrentSettings().BugReport;
+                if (bugreport.tab_open)
+                {
+                    <script>
+                        $(document).ready(function () {
+                            $(".bug_icon_fixed_button").css("right", "0");
+                            reappear_icon();
+                        })
+                    </script>
+                }
+                else
+                {
+                    <script>
+                        $(document).ready(function () {
+                            disappear_icon();
+                        })
+                    </script>
+                }
+            }
+
+            <script>
+                //Send the state of the bug report tab to the back-end
+                  function BugTabStateToJson(tabstate) {
+
+                    var bugtab = { "tab_open": tabstate.data.tab_open };
+
+                  $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("BugTabStateUpdate", "Developer")',
+                    data: JSON.stringify(bugtab),
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    success: function (message) {
+                      console.log(message);
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                      console.log(`Request: ${XMLHttpRequest.toString()}\nStatus: ${textStatus}\nError:${errorThrown}`);
+                    }
+                  });
+                  return false;
+                }
+                $("#bug_icon_btn_leftarrow").on("click", { "tab_open": "true" }, BugTabStateToJson);
+                $("#bug_icon_btn_rightarrow").on("click", { "tab_open": "false" }, BugTabStateToJson);
+            </script>
+        </div>
+
+    </footer>
+
+
+    @Scripts.Render("~/bundles/fullcalendar")
+    @Scripts.Render("~/bundles/popper")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/javascript")
+    @RenderSection("scripts", required: false)
+
+    <!-- Script below added by Dagmar 20200312; submenus functionality changed from hover to click, submenus are stable and do not disappear anymore -->
+    <script>
+        $('.dropdown-menu a.dropdown-toggle').on('click', function (e) {
+            if (!$(this).next().hasClass('show')) {
+                $(this).parents('.dropdown-menu').first().find('.show').removeClass('show');
+            }
+            var $subMenu = $(this).next('.dropdown-menu');
+            $subMenu.toggleClass('show');
+
+
+            $(this).parents('li.nav-item.dropdown.show').on('hidden.bs.dropdown', function (e) {
+                $('.dropdown-submenu .show').removeClass('show');
+            });
+
+
+            return false;
+        });
+    </script>
+</body>
+</html>
+
+@*<ul class="footer-list list-group list-group-horizontal" style="background-color: black">
+        <li class="list-group-item"> <a href="#" class="facebook"><i class="fab fa-facebook-f"></i></a></li>
+        <li class="list-group-item"><a href="#" class="youtube"><i class="fab fa-youtube"></i></a></li>
+        <li class="list-group-item"><a href="#" class="twitter"><i class="fab fa-twitter"></i></a></li>
+        <li class="list-group-item"><a href="#" class="instagram"><i class="fab fa-instagram"></i></a></li>
+        <li class="list-group-item"><a href="#" class="patreon"><i class="fab fa-patreon"></i></a></li>
+    </ul>*@

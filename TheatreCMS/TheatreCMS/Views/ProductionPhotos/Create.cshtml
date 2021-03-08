@@ -1,0 +1,66 @@
+﻿@model TheatreCMS.Models.ProductionPhotos
+
+@{
+    ViewBag.Title = "Create";
+}
+
+<h2>Create</h2>
+
+@* start form for the create method in the controller*@
+@using (Html.BeginForm("Create", "ProductionPhotos", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="formContainer2 ">
+        <div class="form-horizontal">
+            <h4 class="formHeader">ProductionPhotos</h4>
+            <hr />
+            <div class="inputBox2">
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Production, htmlAttributes: new { @class = "control-label col-md-4 inputLabel" })
+                    <div class="col-md-10 formBox">
+                        @Html.DropDownListFor(model => model.Production, (IEnumerable<SelectListItem>)ViewData["Productions"], htmlAttributes: new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Production)
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PhotoId, htmlAttributes: new { @class = "control-label col-md-4 inputLabel" })
+                    <div class="col-md-10 formBox">
+                        <input type="file" name="file" required />
+                        @Html.ValidationMessageFor(model => model.PhotoId, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label col-md-4 inputLabel" })
+                    <div class="col-md-10 formBox">
+                        @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-4 inputLabel" })
+                    <div class="col-md-10 formBox">
+                        @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10 formBox">
+                        <input type="submit" value="Create" class="submitButton2" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

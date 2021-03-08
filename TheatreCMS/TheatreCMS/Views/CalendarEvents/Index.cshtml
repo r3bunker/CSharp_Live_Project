@@ -1,0 +1,724 @@
+﻿@model IEnumerable<TheatreCMS.Models.CalendarEvent>
+@{
+  ViewBag.Title = "Index";
+}
+
+@* Modal box for Add Calender Event *@
+<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="fc-modals-titles" aria-hidden="true">
+
+  <div class="modal-dialog">
+    <div class="modal-content" id="fc-modals">
+      <form id="_ajaxAddToken" method="post">
+        @Html.AntiForgeryToken()
+        <div class="modal-header">
+          <h3 class="modal-title" id="fc-modal-titles">Add a Calendar Event</h3>
+          <hr />
+          <button class="iconBtn2" href="#" data-dismiss="modal">
+            <i class="fa fa-window-close fa-fw"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <span aria-hidden="true"></span>
+          <div class="form-horizontal">
+            <div class="inputBox2">
+
+              <div class="form-group">
+                <label class="fc-modal-labels">Event Title</label>
+                <div class="formBox">
+                  <input type="text" id="addformtitle" placeholder="(text input type)" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="fc-modal-labels">Start time:</label>
+                <div class="formBox">
+                  <input type="datetime-local" id="addformstarttime" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="fc-modal-labels">End time:</label>
+                <div class="formBox">
+                  <input type="datetime-local" id="addformendtime" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="fc-modal-labels" for="eventtypes">Event type:</label>
+                <div class="formBox">
+                  <div>
+                    <select class="form-control" id="eventtypes" onchange="" name="EventTypes">
+                      <option id="selType" value="">Select an Event Type</option>
+                      <option value="prod_type">Productions</option>
+                    </select>
+                  </div>
+                  <div id="ProductionsMenu">
+                    @Html.DropDownList("Productions", (IEnumerable<SelectListItem>)ViewData["Productions"], "Choose Production", htmlAttributes: new { @class = "form-control" })
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="fc-modal-labels">Link:</label>
+                <div class="formBox">
+                  <input type="text" id="addformlink" placeholder="(text input type)" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <div class="iconBtnContainer2">
+            <button class="iconBtn2" id="addsavebtn" data-dismiss="modal">
+              <i class="fa fa-save fa-fw"></i> Save
+            </button>
+            <button class="iconBtn2" href="#" data-dismiss="modal">
+              <i class="fa fa-window-close fa-fw"></i> Close
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</div>
+
+@* Modal box for Editing a CalenderEvent *@
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="fc-modal-titles" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content" id="fc-modals">
+      <form id="_ajaxEditToken" method="post">
+        @Html.AntiForgeryToken()
+        <div class="modal-header">
+          <h3 class="modal-title" id="fc-modal-titles">Edit Calender Event</h3>
+          <button class="iconBtn2" href="#" data-dismiss="modal">
+            <i class="fa fa-window-close fa-fw"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <span aria-hidden="true"></span>
+
+          <div class="form-horizontal">
+            <div class="inputBox2">
+              <div class="form-group">
+                <label class="fc-modal-labels">Event Title</label>
+                <div class="formBox">
+                  <input type="text" class="form-control" id="editformtitle" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="fc-modal-labels">Start time:</label>
+                <div class="formBox">
+                  <input type="datetime-local" id="editformstarttime" value="" />
+
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="fc-modal-labels">End time:</label>
+                <div class="formBox">
+                  <input type="datetime-local" id="editformendtime" value="" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="fc-modal-labels" for="editeventtypes">Event type:</label>
+                <div class="formBox">
+                  <div class="formBox">
+                    <div>
+                      <select class="form-control" id="editeventtypes" name="EventTypes">
+                        <option id="e_selType" value="">Select an Event Type</option>
+                        <option id="e_prod_type" value="e_prod_type">Productions</option>
+                      </select>
+                    </div>
+                    <div id="e_ProductionsMenu">
+                      @Html.DropDownList("Productions", (IEnumerable<SelectListItem>)ViewData["Productions"], "", htmlAttributes: new { @class = "form-control" })
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="fc-modal-labels">Link:</label>
+                <div class="formBox">
+                  <input type="text" id="editformlink" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <div class="iconBtnContainer2">
+            <button class="iconBtn2" id="editsavebtn">
+              <i class="fa fa-save fa-fw"></i> Save
+            </button>
+            <button class="iconBtn2" id="editdeletebtn" data-dismiss="modal" data-toggle="modal">
+              <i class="fa fa-trash-alt fa-fw"></i> Delete
+            </button>
+            <button class="iconBtn2" href="#" data-dismiss="modal">
+              <i class="fa fa-window-close fa-fw"></i> Close
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+@* Modal box for Details from a Calendar Event *@
+<div class="modal fade" id="detailsModal" tabindex="-1" role="dialog" aria-labelledby="fc-modal-titles" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content" id="fc-modals">
+      <span aria-hidden="true"></span>
+      <div class="modal-header">
+        <h3 class="modal-title" id="fc-modal-titles">Event Details</h3>
+        <button class="iconBtn2" href="#" data-dismiss="modal">
+          <i class="fa fa-window-close fa-fw"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-horizontal">
+
+          <dl class="dl-horizontal">
+            <dt>
+              Event Title:
+            </dt>
+            <dd>
+              <p id="deventTitle"></p>
+            </dd>
+            <dt>
+              Start time:
+            </dt>
+            <dd>
+              <p id="deventStartDate"></p>
+            </dd>
+            <dt>
+              End time:
+            </dt>
+            <dd>
+              <p id="deventEndDate"></p>
+            </dd>
+            <dt>
+              Event Type:
+            </dt>
+            <dd>
+              <p id="deventtypes"></p><p id="dtypeevent"></p>
+            </dd>
+            <dt>
+              Link:
+            </dt>
+            <dd>
+              <p id="deventLinks"></p>
+            </dd>
+          </dl>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="iconBtnContainer2">
+          <button class="iconBtn2" id="detaileditbtn" data-dismiss="modal" data-toggle="modal"><i class="fa fa-edit fa-fw"></i> Edit</button>
+          <button class="iconBtn2" id="detaildeletebtn" data-dismiss="modal" data-toggle="modal">
+            <i class="fa fa-trash-alt fa-fw"></i> Delete
+          </button>
+          <button class="iconBtn2" href="#" data-dismiss="modal">
+            <i class="fa fa-window-close fa-fw"></i> Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+@*Modal box for Deletion Confirmation of Calendar Event*@
+<div class="modal fade" id="confdelModal" tabindex="-1" role="dialog" aria-labelledby="fc-modals-titles" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content" id="fc-modals">
+      <span aria-hidden="true"></span>
+      <form id="_ajaxDeleteToken" method="post">
+        @Html.AntiForgeryToken()
+        <div class="modal-header">
+          <h3 class="modal-title" id="fc-modal-titles">Confirm Delete Event</h3>
+          <button class="iconBtn2" href="#" data-dismiss="modal">
+            <i class="fa fa-window-close fa-fw"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <h1>Delete Event</h1>
+          <p>Are you sure you wish to delete this event?</p>
+        </div>
+        <div class="modal-footer">
+          <div class="iconBtnContainer2">
+            <button class="iconBtn2" id="confdeletebtn" data-dismiss="modal" data-toggle="modal"><i class="fa fa-trash-alt fa-fw"></i> Delete</button>
+            <button class="iconBtn2" href="#" data-dismiss="modal">
+              <i class="fa fa-window-close fa-fw"></i> Close
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+@* Admin Modal to delete multiple CalendarEvents from the table *@
+<div class="modal fade" id="multiDeleteModal" tabindex="-1" role="dialog" aria-labelledby="multiDeleteModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      @using (Html.BeginForm("DeleteMultiple", "CalendarEvents", FormMethod.Post, new { encType = "multipart/form-data" }))
+      {
+        @Html.AntiForgeryToken()
+        <div class="modal-header multiDeleteModalHeading">
+          <h4 class="modal-title">Delete Confirmation</h4>
+          <span class="fa-stack fa-2x">
+            <i class="fa fa-calendar-check fa-stack-1x fa-inverse" aria-hidden="true"></i>
+            <i class="fa fa-ban fa-stack-2x text-dark" aria-hidden="true"></i>
+          </span>
+          <button type="button" class="close cancel" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p class="events-comment">Events To Be Deleted</p>
+          <ul id="eventsList">
+          </ul>
+          <p class="my-3 events-total">Total: </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary cancel" data-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-danger delete"><i class="fa fa-trash"></i> Delete</button>
+        </div>
+      }
+    </div>
+  </div>
+</div>
+
+<div id="calendar"></div>
+
+
+<p class="mt-5">
+    @if (User.IsInRole("Admin"))
+    {
+
+    <button class="iconBtn" onclick="location.href='@Url.Action("Create")'">
+      <i class="fa fa-plus-square fa-fw"></i> Create New<!--Added a create button -->
+    </button>
+
+    <button class="iconBtn mx-0" onclick="location.href='@Url.Action("BulkAdd")'">
+      <i class="fas fa-mail-bulk"></i> Bulk Add <!--Added a add button -->
+    </button>
+
+    <button class="btn btn-danger msg-del-btn inactive  " data-toggle="modal"
+            data-target="#multiDeleteModal" aria-disabled="true">
+      <i class="fas fa-trash"></i>
+    </button>
+    }
+</p>
+
+
+<div id="calendarTableContainer">
+
+  
+
+
+  <table id="adminEventTable" class="table">
+    <thead>
+      <tr class="text-center">
+        @if (User.IsInRole("Admin"))
+        {
+          <th class="text-left">
+            <input type="checkbox" class="checkAll" />
+            <label class="ml-1" for="checkAll">Select All</label>
+          </th>
+        }
+        <th>
+          @Html.DisplayNameFor(model => model.Title)
+        </th>
+        <th>
+          @Html.DisplayNameFor(model => model.StartDate)
+        </th>
+        <th>
+          @Html.DisplayNameFor(model => model.EndDate)
+        </th>
+        <th>
+          @Html.DisplayNameFor(model => model.TicketsAvailable)
+        </th>
+        <th>
+          @Html.DisplayNameFor(model => model.ProductionId)
+        </th>
+        <th>
+          @if (User.IsInRole("Admin"))
+          {
+            <text>Options</text>
+          }
+          else
+          {
+            <text>Details</text>
+          }
+        </th>
+      </tr>
+    </thead>
+
+    <tbody>
+      @foreach (var item in Model)
+      {
+        <tr class="text-center">
+          @if (User.IsInRole("Admin"))
+          {
+            <td class="text-left">
+              @Html.CheckBox(item.Title.ToString(), new { @class = "calendarEvent", @value = item.EventId })
+            </td>
+          }
+          <td>
+            @Html.DisplayFor(modelItem => item.Title)
+          </td>
+          <td>
+            @Html.DisplayFor(modelItem => item.StartDate)
+          </td>
+          <td>
+            @Html.DisplayFor(modelItem => item.EndDate)
+          </td>
+          <td>
+            @Html.DisplayFor(modelItem => item.TicketsAvailable)
+          </td>
+          <td>
+            @Html.DisplayFor(modelItem => item.ProductionId)
+          </td>
+          <td>
+            @if (User.IsInRole("Admin"))
+            {
+
+              <button class="iconBtn" onclick="window.location.href = '@Url.Action("Edit", "CalendarEvents", new { id = item.EventId })'">
+                  <i class="fa fa-edit fa-fw"></i>Edit
+              </button>
+    
+            }
+
+              <button class="iconBtn" onclick="window.location.href ='@Url.Action("Details", "CalendarEvents", new { id = item.EventId })'">
+                  <i class="fa fa-info-circle fa-fw"></i>Details
+              </button>
+                   
+
+
+            @if (User.IsInRole("Admin"))
+            {
+
+              <button class="iconBtn" onclick="window.location.href ='@Url.Action("Delete", "CalendarEvents", new { id = item.EventId })'">
+                  <i class="fa fa-trash-alt fa-fw"></i>Delete
+              </button> 
+              
+          
+            }
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>
+
+@section Scripts {
+  <script>
+    var events = [];
+    $(document).ready(function () {
+      GetCalendarEvents();
+      function GetCalendarEvents() {
+        $.ajax({
+          type: "GET",
+          url: "/CalendarEvents/GetCalendarEvents",
+          success: function (data) {
+            events = data
+            GenerateCalendar(events);
+          }
+        })
+      };
+
+      function GenerateCalendar(events) {
+        //remove the previous Calendar
+        $('#calendar').fullCalendar('destroy');
+        //Assign properties to the Calendar, and some events
+        $('#calendar').fullCalendar({
+          contentHeight: 550,
+          timezone: "local",
+          defaultDate: new Date(),
+          //allows multiple/stacked events
+          eventLimit: true,
+          events: events,
+          //render appropriate eventcolor to calendar based on type of event
+          selectable: true,
+          selectHelper: true,
+          //if multiple events on same day should be stacked, set to true:
+          eventLimit: false,
+          select: function (startStr, endStr) {
+            var addstarttime = moment(moment.utc(startStr)).format().substring(0, 19);
+            var addendtime = moment(moment.utc(endStr)).format().substring(0, 19);
+            //setting the selected start and end date/times to default in Add Modal inputs
+
+            function getAddStartT() {
+              document.getElementById("addformstarttime").defaultValue = addstarttime;
+            };
+            function getAddEndT() {
+              document.getElementById("addformendtime").defaultValue = addendtime;
+            };
+            getAddStartT();
+            getAddEndT();
+
+            $("#addModal").modal({ backdrop: true });
+
+            $("#addModal #ProductionsMenu").hide();
+
+
+            $("#addModal #eventtypes").change(function () {
+              var type = $(this).val();
+              if (type == "prod_type") {
+                $("#addModal #ProductionsMenu").show();
+              }
+              else {
+                $("#addModal #ProductionsMenu").hide();
+              };
+            }),
+
+              //Call CalendarEvents/Create New Event
+              $.ajax({
+                type: "GET",
+                url: '/CalendarEvents/Create',
+                data: { '': '' },
+                success: function (data) {
+                  if (data.status) {
+                    //refresh the calendar
+                    $("#calendar").fullCalendar('renderEvent');
+                    GetCalendarEvents();
+                    $('#addModal').modal('hide');
+                  }
+                },
+                error: function () {
+                  alert('Failed, Sorry!');
+                }
+              });
+            $("#calendar").fullCalendar('unselect');
+          },
+
+          eventClick: function (calEvent) {
+            $('#detailsModal #deventId').html(calEvent.id);
+            $('#detailsModal #deventTitle').html(calEvent.title);
+            var startdatedetail = moment.utc(calEvent.start).local().format("MM-DD-YYYY HH:mm a");
+            $('#detailsModal #deventStartDate').html(startdatedetail);
+            var enddatedetail = moment.utc(calEvent.end).local().format("MM-DD-YYYY HH:mm a");
+            $('#detailsModal #deventEndDate').html(enddatedetail);
+
+            if (calEvent.productionid > 0) {
+              $('#detailsModal #deventtypes').html("Production: " + calEvent.productionid);
+            }
+            //$('#detailsModal #deventEventLinks').html(calEvent.eventlinks);
+            $("#detailsModal").modal({ backdrop: true });
+
+            $("#detaileditbtn").click(function () {
+              $('#editModal #eeventId').html(calEvent.id);
+              $('#editModal #eeventTitle').html(document.getElementById("editformtitle").defaultValue = calEvent.title);
+              $('#editModal #eeventStartDate').html(document.getElementById("editformstarttime").defaultValue = moment(moment.utc(calEvent.start)).local().format().substring(0, 19));
+              $('#editModal #eeventEndDate').html(document.getElementById("editformendtime").defaultValue = moment(moment.utc(calEvent.end)).local().format().substring(0, 19));
+
+              if (calEvent.productionid > 0) {
+                $("#editModal #editeventtypes").val("e_prod_type");
+                $('#editModal #Productions').val(calEvent.productionid);
+              }
+              
+              //remove previous modal and show edit Modal when edit button selected
+              $("#detailsModal").modal('hide');
+              window.setTimeout(function () {
+                $("#editModal").modal("show");
+              }, 500);
+
+              //save changes made in edit Modal
+              $('#editsavebtn').click(function () {
+                var antiForgeryToken = $('#editModal input[name="__RequestVerificationToken"]').val();
+                calendarEvent = {
+                  "EventId": calEvent.id,
+                  "Title": $('#editModal #editformtitle').val(),
+                  "StartDate": $('#editModal #editformstarttime').val(),
+                  "EndDate": $('#editModal #editformendtime').val(),
+                  "TicketsAvailable": null,
+                  "ProductionId": $("#editModal #Productions").val(),
+
+                  '__RequestVerificationToken': antiForgeryToken,
+                }
+                $.ajax({
+                  type: "POST",
+                  url: '/CalendarEvents/Edit',
+                  data: calendarEvent,
+                  success: function (data) {
+                    //refresh the calendar
+                    console.log(data);
+                    GetCalendarEvents();
+                    $('#editModal').modal('hide');
+                  },
+                  error: function () {
+                    alert('Failed, Sorry!');
+                  }
+                });
+                $("#calendar").fullCalendar('unselect', jsEvent, view);
+                $("#calendar").fullCalendar('updateEvent', calendarEvent, true);
+              });
+            });
+
+            //send to Confirm to Delete Modal when delete button selected [on details Modal]
+            $("#detaildeletebtn").click(function () {
+              window.setTimeout(function () {
+                $("#confdelModal").modal("show");
+              }, 500);
+              selectedEvent = calEvent.id;
+              $("#detailsModal").modal('hide');
+            });
+
+            //send to Confirm to Delete Modal when delete button selected [on edit Modal]
+            $("#editdeletebtn").click(function () {
+              $("#confdelModal").modal("show");
+              selectedEvent = calEvent.id;
+            });
+          }
+        });
+      };
+
+      //save new event from Add Modal to db
+      $('#addsavebtn').click(function () {
+        var antiForgeryToken = $('#addModal input[name="__RequestVerificationToken"]').val();
+        var savestart = $('#addModal #addformstarttime').val();
+        var saveend = $('#addModal #addformendtime').val();
+        var prod_id = $("#addModal #Productions").val();
+
+        if (prod_id > 0) {
+          var productionid = prod_id;
+          var color = '#DB1A11';
+        }
+        else {
+          alert("You must choose a Production to post an event to the calendar.");
+        };
+
+        var calendarEvent = {
+          "Title": $('#addModal #addformtitle').val(),
+          "StartDate": savestart,
+          "EndDate": saveend,
+          "TicketsAvailable": null,
+          "ProductionId": productionid,
+          "Color": color,
+          '__RequestVerificationToken': antiForgeryToken
+        };
+
+        $.ajax({
+          type: "POST",
+          url: '/CalendarEvents/Create',
+          data: calendarEvent,
+          success: function (data) {
+            //refresh the calendar
+            console.log(data);
+            GetCalendarEvents();
+            $('#addModal').modal('hide');
+          },
+          error: function () {
+            alert('Failed, Sorry!');
+          }
+        });
+        $("#calendar").fullCalendar('renderEvent', calendarEvent);
+      }),
+
+        //confirm delete function call/fully delete event from db
+        $('#confdeletebtn').click(function () {
+          var antiForgeryToken = $('#confdelModal input[name="__RequestVerificationToken"]').val();
+          selectedEvent = {
+            id: selectedEvent,
+            '__RequestVerificationToken': antiForgeryToken
+          };
+          $.ajax({
+            type: "POST",
+            url: '/CalendarEvents/DeletingEvent',
+            data: selectedEvent,
+            success: function (data) {
+              if (data.status) {
+                $("#calendar").fullCalendar('removeEvents', selectedEvent.id);
+                GetCalendarEvents();
+                $('#confdelModal').modal('hide');
+              }
+            },
+            error: function () {
+              alert('Failed, Sorry!');
+            }
+          });
+        });
+
+        @* The following code is used to delete one or more calendar events from the admin table. It will trigger a modal that shows any CalendarEvents chosen for deletion as well as the total number to delete *@
+
+        // Check/Un-check all checkboxes based on CheckAll checkbox & style each checked row for deletion
+        $('tbody :checkbox').change(function () {
+          $(this).closest('tr').toggleClass('isChecked', this.checked);
+     
+          var allchecked = $('tbody :checkbox:checked').length == $('tbody :checkbox').length;
+          $('thead :checkbox').prop('checked', allchecked);
+        });
+        $('thead :checkbox').change(function () {
+          $('tbody :checkbox').prop('checked', this.checked).trigger('change')
+        });
+
+        // Toggles the trash button above table to be active, or inactive
+        $(".checkAll").click(function () {
+          var trash = $(".msg-del-btn");
+          if ($(this).is(':checked')) {
+            trash.removeClass("inactive");
+          } else {
+            trash.addClass("inactive");
+          }
+        });
+
+        $(".calendarEvent").click(function () {
+          var trash = $(".msg-del-btn");
+          if ($(".calendarEvent").is(":checked")) {
+            trash.removeClass("inactive");
+          }
+          else {
+            trash.addClass("inactive");
+          }
+        });
+
+        // Passing the CalendarEvents id's that are checked to the modal to be sent to the controller for deletion
+        $(".delete").click(function () {
+          var modal = $("#multiDeleteModal").find(".modal-body");
+          $(".calendarEvent:checked").each(function (index) {
+            var eventId = $(this).val();
+            $(modal).append("<input name='eventsArray' value='" + eventId + "' type='hidden' />");
+          });
+        });
+
+        // Append the Titles' of the selected events to the modal
+        var eventTitle = "";
+        $(".msg-del-btn").click(function () {
+          var eventsList = [];
+          $(".calendarEvent:checked").each(function () {
+            eventTitle = $(this).attr("name");
+            eventsList.push(eventTitle);
+          });
+          for (var i = 0; i < eventsList.length; i++) {
+            $("#eventsList").append("<li class='temp-event'>" + eventsList[i] + "</li>");
+          }
+        });
+
+      // Append the total number of events to cancel to the modal
+      $(".msg-del-btn").click(function () {
+        var events = [];
+        var title = "";
+        var eventsTotal = 0;
+        $(".calendarEvent:checked").each(function () {
+          title = $(this).attr("name");
+          events.push(title);
+        });
+        eventsTotal = events.length;
+        $(".events-total").append("<span class='temp-total'>" + eventsTotal + "</span>");
+      })
+
+        // Remove the Titles and total number of selected events from the modal on cancel
+        $(".cancel").click(function () {
+          $("#eventsList").children().remove(".temp-event");
+          $(".events-total").children().remove(".temp-total");
+        })
+
+        @* End multiple delete admin calendar table *@
+
+    });
+
+        // page is now ready, initialize the calendar...
+  </script>
+}

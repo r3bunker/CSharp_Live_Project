@@ -1,0 +1,183 @@
+﻿@model TheatreCMS.Models.CalendarEvent
+
+@{
+    ViewBag.Title = "Create Bulk Production Calendar Events";
+}
+
+<h2>Create Bulk Production Calendar Events</h2>
+
+<section id="generate-showtimes-section">
+    <header>Generate Showtimes</header>
+    <form id="bulkaddform">
+      <div class="form-group row w-50">
+        <label class="bulk-add--label col-sm-2 col-form-label">Production</label>
+        <div class="col-sm-10 d-inline-flex ">
+          @Html.DropDownList("Productions", (IEnumerable<SelectListItem>)ViewData["Productions"], "N/A", htmlAttributes: new { @class = "form-control", @id = "generate__production-field" })
+          @Html.ValidationMessageFor(model => model.ProductionId, "", new { @class = "text-white" })
+        </div>
+      </div>
+      <div class="form-group row w-50">
+        <label class="bulk-add--label col-sm-2 col-form-label">Start Date</label>
+        <div class="col-sm-10 d-inline-flex">
+          @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control", @id = "generate__start-date-field", @type = "date" } })
+          @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-white" })
+        </div>
+      </div>
+
+      <div class="form-group row w-50">
+        <label class="bulk-add--label col-sm-2 col-form-label">End Date</label>
+        <div class="col-sm-10 d-inline-flex">
+          @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control datepicker", @id = "generate__end-date-field", @type = "date" } })
+          @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "text-white" })
+        </div>
+      </div>
+
+
+      <div class="form-group row d-inline show-times col-sm-10 w-50">
+        <label for="matinee">
+          <input type="checkbox" id="matinee" name="matinee" />
+          Matinee <span id="matinee-time"></span>
+        </label>
+        <label for="evening">
+          <input type="checkbox" id="evening" name="evening" />
+          Evening <span id="evening-time"></span>
+        </label>
+        <div class="form-group row w-50" for="other" id="showtime-dropdown">
+          <label class="bulk-add--label col-sm-2 col-form-label">Custom</label>
+          <div class="col-sm-10 d-inline-flex">
+            @Html.DropDownList("custom-time", new SelectList(ViewData["Times"] as List<string>), "", new { @class = "dropdown" })
+          </div>
+        </div>
+        @*<label for="other" id="showtime-dropdown">
+           @Html.DropDownList("custom-time", new SelectList(ViewData["Times"] as List<string>), "", new { @class = "dropdown" })
+      </label>*@
+      </div>
+
+
+      <div class="form-group">
+        <label>
+          @Html.CheckBox("monday", false)
+          Monday
+        </label>
+        <label>
+          @Html.CheckBox("tuesday", false)
+          Tuesday
+        </label>
+        <label>
+          @Html.CheckBox("wednesday", false)
+          Wednesday
+        </label>
+        <label>
+          @Html.CheckBox("thursday", false)
+          Thursday
+        </label>
+        <label>
+          @Html.CheckBox("friday", false)
+          Friday
+        </label>
+        <label>
+          @Html.CheckBox("saturday", false)
+          Saturday
+        </label>
+        <label>
+          @Html.CheckBox("sunday", false)
+          Sunday
+        </label>
+      </div>
+
+      <div class="form-group">
+        <label>
+          Interval
+          <select id="interval">
+            <option value="1">One Week</option>
+            <option value="2">Two Weeks</option>
+            <option value="3">Three Weeks</option>
+            <option value="4">Four Weeks</option>
+          </select>
+        </label>
+      </div>
+    </form>
+      <div>
+        <button type="button" id="generate-button">Generate Showtimes</button>
+      </div>
+
+      <div id="bulk-add-modal">
+        <div id="bulk-add-modal_content">
+          <p>Would you like to add the following show times to the list?</p>
+          <table id="modal-table">
+            <tr>
+              <th>Date</th>
+              <th>Day</th>
+              <th>Start Time</th>
+            </tr>
+
+          </table>
+          <button type="button" id="bulk-add-modal_yes" class="bulk-add-modal_button">YES</button>
+          <button type="button" id="bulk-add-modal_no" class="bulk-add-modal_button">NO</button>
+        </div>
+      </div>
+</section>
+
+<section id="review-showtimes-section">
+
+    <header>Review Showtimes</header>
+    <div id="showtimes-container">
+        <table id="showtimes-table">
+
+            <tr>
+                <th>Date</th>
+                <th>Day</th>
+                <th>Start Time</th>
+            </tr>
+
+        </table>
+    </div>
+    <div>
+        <button id="bulk-add_submit" type="submit">Submit</button>
+    </div>
+
+</section>
+
+
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+@*@using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-horizontal">
+            <h4>CalendarEvent</h4>
+            <hr />
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Create" class="btn btn-main" />
+                </div>
+            </div>
+        </div>
+    }*@

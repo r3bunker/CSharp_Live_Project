@@ -1,0 +1,42 @@
+﻿@model TheatreCMS.Areas.Subscribers.Models.SubscriptionPlan
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>SubscriptionPlan</h4>
+    <hr />
+    <dl class="dl-horizontal">
+      <dt>
+        @Html.DisplayNameFor(model => model.SubscriptionLevel)
+      </dt>
+
+      <dd>
+        @Html.DisplayFor(model => model.SubscriptionLevel)
+      </dd>
+
+      <dt>
+        @Html.DisplayNameFor(model => model.PricePerYear)
+      </dt>
+
+      <dd>
+        @Html.DisplayFor(model => model.PricePerYear)
+      </dd>
+
+      <dt>
+        @Html.DisplayNameFor(model => model.NumberOfShows)
+      </dt>
+
+      <dd>
+        @Html.DisplayFor(model => model.NumberOfShows)
+      </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.PlanId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

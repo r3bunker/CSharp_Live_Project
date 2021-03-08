@@ -1,0 +1,123 @@
+﻿@using TheatreCMS.Controllers
+@using TheatreCMS.Helpers
+@model IEnumerable<TheatreCMS.Models.CastMember>
+
+
+@{
+    ViewBag.Title = "Cast";
+    // UserIds set to make it easier to read
+    var UserIds = ViewBag.Users as Dictionary<string, string>;
+    var FavCastIds = ViewBag.FavCastIds;
+}
+
+<h1 class="text-center m-3 pt-3">Cast</h1>
+
+<p>
+    @*Create is admin only*@
+
+    @*Create button to add cast members*@
+    @if (User.IsInRole("Admin"))
+    {
+        <button class="iconBtn" onclick="location.href ='@Url.Action("Create")'">
+            <i class="fa fa-plus-square fa-fw"></i>Create New
+        </button>
+    }
+</p>
+
+<div class="card-columns mr-3 ml-3 p-3" id="castContainer">
+    @*Creates a card for each cast member with their photo as the image-cap*@
+    @foreach (var item in Model)
+    {
+        <div class="card castImageContainer">
+
+            @* This code determines if Cast Memeber has no photo.  If so, use default CastMember.jpg for photo. *@
+            @{
+                string img = "";
+                if (item.PhotoId != 0)
+                {
+                    img = Url.Action("DisplayPhoto", "Photo", new { id = item.PhotoId });       /*If cast member has a photo, display this as image-cap*/
+                }
+                else
+                {
+                    img = Url.Content("~/Content/Images/CastMember.jpg");       /*If cast member has no photo, display this as image-cap*/
+                }
+            }
+
+            <a href="@Url.Action("Details", "CastMembers", new { id = item.CastMemberID })"> <img class="card-img-top" id="castImage" src="@img" /> </a>
+
+            @*<div class="castMiddle mr-3 mb-1 pb-0">*@
+            <div class="card-body">
+                <h4 class="card-title">
+                    @* Favorite cast members button *@
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        if (FavCastIds.Contains(item.CastMemberID.ToString()))
+                        {
+                            <span class="fb-favorited" id="fb-@item.CastMemberID" onclick="FavoriteCastMember(@item.CastMemberID)"></span>
+                        }
+                        else
+                        {
+                            <span class="fb-not-favorited" id="fb-@item.CastMemberID" onclick="FavoriteCastMember(@item.CastMemberID)"></span>
+                        }
+                    }
+                    @Html.DisplayFor(modelItem => item.Name),
+                    @Html.DisplayFor(modelItem => item.MainRole)
+                </h4>
+                @{ @*Added if statement so "YearJoined" variable is only used if the year joined is not null*@
+                if (item.YearJoined != null)
+                {
+                    <h4 class="font-italic"> Joined: @Html.DisplayFor(modelItem => item.YearJoined)</h4>;
+                }
+                }
+
+            <a href="@Url.Action("Details", "CastMembers", new { id = item.CastMemberID })">
+              @if (item.Bio != null && item.Bio.Length > 0)
+                {
+                  item.Bio = TextHelper.LimitWordCount(item.Bio, 30);
+                }
+              <p class="castText">@Html.DisplayFor(modelItem => item.Bio)</p>
+
+              @*@{ if (item.Bio != null && item.Bio.Length > 200)                     // the max allowable characters can be changed on this line, and
+                  {
+                    item.Bio = item.Bio.Substring(0, 200) + "...";                  //   this line
+                  }
+                }*@
+              @*this tag is the bio popup*@
+            </a>
+
+
+            <p>
+              @*Delete and edit are admin only*@
+
+              @*Button to edit cast members*@
+              @if (User.IsInRole("Admin"))
+              {
+                <button class="iconBtn" onclick="location.href ='@Url.Action("Edit", new { id = item.CastMemberID })'">
+                  <i class="fa fa-edit fa-fw"></i>Edit
+                </button>
+              }
+              else if (User.IsInRole("Member") && item.CastMemberID == ViewBag.memberId && item.CurrentMember) // Allows members to edit their own info
+              {
+
+                <button class="iconBtn" onclick="location.href ='@Url.Action("Edit", new { id = item.CastMemberID })'">
+                  <i class="fa fa-edit fa-fw"></i>Edit
+                </button>
+              }
+
+
+
+              @*@Html.ActionLink(" Details", "Details" , new { id=item.CastMemberID })*@
+
+              @*Button to delete cast members*@
+              @if (User.IsInRole("Admin"))
+              {
+                <button class="iconBtn" onclick="location.href ='@Url.Action("Delete", new { id = item.CastMemberID }) '">
+                  <i class="fa fa-trash-alt fa-fw"></i>Delete
+                </button>
+              }
+            </p>
+            </div>
+        </div>
+    }
+</div>
+

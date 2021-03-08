@@ -1,0 +1,335 @@
+﻿@model TheatreCMS.Models.Production
+@using TheatreCMS.Controllers
+
+@Scripts.Render("~/Scripts/Site.js")
+
+
+<div class="production-details-container">
+  @{
+      //Null check for default photos
+      if(Model.DefaultPhoto != null)
+      {
+        <img src='@Url.Action("DisplayPhoto", "Photo", new { id = Model.DefaultPhoto.PhotoId })' class="production-details-background" />
+      }
+      else
+      { //If no default photo, use Unavailable.png  
+        <img src="~/Content/Images/Unavailable.png" class="production-details-background" />
+      }
+  }
+</div>
+<div class="container">
+  <div>
+    <div class="row justify-content-xl-start text-center">
+      <div class="col-12">
+        <dl>
+          <dd class="col">
+            <div class="jumbotron" id="jumbo"><h1><b> @Html.DisplayFor(model => model.Title)</b></h1></div>
+          </dd>
+
+        </dl>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-4 justify-content-center">
+        <div class="card bg-info" id="cardss">
+          <div class="card-header" id="head">
+            <b>Days Playing</b>
+          </div>
+          <ul class="list-group list-group-flush text-black-50">
+
+            <li class="list-group-item">
+              Opening Day
+              <dl>
+
+                <dd class="col">
+                  @Html.DisplayFor(model => model.OpeningDay)
+                </dd>
+              </dl>
+            </li>
+            <li class="list-group-item">
+              Closing Day
+              <dl>
+                <dd class="col">
+                  @Html.DisplayFor(model => model.ClosingDay)
+                </dd>
+              </dl>
+            </li>
+          </ul>
+        </div>
+
+        <div class="card bg-info" id="cardss">
+          <div class="card-header" id="head">
+            <b>Show Time and Length</b>
+          </div>
+          <ul class="list-group list-group-flush text-black-50">
+
+            <li class="list-group-item">
+              Run Time
+              <dl>
+                <dd class="col">
+                  @Html.DisplayFor(model => model.Runtime)
+                </dd>
+              </dl>
+            </li>
+            <!--===== SHOWTIMES - Display only if available-->
+            <li class="list-group-item">
+              Evening Showtime
+              <dl>
+                @{
+                  if (Model.ShowtimeEve.HasValue)
+                  {
+                    <dd class="col">@Model.ShowtimeEve.Value.ToString("h:mm tt")</dd>
+                  }
+                  else
+                  {
+                    <dd class="col">Not Playing</dd>
+                  }
+                }
+              </dl>
+            </li>
+            <li class="list-group-item">
+              Matinee Showtime
+              <dl>
+                @{
+                  if (Model.ShowtimeMat.HasValue)
+                  {
+                    <dd class="col">@Model.ShowtimeMat.Value.ToString("h:mm tt")</dd>
+                  }
+                  else
+                  {
+                    <dd class="col">Not Playing</dd>
+                  }
+                }
+              </dl>
+            </li>
+          </ul>
+        </div>
+
+
+        <!--Iterate through Parts for a specific Type of role and if there is data it will display the below item in the Parts card. If no data is returned it will not display-->
+        <!--===================================================
+        The below refactors the parts section
+  ===================================================-->
+        <!-- Parts Card Section visible when screen size is bigger-->
+        <!-- when screen size is med or bigger this will display. It is otherwise hidden-->
+        <!-- Parts Card Section -->
+        @if (Model.Parts.Count != 0)
+          {
+            <div class="card d-none d-md-block" id="cardss">
+              <div class="card-header" id="head">
+                <b>Parts</b>
+              </div>
+              <ul class="list-group list-group-flush text-black-50">
+                @{var part = new TheatreCMS.Enum.PositionEnum();}
+                @{List<TheatreCMS.Models.Part> parts = new List<TheatreCMS.Models.Part>();}
+                @foreach (int position in ViewBag.Positions)
+                {
+                  parts.Clear();
+                  part = (TheatreCMS.Enum.PositionEnum)position;
+                  parts = Model.Parts.Where(x => x.Type == part).ToList();
+                  if (parts != null && parts.Any())
+                  {
+                    <li class="list-group-item">
+                      @(part)s
+                      <dl>
+                        @foreach (var item in parts)
+                        {
+                          if (item != null && part.ToString() == "Actor")
+                          {
+                            <dd class="col">
+                              <a href="/Part/Details/@item.PartID">@Html.Raw(@item.Character)</a>
+                            </dd>
+                            if (item.Person != null)
+                            {
+                              <dd class="col">
+                                <p class="prod-details-actor-info"> played by <a class="prod-details-actor-info-link" href="/CastMembers/Details/@item.Person.CastMemberID">@item.Person.Name.ToString()</a></p>
+                              </dd>
+                            }
+                          }
+                          else if (item != null)
+                          {
+                            <dd class="col">
+                              <a href="/Part/Details/@item.PartID">@Html.Raw(@item.Character)</a>
+                            </dd>
+                          }
+                        }
+                      </dl>
+                    </li>
+                  }
+                }
+              </ul>
+            </div>
+          }
+        <!-- End Parts Card Section-->
+      </div>
+
+
+      <div class="col-md-8">
+
+        <div class="card text-center bg-white text-black-50" id="cardss">
+
+          <h5 class="card-header text-white" id="head"><b>About The Production</b></h5>
+
+          @{
+            //Null check for default photos
+            if (Model.DefaultPhoto != null)
+            {
+               <img src='@Url.Action("DisplayPhoto", "Photo", new { id = Model.DefaultPhoto.PhotoId })' id="DisplayImg" />
+            }
+            else
+            { //If no default photo, use Unavailable.png
+              <img src="~/Content/Images/Unavailable.png" id="DisplayImg" />
+            }
+          }
+
+          <dl class="dl-horizontal justify-content-start col">
+
+            <dt class="col">
+              @Html.DisplayNameFor(model => model.Title)
+            </dt>
+
+            <dd class="col">
+              @Html.DisplayFor(model => model.Title)
+            </dd>
+
+            <dt class="col">
+              @Html.DisplayNameFor(model => model.Playwright)
+            </dt>
+
+            <dd class="col">
+              @Html.DisplayFor(model => model.Playwright)
+            </dd>
+            <div class="text-center">
+              <dl>
+
+                <dt class="col flex-md-row">
+                  @Html.DisplayNameFor(model => model.Description)
+                </dt>
+
+                <dd class="col">
+                  @Html.DisplayFor(model => model.Description)
+                </dd>
+
+                <dt class="col">
+                  @Html.DisplayNameFor(model => model.Season)
+                </dt>
+
+                <dd class="col">
+                  @Html.DisplayFor(model => model.Season)
+                </dd>
+
+                <dt class="col">
+                  Current Show
+                  @*@Html.DisplayNameFor(model => model.IsCurrentlyShowing())*@
+                </dt>
+
+                <dd class="col">
+                  <input class="check-box" disabled="disabled" type="checkbox" @(Model.IsCurrentlyShowing() ? "checked" : "") />
+                  @*@Html.DisplayFor(model => model.IsCurrentlyShowing())*@
+                <dd>
+
+                <dt class="col">
+                  @Html.DisplayNameFor(model => model.IsWorldPremiere)
+
+                </dt>
+
+                <dd class="col">
+                  @Html.DisplayFor(model => model.IsWorldPremiere)
+                </dd>
+
+
+              </dl>
+            </div>
+
+          </dl>
+          @*Hiding buying info and options.*@
+          @{
+            var ActiveProductions = Model.ClosingDay;  // Getting ClosingDay
+                                                       // Comparing ClosingDay to today & IsCurrent bool to display or not
+            if (ActiveProductions >= DateTime.Today || Model.IsCurrentlyShowing())
+            {
+              <div class="card text-center bg-white text-black-50" id="cardss">
+                <div class="card-body">
+                  <h5 class="card-title">Where To Buy?</h5>
+                  <p class="card-text">
+                    <dl>
+                      <dd class="col">Get your tickets online! at @Html.DisplayFor(model => model.TicketLink)</dd>
+                    </dl>
+                  </p>
+                  <a href="#" class="btn btn-main">buy now</a> <!-- btn-main originally btn-primary, save for possible reversion -->
+                </div>
+              </div>
+            }
+          }
+        </div>
+
+        <!-- Parts Card Section visible when screen size small -->
+        <!--===================================================
+  The below refactors the parts section for a small screen
+  ===================================================-->
+
+
+        @if (Model.Parts.Count != 0)
+          {
+            <div class="card bg-info d-md-none" id="cardss">
+              <!-- when screen size is md or bigger this will not display. So when screen size is sm/mobile view it will be visible but otherwise hidden -->
+              <div class="card-header text-white" id="head">
+                <b>Parts</b>
+              </div>
+              <ul class="list-group list-group-flush text-black-50">
+                @{var part1 = new TheatreCMS.Enum.PositionEnum();}
+                @{List<TheatreCMS.Models.Part> parts1 = new List<TheatreCMS.Models.Part>();}
+                @foreach (int position in ViewBag.Positions)
+                {
+                  parts1.Clear();
+                  part1 = (TheatreCMS.Enum.PositionEnum)position;
+                  parts1 = Model.Parts.Where(x => x.Type == part1).ToList();
+                  if (parts1 != null && parts1.Any())
+                  {
+                    <li class="list-group-item">
+                      @(part1)s
+                      <dl>
+                        @foreach (var item in parts1)
+                        {
+                          if (item != null && part1.ToString() == "Actor")
+                          {
+                            <dd class="col">
+                              <a href="/Part/Details/@item.PartID">@Html.Raw(@item.Character)</a>
+                            </dd>
+                            if (item.Person != null)
+                            {
+                              <dd class="col">
+                                <p class="prod-details-actor-info"> played by <a class="prod-details-actor-info-link" href="/CastMembers/Details/@item.Person.CastMemberID"><i>@item.Person.Name.ToString()</i></a></p>
+                              </dd>
+                            }
+                          }
+                          else if (item != null)
+                          {
+                            <dd class="col">
+                              <a href="/Part/Details/@item.PartID">@Html.Raw(@item.Character)</a>
+                            </dd>
+                          }
+                        }
+                      </dl>
+                    </li>
+                  }
+                }
+              </ul>
+            </div>
+          }
+      </div>
+    </div>
+  </div>
+
+  @*Shows/hides edit link depending on user role.*@
+  <p class="position-relative">
+    @* Added to bring links to the foreground *@
+    @if (ViewContext.HttpContext.User.IsInRole("Admin"))
+    {
+      @Html.ActionLink("Edit", "Edit", new { id = Model.ProductionId }) @:|
+    }
+    @Html.ActionLink("Current Productions", "Current") |
+    @Html.ActionLink("Back to List", "Index")
+  </p>
+</div>

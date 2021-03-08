@@ -1,0 +1,147 @@
+﻿@model TheatreCMS.Models.Photo
+
+@{
+  ViewBag.Title = "Delete";
+}
+
+<div class="mt-5 mx-auto col-12 col-sm-10 col-md-8 col-lg-6 text-center">
+  <h4>Are you sure you want to delete this?</h4>
+  <hr />
+  <dl class="dl-horizontal">
+
+    <dd>
+      @Html.DisplayFor(model => model.Title)
+    </dd>
+
+    <dd>
+      <img class="large_size" src='@Url.Action("DisplayPhoto", "Photo", new { id = Model.PhotoId })' />
+    </dd>
+
+    <dd>
+      <h5>Dimensions</h5>
+    </dd>
+
+    <dd>
+      @Html.DisplayFor(model => model.OriginalHeight)
+      x @Html.DisplayFor(model => model.OriginalWidth)
+    </dd>
+
+    @*Create a local variable to assign the output of the FindDependencies() method.*@
+    @{
+      var dependencies = TheatreCMS.Controllers.PhotoController.FindDependencies(Model.PhotoId);
+    }
+
+    @*Use variable dependencies.HasDependencies to check for an evaluation of false. *@
+    @if (!dependencies.HasDependencies)
+    {
+      <dt>
+        No dependencies exist with this photo: Safe to delete
+      </dt>
+    }
+    else
+    {
+      <dt>
+        This photo is being used by the following items:
+      </dt>
+
+      <dd>
+        @* Foreach production in the dependencies.ProductionPhotos List, get the title and season of each production. *@
+        @foreach (var production in dependencies.ProductionPhotos)
+        {
+          @production.Title; <text> - Season: </text>
+          @production.Production.Season; <br />
+        }
+
+        @* Foreach sponsor in the dependencies.Sponsors List, get the name of each sponsor. *@
+        @foreach (var sponsor in dependencies.Sponsors)
+        {
+          @sponsor.Name <br />
+        }
+
+        @*Foreach castmember in the dependencies.CastMembers List, get the name of each cast member. *@
+        @foreach (var castmember in dependencies.CastMembers)
+        {
+          <text> - Cast Member: </text>
+          @castmember.Name
+        }
+      </dd>
+    }
+
+  </dl>
+
+
+  @using (Html.BeginForm())
+  {
+    @Html.AntiForgeryToken()
+
+    // Checking to see if photos has dependencies
+    if (dependencies.HasDependencies == false)
+    {
+      // No dependencies, deleted
+      <div class="form-actions no-color">
+        <div class="row text-center">
+          <input type="submit" value="Delete" class="btn btn-main ml-auto mr-1 col-5" id="delete-btn" />
+          <input type="button" value="Cancel" class="btn btn-main mr-auto ml-1 col-5" id="cancel-btn" onclick="location.href='@Url.Action("Index", "Photo")'" />
+        </div>
+      </div>
+    }
+    else
+    {
+      // Has dependencies, launch modal
+
+      <div class="form-actions no-color">
+        <div class="row text-center">
+          <input type="button" value="Delete" class="btn btn-main col-5 ml-auto mr-1 d-block" id="delete-btn" data-toggle="modal" data-target="#deleteModal" />
+          <input type="button" value="Cancel" class="btn btn-main col-5 mr-auto ml-1 d-block" id="cancel-btn" onclick="location.href='@Url.Action("Index", "Photo")'" />
+        </div>
+      </div>
+    }
+  }
+
+  @* Modal *@
+  <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="deleteModal_style">Delete photo?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h5 class="deleteModal_style">This photo is being used by the following items:</h5>
+
+                @*Finds and lists productions this photo is used in.*@
+            <p class="deleteModal_style">
+              @foreach (var production in dependencies.ProductionPhotos)
+              {
+                @production.Title; <text> - Season: </text>
+                @production.Production.Season; <br />
+              }
+              @* Foreach sponsor in the dependencies.Sponsors List, get the name of each sponsor. *@
+              @foreach (var sponsor in dependencies.Sponsors)
+              {
+                @sponsor.Name <br />
+              }
+
+              @*Foreach castmember in the dependencies.CastMembers List, get the name of each cast member. *@
+              @foreach (var castmember in dependencies.CastMembers)
+              {
+                <text> - Cast Member: </text>
+                @castmember.Name
+              }
+            </p>
+            </div>
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-main" data-dismiss="modal">Close</button>
+                    <input type="submit" value="Delete" class="btn btn-main col-3" id="photo-delete-btn" />
+                    @Url.Action("DeleteConfirmed", "Photo", new { id = Model.PhotoId })
+                </div>
+            }
+        </div>
+    </div>
+  </div>
+</div>

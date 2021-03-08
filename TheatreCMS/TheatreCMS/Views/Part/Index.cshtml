@@ -1,0 +1,143 @@
+﻿@model IEnumerable<TheatreCMS.Models.Part>
+@using TheatreCMS.Enum;
+
+@{
+    ViewBag.Title = "Part";
+}
+
+
+
+@* Admin Modal to delete multiple CalendarEvents from the table *@
+<div class="modal fade" id="multiDeleteModal" tabindex="-1" role="dialog" aria-labelledby="multiDeleteModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            @using(Html.BeginForm("PartsToDelete", "Part", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                <div class="modal-header multiDeleteModalHeading">
+                    <h4 class="modal-title">Delete Confirmation</h4>
+                    <span class="fa-stack fa-2x">
+                        <i class="fa fa-file-invoice fa-stack-1x fa-inverse" aria-hidden="true"></i>
+                        <i class="fa fa-ban fa-stack-2x text-dark" aria-hidden="true"></i>
+                    </span>
+                    <button type="button" class="close cancel" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p class="parts-comment">Parts To Be Deleted</p>
+                    <ul id="partsList">
+                    </ul>
+                    <p class="my-3 parts-total">Total: </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary cancel" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger delete"><i class="fa fa-trash"></i> Delete</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+@*Modified the code changing it to bootstrap grid columns*@
+<h2 class="mx-auto mb-3 mt-4 text-center">Part</h2>
+<div class="container">       
+            <div>
+                <div class="text-left">Filter By...</div>
+                           
+                    @*The HTML helper creates a form and when the form is submitted it calls the Index() method from PartController.*@
+                    @*Had to apply a row to the form and move the col to a div o get the drop downs spaces out and adjusted the margis to pull top and bottm closer*@
+                    @using (Html.BeginForm("Index", "Part", FormMethod.Post, new { @id = "partsForm", @class = "row no-gutters mx-auto mt-n2 mb-n3" }))
+                    {
+                        // Creates a drop down list referencing the information from ViewData dictionary, which contains 'ProductionsID' key. The value that is selected is submitted onchange.
+                        <div class="col-md-4 mb-0">
+                            @Html.DropDownList("ProductionsID", (IEnumerable<SelectListItem>)null, "All Productions", new { @class = "text-muted", @onchange = "document.getElementById('partsForm').submit();" })
+                        </div>
+                        <div class="col-md-4 px-md-1">
+                            @Html.DropDownList("CastMembersID", (IEnumerable<SelectListItem>)null, "All Cast Members", new { @class = "text-muted my-md-2 my-0", @onchange = "document.getElementById('partsForm').submit();" })
+                        </div>
+                        <div class="col-md-4 mt-0">
+                            @Html.DropDownList("Roles", (IEnumerable<SelectListItem>)null, "All Roles", new { @class = "text-muted", @onchange = "document.getElementById('partsForm').submit();" })
+                        </div>
+                    }
+                             
+                <div class="text-right">@Html.ActionLink("Reset Filters", "ResetFilters") </div>
+            </div>
+</div>
+
+
+<div class="container ml-5 mb-3">
+
+    <div class="row">
+        @if (User.IsInRole("Admin"))
+        {
+            <p>
+                @Html.ActionLink("Create New", "Create")
+            </p>
+            // button to open modal for deleting multiple parts
+            <button class="btn btn-danger msg-del-btn inactive ml-4" data-toggle="modal"
+                    data-target="#multiDeleteModal" aria-disabled="true">
+                Delete Part(s)
+            </button>
+
+        }
+    </div>
+</div>
+
+
+
+<div class="ml-1 mr-1 justify-content-center part-card-deck">
+    <!--Creates a bootstrap card for every part in the production customized to the part they are reponsible for-->
+    @foreach (var item in Model)
+    {
+        <div class="part-cardHover">
+            <div class="text-light mb-3 align-items-center part-card border-white" id="part-card-@item.PartID">
+                @if (User.IsInRole("Admin"))
+                {
+                    // Adds item to be deleted when checked
+                    <div class="part-card-checkbox" id="check-@item.PartID" data-toggle="part-Delete-Checkbox" data-placement="right" title="Checked parts will be deleted">
+                        @Html.CheckBox(item.Person.Name + " in "+item.Production.Title.ToString(), new { @class = "partDeleteCheckbox", @value = item.PartID})
+                    </div>
+
+                }
+                <h5 class="mt-3 mb-3 underline text-center">@Html.DisplayFor(modelItem => item.Person.Name)</h5>
+                <!--Check for what type of job and displays correct formatting for card.-->
+                @if ((int)item.Type > 0)
+                {
+                    //non-actor formatting
+                    <h6 class=" ml-4 mr-4 text-center"> @Html.DisplayFor(modelItem => item.Type)</h6>
+                }
+                else
+                {
+                    //actor formatting
+                    <p class="font-italic text-center mb-0">Playing:</p>
+                    <h6 class="mb-1 text-center"> @Html.DisplayFor(modelItem => item.Character) </h6>
+                }
+                <p class="font-italic m-0">In the Production:</p>
+                <h6 class=" ml-4 mr-4 text-center">@Html.DisplayFor(modelItem => item.Production.Title)</h6>
+                <p class="bold mt-1 mb-0 text-center">Details</p>
+                <p class="card-text ml-3 mr-3 part-details-elipsis">@Html.DisplayFor(modelItem => (item.Details))</p>
+
+                <!--Card overlay for edit tools-->
+                <div class="part-overlay mask d-flex align-items-end justify-content-center">
+
+
+              <!--condition to look for admin authority and give access to edit options for cards-->
+              @if (User.IsInRole("Admin"))
+              {
+              <div class="partActions">
+                <a class="btn" href="@Url.Action("Edit", new { id = item.PartID })"><i class="fas fa-edit fa-2x"></i></a>
+                <a class="btn ml-3" href="@Url.Action("Details", new { id = item.PartID })"><i class="fas fa-info-circle fa-2x"></i></a>
+                <a class="btn ml-3" href="@Url.Action("Delete", new { id = item.PartID })"><i class="fas fa-trash-alt fa-2x"></i></a>
+              </div>
+
+              }
+
+
+            </div>
+          </div>
+        </div>
+    }
+</div>
+

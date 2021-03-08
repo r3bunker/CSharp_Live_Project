@@ -1,0 +1,308 @@
+﻿@model TheatreCMS.Models.Award
+
+@{
+        ViewBag.Title = "Create";
+}
+
+<h2>Create</h2>
+
+<!-- The below card will preview for the user the award that the user is creating. It is sticky so they
+    can see the entire preview as they fill out the form. -->
+
+<div class="card awardPreview bg-black border border-light mx-auto sticky-top">
+        <div class="card-body">
+                <!-- Removed line breaks in Award Preview Card -->
+                <!-- <br><br /> -->
+
+                <h3 class="text-center underline">Award Preview</h3>
+                <br />
+                <h5 id="awardYearPreview" class="font-weight-bold underline text-center my-1"></h5>
+
+                <ul class="list-inline text-center my-0">
+                        <li class="list-inline-item mx-0" id="awardNamePreview"></li>
+                        <li class="list-inline-item mx-0 text-uppercase" id="awardTypePreview"></li>
+                        <li class="list-inline-item mx-0" id="awardCategoryPreview"></li>
+                </ul>
+
+
+                <ul class=" list-inline text-center my-0">
+                        <li class="list-inline-item font-weight-bold mx-0" id="awardRecipientPreview"></li>
+                        <li class="list-inline-item font-italic mx-0" id="awardProductionPreview"></li>
+                </ul>
+
+
+                <p id="awardOtherInfoPreview" class="text-center my-0"></p>
+                <br />
+        </div>
+</div>
+
+
+@using (Html.BeginForm())
+{
+        @Html.AntiForgeryToken()
+
+        <div class="form-horizontal awardForm">
+                <h4>Award</h4>
+                <hr />
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <div class="form-group mx-auto">
+                        @Html.LabelFor(model => model.Year, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                                @*@Html.EditorFor(model => model.Year, new { htmlAttributes = new { @class = "form-control" } })*@
+                                @*@Html.DropDownList("Year", null, "Select a Year", htmlAttributes: new { @class = "form-control awardYear" })
+                                        @Html.ValidationMessageFor(model => model.Year("Year"), "", new { @class = "text-danger" })*@
+                                @Html.DropDownListFor(
+                                    model => model.Year,
+                                    new SelectList(Enumerable.Range(1997, (DateTime.Now.Year - 1997 + 2))),
+                                    "Select a Year", htmlAttributes: new { @class = "form-control awardYear" })
+                                @Html.ValidationMessageFor(model => model.Year, "", new { @class = "text-danger" })
+                        </div>
+                </div>
+
+                <div class="form-group">
+                        @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control awardName" } })
+                                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                        </div>
+                </div>
+
+                <div class="form-group">
+                        @Html.LabelFor(model => model.Type, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                                @Html.EnumDropDownListFor(model => model.Type, "Type of Award", htmlAttributes: new { @class = "form-control awardType" })
+                                @Html.ValidationMessageFor(model => model.Type, "", new { @class = "text-danger" })
+                        </div>
+                </div>
+
+                <div class="form-group">
+                        @Html.LabelFor(model => model.Category, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                                @Html.EditorFor(model => model.Category, new { htmlAttributes = new { @class = "form-control awardCategory" } })
+                                @Html.ValidationMessageFor(model => model.Category, "", new { @class = "text-danger" })
+                        </div>
+                </div>
+
+                <div class="form-group">
+                        @Html.LabelFor(model => model.Recipient, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                                @Html.EditorFor(model => model.Recipient, new { htmlAttributes = new { @class = "form-control awardRecipient" } })
+                                @Html.ValidationMessageFor(model => model.Recipient, "", new { @class = "text-danger" })
+                        </div>
+                </div>
+
+                <div class="form-group">
+                        @Html.LabelFor(model => model.ProductionId, "Production", htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                                @Html.DropDownList("ProductionId", null, "Select a Production", htmlAttributes: new { @class = "form-control awardProduction" })
+
+                                @Html.ValidationMessageFor(model => model.Production, "", new { @class = "text-danger" })
+                        </div>
+                </div>
+
+                <div class="form-group">
+                        @Html.LabelFor(model => model.CastMemberId, "Cast Member", htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                                @Html.DropDownList("CastMemberId", null, "Select a Cast Member", htmlAttributes: new { @class = "form-control awardCastMember" })
+                                @*this script takes the cast member name that is chosen and enters it into the recipient text box if empty"*@
+                                @*<script type="text/javascript">
+                                            function GetMember() {
+                                                var selectedmember = $('#CastMemberId option:selected').text();
+                                                if (!$('#Recipient').val()) {
+                                                    document.getElementById("Recipient").value = selectedmember;
+                                                }
+                                            }
+                                        </script>*@
+                                @Html.ValidationMessageFor(model => model.CastMemberId, "", new { @class = "text-danger" })
+                        </div>
+                </div>
+
+                <div class="form-group">
+                        @Html.LabelFor(model => model.OtherInfo, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                                @Html.EditorFor(model => model.OtherInfo, new { htmlAttributes = new { @class = "form-control awardOtherInfo" } })
+                                @Html.ValidationMessageFor(model => model.OtherInfo, "", new { @class = "text-danger" })
+                        </div>
+                </div>
+
+                <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                                <input type="submit" value="Create" class="btn btn-main" />
+                        </div>
+                </div>
+        </div>
+}
+
+<div>
+        @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+        @Scripts.Render("~/bundles/jqueryval")
+        <script>
+
+    //The below will get what the user is typing / selecting from the form and display it on the preview award
+    //Award Year
+    $(".awardForm .awardYear").on('change', function () {
+        var content = $(".awardYear").val();
+        $("#awardYearPreview").html(content);
+    });
+
+    //Award Name
+    $(".awardForm .awardName").on('input', function () {
+        var content = $(".awardName").val().toUpperCase();
+        $("#awardNamePreview").html(content);
+    });
+
+    //$(document).ready(function () {
+    //    $('#awardTypePreview').html('AWARD FOR');
+    //})
+
+        //Award Type
+
+    //$(".awardForm .awardType").on('change', function () {
+    //    var content = $(this).children("option:selected").val();
+    //        if (content == "0") {
+    //            $("#awardTypePreview").html('AWARD FOR');
+    //        }
+    //        else if (content == "1") {
+    //            $("#awardTypePreview").html('FINALIST FOR');
+    //        }
+    //        else if (content == "2") {
+    //            $("#awardTypePreview").html('OTHER FOR');
+    //        }
+    //        else {
+    //            $("#awardTypePreview").html(content);
+    //        }
+    //})
+
+    //Get award type without using AJAX
+
+    //$(".awardForm .awardType").change(function () {
+    //    var type = $(this).children("option:selected").text();
+    //    $('#awardTypePreview').html(type + " for ");
+    //})
+
+    $(".awardForm .awardType").change(function () {
+        var type = $(this).children("option:selected").text();
+        if (type == "Type of Award") {
+            $('#awardTypePreview').html("");
+        } else {
+            $('#awardTypePreview').html(type + " for ");
+        }
+    });
+
+     @*$(".awardForm .awardType").on('change', function () {
+            var content = $(".awardType").val();
+            $.ajax({
+                url: "@Url.Action("GetAwardType","Awards")",
+                data: { awardId: content },
+                success: function (data) {
+                    if (data != "") {
+                        $("#awardTypePreview").html(data + " for ");
+                    }
+                    else {
+                        $("#awardTypePreview").html("");
+                    }
+
+
+                }
+            })
+
+        })*@
+
+    //Award Category
+
+    $(".awardForm .awardCategory").on('input', function () {
+        var content = $(".awardCategory").val().toUpperCase();
+        $("#awardCategoryPreview").html(content);
+    });
+
+    //Award Recipient
+
+    $(".awardForm .awardRecipient").on('input', function () {
+        var content = $(".awardRecipient").val();
+        if (content == "") {
+            $("#awardRecipientPreview").html("");
+        }
+        else {
+            $("#awardRecipientPreview").html(content + " -");
+        }
+    });
+
+        // Get Award Production without using AJAX
+
+    //$(".awardForm .awardProduction").change(function () {
+    //    var production = $(this).children("option:selected").text();
+    //    $('#awardProductionPreview').html(production);
+    //})
+
+    // Function changes Year in Award dropdown when changing Production.
+    $(".awardForm .awardProduction").change(function () {
+        var production = $(this).children("option:selected").text();
+        var productionId = $(this).children("option:selected").attr("value");
+        var productionYear = 0;
+        var arrayYears = @Html.Raw(Json.Encode(@ViewBag.ProductionYears));
+
+        if (production == "Select a Production") {
+            $('#awardProductionPreview').html("");
+            var dropDown = document.getElementById("Year");
+            dropDown.selectedIndex = 0;
+        } else {
+            $('#awardProductionPreview').html(production);
+            for (var i = 0; i < arrayYears.length; i++) {
+                if (i + 1 == productionId) {
+                    productionYear = arrayYears[i];
+                }
+            }
+            document.getElementById("Year").value = productionYear;
+            $('#awardYearPreview').html(productionYear);
+        }
+    });
+
+        @*$(".awardForm .awardProduction").on('change', function () {
+            var content = $(".awardProduction").val();
+            $.ajax({
+                url: "@Url.Action("GetProductionName","Awards")",
+                data: { productionId: content },
+                success: function (data) {
+                    $("#awardProductionPreview").html(data);
+
+                }
+            })
+
+        })*@
+
+        // Function changes Recipient when chosing CastMember and Recipient is Empty.
+        // After that it keeps changing Recipient as change made to CastMember before saving.
+        $(".awardForm .awardCastMember").change(function () {
+            var selectedMember = $(this).children("option:selected").text();
+            var arrayCastMembers = @Html.Raw(Json.Encode(@ViewBag.CastMembers));
+            if (selectedMember != "Select a Cast Member") {
+                if (!$('#Recipient').val() || arrayCastMembers.indexOf($('#Recipient').val()) > -1)
+                {
+                    document.getElementById("Recipient").value = selectedMember;
+                    $('#awardRecipientPreview').html(selectedMember + " -");
+                }
+            }
+        });
+
+    //Award Other Info
+
+    $(".awardForm .awardOtherInfo").on('input', function () {
+        var content = $(".awardOtherInfo").val();
+        $("#awardOtherInfoPreview").html(content);
+    });
+
+
+
+        </script>
+
+
+
+
+
+
+
+
+}

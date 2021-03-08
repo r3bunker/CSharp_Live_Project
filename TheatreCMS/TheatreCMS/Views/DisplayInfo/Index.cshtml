@@ -1,0 +1,62 @@
+﻿@using TheatreCMS.Controllers
+@model IEnumerable<TheatreCMS.Models.DisplayInfo>
+
+@{
+    ViewBag.Title = "Info";
+}
+
+<h2>Info</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table admin-tables">
+  <tr>
+    <th>
+      @Html.DisplayNameFor(model => model.Title)
+    </th>
+    <th>
+      @Html.DisplayNameFor(model => model.TextContent)
+    </th>
+    <th>
+        @Html.DisplayNameFor(model => model.Photo)
+    </th>
+    @*<th>
+      @Html.DisplayNameFor(model => model.File)
+    </th>*@
+    <th></th>
+  </tr>
+
+@foreach (var item in Model)
+{
+<tr>
+  <td>
+    @Html.DisplayFor(modelItem => item.Title)
+  </td>
+  <td>
+    @Html.DisplayFor(modelItem => item.TextContent)
+  </td>
+  <td>
+    <img src="@Url.Action("DisplayPhoto", "Photo", new { id = item.PhotoId})" class="thumbnail_size" alt="New Info Image" />
+
+    @{
+      ////displays the image using inline <img tag
+      //byte[] thumbBytes = ImageUploadController.ImageThumbnail(item.Image, 200, 200);
+      //var thumbBase64 = Convert.ToBase64String(thumbBytes);
+      //var imgSrc = String.Format("data:image/png;base64,{0}", thumbBase64);
+    }
+
+    @*<img src="@imgSrc" />*@
+  </td>
+  @*<td>
+        @Html.DisplayFor(modelItem => item.File)
+    </td>*@
+  <td>
+    @Html.ActionLink("Edit", "Edit", new { id = item.InfoId }) |
+    @Html.ActionLink("Details", "Details", new { id = item.InfoId }) |
+    @Html.ActionLink("Delete", "Delete", new { id = item.InfoId })
+  </td>
+</tr>
+}
+
+</table>

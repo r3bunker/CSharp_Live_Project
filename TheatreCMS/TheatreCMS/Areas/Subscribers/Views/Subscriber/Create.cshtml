@@ -1,0 +1,159 @@
+﻿@model TheatreCMS.Areas.Subscribers.Models.Subscriber
+
+@{
+  ViewBag.Title = "Create";
+}
+
+  <h2>Create Subscriber</h2>
+
+ @if (Request.IsAuthenticated)
+ {
+
+   /*dispays if user is signed in as admin*/
+     if (User.IsInRole("Admin"))
+     {
+       using (Html.BeginForm())
+        {
+         @Html.AntiForgeryToken()
+     <div class="form-horizontal">
+      
+      <hr />
+      @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+      <!--dv for a drop down menu-->
+        <h3>@ViewBag.SubscriberError</h3>
+        <div class="form-group">
+            @Html.LabelFor(model => model.SubscriberPerson, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <div>
+                    @Html.DropDownList("dbUsers", (IEnumerable<SelectListItem>)ViewData["dbUsers"])
+                </div>
+            </div>
+        </div>
+
+          <div class="form-group">
+        @Html.LabelFor(model => model.CurrentSubscriber, htmlAttributes: new { @class = "control-label col-md-2 testC" })
+        <div class="col-md-10">
+          @Html.EditorFor(model => model.CurrentSubscriber)
+          @Html.ValidationMessageFor(model => model.CurrentSubscriber, "", new { @class = "text-danger" })
+        </div>
+      </div>
+
+      <div class="form-group">
+        @Html.LabelFor(model => model.HasRenewed, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+          <div class="checkbox">
+            @Html.EditorFor(model => model.HasRenewed)
+            @Html.ValidationMessageFor(model => model.HasRenewed, "", new { @class = "text-danger" })
+          </div>
+        </div>
+      </div>
+        
+      <div class="form-group">
+        @Html.LabelFor(model => model.Newsletter, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+          <div class="checkbox">
+            @Html.EditorFor(model => model.Newsletter)
+            @Html.ValidationMessageFor(model => model.Newsletter, "", new { @class = "text-danger" })
+          </div>
+        </div>
+      </div>
+
+        <div class="form-group">
+        @Html.LabelFor(model => model.RecentDonor, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+          <div class="checkbox">
+            @Html.EditorFor(model => model.RecentDonor)
+            @Html.ValidationMessageFor(model => model.RecentDonor, "", new { @class = "text-danger" })
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        @Html.LabelFor(model => model.LastDonated, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+          @Html.EditorFor(model => model.LastDonated, new { htmlAttributes = new { @class = "form-control" } })
+          @Html.ValidationMessageFor(model => model.LastDonated, "", new { @class = "text-danger" })
+        </div>
+      </div>
+
+      <div class="form-group">
+        @Html.LabelFor(model => model.LastDonationAmt, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+          @Html.EditorFor(model => model.LastDonationAmt, new { htmlAttributes = new { @class = "form-control" } })
+          @Html.ValidationMessageFor(model => model.LastDonationAmt, "", new { @class = "text-danger" })
+        </div>
+      </div>
+      
+      <div class="form-group">
+        @Html.LabelFor(model => model.SpecialRequests, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+          @Html.EditorFor(model => model.SpecialRequests, new { htmlAttributes = new { @class = "form-control" } })
+          @Html.ValidationMessageFor(model => model.SpecialRequests, "", new { @class = "text-danger" })
+        </div>
+      </div>
+
+        <div class="form-group">
+        @Html.LabelFor(model => model.Notes, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+          @Html.EditorFor(model => model.Notes, new { htmlAttributes = new { @class = "form-control" } })
+          @Html.ValidationMessageFor(model => model.Notes, "", new { @class = "text-danger" })
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+          <input type="submit" value="Create" class="btn btn-default" />
+        </div>
+      </div>
+    </div>
+     }
+   }
+   else
+   {  /*dispays if user is signed in not as admin*/
+       using (Html.BeginForm())
+        {
+         @Html.AntiForgeryToken()
+      <div class="form-horizontal">
+        <h3>@ViewBag.SubscriberError</h3>
+
+     <div class="form-group">
+        @Html.LabelFor(model => model.Newsletter, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+          <div class="checkbox">
+            @Html.EditorFor(model => model.Newsletter)
+            @Html.ValidationMessageFor(model => model.Newsletter, "", new { @class = "text-danger" })
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        @Html.LabelFor(model => model.SpecialRequests, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+          @Html.EditorFor(model => model.SpecialRequests, new { htmlAttributes = new { @class = "form-control" } })
+          @Html.ValidationMessageFor(model => model.SpecialRequests, "", new { @class = "text-danger" })
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+          <input type="submit" value="Create" class="btn btn-default" />
+        </div>
+      </div>
+    </div>
+    }
+   }
+ } else /*dispays if user is not signed in*/
+ {
+   <p>In order to become a subsciber you must log in.</p>
+ }
+
+
+
+<div>
+  @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+  @Scripts.Render("~/bundles/jqueryval")
+}

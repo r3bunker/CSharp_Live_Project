@@ -1,0 +1,44 @@
+﻿@model TheatreCMS.Models.DisplayLinks
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2 class="Display-title-details">Details</h2>
+
+
+
+
+       
+        <dl class="Display-linkspage-details Display-container-title-details">
+            <dt>
+                @Html.DisplayNameFor(model => model.Name)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Name)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Text)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Text)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Link)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Link)
+            </dd>
+
+        </dl>
+    
+
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.LinkId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

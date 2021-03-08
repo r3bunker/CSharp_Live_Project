@@ -1,0 +1,126 @@
+﻿@model TheatreCMS.Models.CastMember
+
+@{
+    ViewBag.Title = "Create";
+}
+
+<h2>Create</h2>
+
+@using (Html.BeginForm("Create", "CastMembers", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+<div class="formContainer2 ">
+    <div class="form-horizontal">
+        <h4 class="formHeader">CastMember</h4>
+        <hr />
+        <div class="inputBox2">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-4 inputLabel" })
+                <div class="col-md-10 formBox">
+                    @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-dark" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="inputLabel col-md-4"> &nbsp; &nbsp;Username</label>
+                <div class="col-md-10 formBox">
+                    @Html.DropDownList("dbUsers", (IEnumerable<SelectListItem>)ViewData["dbUsers"], "N/A", htmlAttributes: new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.CastMemberPersonID, "", new { @class = "text-dark" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.YearJoined, "Year Joined", htmlAttributes: new { @class = "control-label col-md-4 inputLabel" })
+                <div class="col-md-10 formBox">
+                    @Html.EditorFor(model => model.YearJoined, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.YearJoined, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.MainRole, "Main Role", htmlAttributes: new { @class = "control-label col-md-4 inputLabel" })
+                <div class="col-md-10  formBox">
+                    @Html.EnumDropDownListFor(model => model.MainRole, htmlAttributes: new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.MainRole, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Bio, htmlAttributes: new { @class = "control-label col-md-4 inputLabel" })
+                <div class="col-md-10 formBox">
+                    @Html.EditorFor(model => model.Bio, new { htmlAttributes = new { @class = "form-control row-3" } })
+                    @Html.ValidationMessageFor(model => model.Bio, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.Label("Photo") @*Change label from PhotoId to Photo*@
+                <div class="col-md-10 formBox">
+                    @*Create a preview image when file is selected*@
+                    <img id="img" alt="" width="100" height="100" />
+                    <input type="file" name="file" class="fileSelect" onchange="document.getElementById('img').src = window.URL.createObjectURL(this.files[0])">
+                    @Html.ValidationMessageFor(model => model.PhotoId, "", new { @class = "text-danger" })
+
+                </div>
+            </div>
+
+            <!--===== CHECKBOXES - match column width for group container =====-->
+            <div class="container col-md-10 text-center">
+                <div class="row justify-content-center">
+                    <!--=== AssociateArtist ===-->
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.AssociateArtist, htmlAttributes: new { @class = "control-label inputLabel" })
+                        <div class="focus-negate">
+                            @Html.EditorFor(model => model.AssociateArtist, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.AssociateArtist, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <!--=== EnsembleMember ===-->
+                    <div class="mx-4 form-group">
+                        @Html.LabelFor(model => model.EnsembleMember, htmlAttributes: new { @class = "control-label inputLabel" })
+                        <div class="focus-negate">
+                            @Html.EditorFor(model => model.EnsembleMember, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.EnsembleMember, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <!--=== CurrentMember ===-->
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.CurrentMember, htmlAttributes: new { @class = "control-label inputLabel" })
+                        <div class="focus-negate">
+                            @Html.EditorFor(model => model.CurrentMember, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.CurrentMember, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--===== YEARS =====-->
+            <div class="form-group">
+                @Html.LabelFor(model => model.CastYearLeft, htmlAttributes: new { @class = "control-label col-md-4 inputLabel" })
+                <div class="col-md-10 formBox">
+                    @Html.EditorFor(model => model.CastYearLeft, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.CastYearLeft, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.DebutYear, htmlAttributes: new { @class = "control-label col-md-4 inputLabel" })
+                <div class="col-md-10 formBox">
+                    @Html.EditorFor(model => model.DebutYear, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.DebutYear, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <!--===== SUBMIT =====-->
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10 formBox">
+                    <input type="submit" value="Create" class="submitButton2" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>

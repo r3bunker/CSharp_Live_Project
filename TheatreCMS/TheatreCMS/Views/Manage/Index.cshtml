@@ -1,0 +1,189 @@
+﻿@model TheatreCMS.Models.IndexViewModel
+
+
+<div class="container text-center">
+  <h2 class="mt-3">Change your account settings</h2>
+  <p class="text-success">@ViewBag.StatusMessage</p>
+  <div class="row">
+    <div class="col">
+      <div class="text-right">
+        @{
+          string img = "";
+          if (Model.PhotoId != 0)
+          {
+            img = Url.Action("DisplayPhoto", "Photo", new { id = Model.PhotoId });
+          }
+          else
+          {
+            img = Url.Content("~/Content/Images/CastMember.jpg");
+          }
+          <img class="card-img-top medium_size" id="castImage" src="@img" alt="" />
+        }
+      </div>
+    </div>
+    <div class="col">
+      <div class="row">
+        <div class="col">
+          <div class="row">
+            <ul class="list-group text-left list-unstyled">
+              <li class="list-ground-item"><i class="fa fa-edit fa-fw text-danger"></i>@Model.FullName</li>
+              <li>@Model.UserName</li>
+              <li class="list-ground-item">
+                @if (Model.HasPassword)
+                {@Html.ActionLink("Change your password", "ChangePassword")}
+              else
+              {@Html.ActionLink("Create", "SetPassword")}
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="row">&nbsp;</div> <!-- spacer -->
+      <div class="row">
+        <div class="col">
+          <div class="row">
+            <ul class="list-group text-left list-unstyled">
+              <li class="list-ground-item">
+                @if (Model.HasPassword)
+                {<a href="@Url.Action("ChangeEmailAddress")"><i class="fa fa-edit fa-fw text-danger"></i></a>}
+                else
+                {<a href="@Url.Action("Create", "SetPassWord")"><i class="fa fa-edit fa-fw text-danger"></i></a>}Email Address:
+              </li>
+              <li class="list-ground-item">
+                @Model.EmailAddress
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="row">&nbsp;</div> <!-- spacer -->
+      <div class="row">
+        <div class="col">
+          <div class="row">
+            <ul class="list-group text-left list-unstyled">
+              <li class="list-ground-item">
+
+                <a href="@Url.Action("ChangeMailingAddress")"><i class="fa fa-edit fa-fw text-danger"></i></a>Mailing Address:
+              </li>
+              <li class="list-ground-item">
+                @Model.StreetAddress
+              </li>
+              <li class="list-ground-item">
+                @Model.City,&nbsp;@Model.State&nbsp;@Model.ZipCode
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="row">&nbsp;</div> <!-- spacer -->
+      <div class="row">
+        <div class="col">
+          <div class="row">
+            <ul class="list-group text-left list-unstyled">
+
+              @if (Model.PhoneNumber != null)
+              {
+                <li class="list-ground-item">
+                  <a href="@Url.Action("ChangePhoneNumber")"><i class="fa fa-edit fa-fw text-danger"></i></a>Phone Number:
+                </li>
+                <li class="list-ground-item">
+                  @Model.PhoneNumber
+                </li>
+              }
+              else
+              {
+                <li class="list-ground-item">
+                  <a href="@Url.Action("AddPhoneNumber")"><i class="fa fa-plus-square fa-fw text-danger"></i></a>Phone Number:
+                </li>
+                <li class="list-ground-item">
+                  <span class="small font-italic">none</span>
+                </li>
+              }
+
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    @*<dt>External Logins:</dt>
+      <dd>
+          @Model.Logins.Count [
+          @Html.ActionLink("Manage", "ManageLogins") ]
+      </dd>*@
+    @*
+      Phone Numbers can used as a second factor of verification in a two-factor authentication system.
+
+       See <a href="https://go.microsoft.com/fwlink/?LinkId=403804">this article</a>
+          for details on setting up this ASP.NET application to support two-factor authentication using SMS.
+
+       Uncomment the following block after you have set up two-factor authentication
+    *@
+
+    @*<dt>Two-Factor Authentication:</dt>
+      <dd>
+          <p>
+              There are no two-factor authentication providers configured. See <a href="https://go.microsoft.com/fwlink/?LinkId=403804">this article</a>
+              for details on setting up this ASP.NET application to support two-factor authentication.
+          </p>*@
+    @*@if (Model.TwoFactor)
+      {
+          using (Html.BeginForm("DisableTwoFactorAuthentication", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+          {
+              @Html.AntiForgeryToken()
+              <text>Enabled
+              <input type="submit" value="Disable" class="btn btn-main" /> // btn-main originally btn-link, save for possible reversion //
+              </text>
+          }
+      }
+      else
+      {
+          using (Html.BeginForm("EnableTwoFactorAuthentication", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+          {
+              @Html.AntiForgeryToken()
+              <text>Disabled
+              <input type="submit" value="Enable" class="btn btn-main" /> //btn-main originally btn-link, save for possible reversion //
+              </text>
+          }
+      }
+      </dd>*@
+
+  </div>
+
+  <!-- Favorite Cast Member Section -->
+  <div class="row">&nbsp;</div> <!-- spacer -->
+  <div class="row">
+    <div class="col mx-auto text-center">
+      <h2>Favorite Cast Members</h2>
+    </div>
+  </div>
+
+  <div class="row">
+    @*Creates a card for each cast member with their photo as the image-cap*@
+    @foreach (var item in Model.FavoriteCastMembers)
+    {
+      <div class="col-md-4">
+        <div class="card bg-black manageIndexFavoritCastMemberCard">
+          @* This code determines if Cast Member has no photo. If so, use default CastMember.jpg for photo. *@
+          @{
+            string favoritePic = "";
+            if (item.CastMemberPhotoId != null)
+            {
+              favoritePic = Url.Action("DisplayPhoto", "Photo", new { id = item.CastMemberPhotoId });       /*If cast member has a photo, display this as image-cap*/
+            }
+            else
+            {
+              favoritePic = Url.Content("~/Content/Images/CastMember.jpg");       /*If cast member has no photo, display this as image-cap*/
+            }
+          }
+          <img class="card-img-top manageIndexFavoritCastMemberPhoto" id="castImage" src="@favoritePic" alt="" />
+          <div class="card-block">
+            <p class="card-text">@item.CastMemberName</p>
+          </div>
+        </div>
+      </div>
+    }
+    <!-- End of section -->
+  </div>
+</div>
+    

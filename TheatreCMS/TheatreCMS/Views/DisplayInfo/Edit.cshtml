@@ -1,0 +1,115 @@
+﻿@using TheatreCMS.Controllers
+@model TheatreCMS.Models.DisplayInfo
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>Edit</h2>
+
+
+@using (Html.BeginForm("Edit", "DisplayInfo", null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="formContainer2 ">
+        <div class="form-horizontal">
+            <h4 class="formHeader">DisplayImage</h4>
+            <hr />
+            <div class="inputBox2">
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                @Html.HiddenFor(model => model.InfoId)
+                @Html.HiddenFor(model => model.Photo)
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label col-md-4 inputLabel" })
+                    <div class="col-md-10 formBox">
+                        @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="control-label col-md-4 inputLabel mx-auto">Current Photo</div>
+                    @*<img> tag below displays the current saved immage to edit page*@
+                    <img class="medium_size my-3 img-thumbnail rounded mx-auto d-block" src="@Url.Action("DisplayPhoto", "Photo", new { id = Model.PhotoId })" alt="DisplayInfo Image Preview" />
+                    @Html.ValidationMessageFor(model => model.Photo, "", new { @class = "text-danger" })
+
+                    @*.img_div displays the new image to replace the current image*@
+                    <div class="control-label col-md-4 inputLabel mx-auto">New Photo</div>
+                    <div class="img_div" type="hidden">
+                        <input type="file" name="file" class="file" onchange="previewFile(this)" />@*jquery for previewFile is under the scripts tag beloww *@
+                        <img id="previewImg" class="medium_size my-3 img-thumbnail rounded mx-auto d-block" />
+                        @Html.ValidationMessageFor(model => model.Photo, "", new { @class = "text-danger" })
+
+                        <hr />
+                        @Html.LabelFor(model => model.TextContent, htmlAttributes: new { @class = "control-label col-md-4 inputLabel" })
+                        @Html.EditorFor(model => model.TextContent, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.TextContent, "", new { @class = "text-danger" })
+                        @*@Html.TextBoxFor(m => m.File, "file", new { type = "file" })*@
+
+                    </div>
+
+
+                    <!--Hid this in the above call, Html.HiddenFor(model => model.Image)-->
+                    @*<div class="form-group">
+                            @Html.LabelFor(model => model.Image, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.Image, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.Image, "", new { @class = "text-danger" })
+                            </div>
+                        </div>*@
+
+                    @* eidtor for image
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Photo, htmlAttributes: new { @class = "control-label col-md-4 inputLabel" })
+                            <div class="control-label col-md-2  formBox">*@
+                    @*@Html.LabelFor(model => model.File)*@
+                    @{
+                        //string imgSrc = "";
+                        //if (Model.Photo != null)
+                        //{
+                        //    //displays the image using inline <img tag
+                        //    byte[] thumbBytes = ImageUploadController.ImageThumbnail(Model.Image, 200, 200);
+                        //    var thumbBase64 = Convert.ToBase64String(thumbBytes);
+                        //    imgSrc = String.Format("data:image/png;base64,{0}", thumbBase64);
+                        //}
+                    }
+                    @*@<img src="@imgSrc" />*@
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10  formBox">
+            <input type="submit" value="Save" class="submitButton2" />
+        </div>
+    </div>
+
+
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@*Jquery for previewFile function*@
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script>
+    function previewFile(input) {
+        var file = $("input[type=file]").get(0).files[0];
+        if (file) {
+            var reader = new FileReader();
+            reader.onload = function () {
+                $("#previewImg").attr("src", reader.result);
+            }
+            reader.readAsDataURL(file);
+        }
+    }
+</script>
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

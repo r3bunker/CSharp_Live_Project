@@ -1,0 +1,133 @@
+﻿@model IEnumerable<TheatreCMS.Models.Sponsor>
+
+
+@{
+  ViewBag.Title = "Index";
+}
+
+<div class="text-center mt-5">
+  <h2>Sponsors</h2>
+</div>
+
+
+@*
+      @Html.ActionLink("Create New", "Create")
+  </p>*@
+
+
+<!--JonthueM light Navbar for Creating & Searching Content-->
+<nav class="navbar navbar-light">
+  <div class="navbar-nav mr-auto mt-2 mt-lg-0">
+    <button class="iconBtn" onclick="window.location.href ='@Url.Action("Create", "Sponsors")'">
+      <!-- or buttons can be in their own container-->
+      <i class="fa fa-plus-square fa-fw"></i>Create New<!-- This button is a link to a different page -->
+    </button>
+  </div>
+  <form class="form-inline my-2 my-lg-0">
+      <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" id="Search">
+      <!-- clears search bar and resets to normal page after the onclick-->
+      
+      <button class="iconBtn" type='button' onclick="document.getElementById('Search').value = ''; $('#sponsor-search tr').show(); " title="Reset Search">
+
+          <i class="fas fa-undo"></i> <!--This button refreshes the page-->
+      </button>
+  </form>
+</nav>
+
+
+
+
+
+<div class="mx-1">
+
+  <table class="table-styling">
+    <tr class="tr-styling">
+      <th class="th-styling">
+        @Html.DisplayNameFor(model => model.Name)
+      </th>
+      <th class="th-styling">
+       Logo Image
+      </th>
+      <th class="th-styling">
+        Height
+      </th>
+      <th class="th-styling">
+        Width
+      </th>
+      <th class="th-styling">
+        @Html.DisplayNameFor(model => model.Current)
+      </th>
+      <th class="th-styling">
+        @Html.DisplayNameFor(model => model.Link)
+      </th>
+      <th class="th-styling">
+      </th>
+    </tr>
+    <tbody id="sponsor-search">
+    @foreach (var item in Model)
+    {
+      <tr class="tr-styling">
+        <td class="td-styling">
+          @Html.DisplayFor(modelItem => item.Name)
+        </td>
+        <td class="td-styling">
+
+          <img src="@Url.Action("DisplayPhoto", "Photo", new { id = item.PhotoId})" class="thumbnail_size" alt="Sponsor Logo Image" />
+          @*//  id = item.SponsorId, table="Sponsor", path = item.Logo
+
+
+            @{
+                string img = "";
+                if (item.Logo != null)
+                {
+                    byte[] thumbBytes = ImageUploadController.ImageThumbnail(item.Logo, 28, 28);
+                    var base64 = System.Convert.ToBase64String(thumbBytes);
+                    img = String.Format("data:image/png;base64,{0}", base64);
+                }
+            }
+            <img src="@img" />*@
+
+        </td>
+        <td class="td-styling">
+          @Html.DisplayFor(modelItem => item.Photo.OriginalHeight)
+        </td>
+        <td class="td-styling">
+          @Html.DisplayFor(modelItem => item.Photo.OriginalWidth)
+        </td>
+        <td class="td-styling">
+          @Html.DisplayFor(modelItem => item.Current)
+        </td>
+        <td class="td-styling">
+          <a href="@item.Link" target="_blank">@Html.DisplayFor(modelItem => item.Link)</a>
+
+        </td>
+
+
+        <td class="td-styling">
+          <button class="iconBtn" onclick="window.location.href ='@Url.Action("Edit", "Sponsors", new { id = item.SponsorId })'">
+            <i class="fa fa-edit fa-fw"></i>Edit
+          </button>
+          <button class="iconBtn" onclick="window.location.href ='@Url.Action("Details", "Sponsors", new { id = item.SponsorId })'">
+            <i class="fa fa-info-circle fa-fw"></i>Details
+          </button>
+          <button class="iconBtn" onclick="window.location.href ='@Url.Action("Delete", "Sponsors", new { id = item.SponsorId })'">
+            <i class="fa fa-trash-alt fa-fw"></i>Delete
+          </button>
+
+          @*@Html.ActionLink("Edit", "Edit", new { id = item.SponsorId }) |
+            @Html.ActionLink("Details", "Details", new { id = item.SponsorId }) |
+            @Html.ActionLink("Delete", "Delete", new { id = item.SponsorId })*@
+        </td>
+      </tr>
+    }
+      </tbody>
+  </table>
+
+
+</div>
+
+<br />
+<p>
+  @Html.ActionLink("View Sponsors", "List")
+</p>
+

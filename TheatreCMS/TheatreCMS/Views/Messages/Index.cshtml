@@ -1,0 +1,978 @@
+﻿@model IEnumerable<TheatreCMS.Models.Message>
+
+@{
+    ViewBag.Title = "Mailbox";
+}
+
+
+@*@Html.AntiForgeryToken()*@
+
+<div class="messages-index container my-5 py-4">
+
+    <h4 class="mb-4 msg-title">Mailbox</h4>
+
+    @* Search Form *@
+    <div class="search-form-container ml-4">
+        @using (Html.BeginForm("Index", "Messages", FormMethod.Post, new { @class = "search-bar-form" }))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="input-group">
+                <input type="text" class="form-control m-0 searchBar" name="searchQuery" id="searchQuery" placeholder="Search" aria-label="Search" aria-describedby="basic-addon2">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary fa fa-search" type="submit"></button>
+                </div>
+            </div>
+        }
+    </div>
+
+    @if (ViewData["searchQuery"] != null)
+    {
+        <div>
+            Showing search results for <b>@ViewData["searchQuery"]</b>.
+        </div>
+        <div class="mb-3 clear-search">
+            <a href="@Url.Action("Index", "Messages")">Clear Search</a>
+        </div>
+    }
+
+    <!-- Nav tabs"-->
+    <div class="justify-content-start flex-nowrap">
+        <ul class="nav nav-tabs" role="tablist" id="navTabs">
+            <li class="nav-item">
+                <a class="nav-link btn btn-primary" id="compose" data-toggle="tab" href="#newMsg">Compose</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link btn fas fa-trash btn-danger msg-del-btn inactive" id="msg-delete" data-toggle="modal" data-target="#checkboxDeleteModal"></a>
+            </li>
+            <li class="nav-item" id="inbox-nav">
+                <a class="nav-link active" data-toggle="tab" id="msgInboxTab" href="#inbox">Inbox</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" id="msgSentTab" href="#sent">Sent</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" id="msgTrashTab" href="#trash">Trash</a>
+            </li>
+        </ul>
+    </div>
+
+
+
+    <!-- Tab panes -->
+    <div class="tab-content border">
+
+        <!-- Compose/New Message tab -->
+        <div id="newMsg" class="container tab-pane fade my-4 text-right">
+
+            <h5 class="text-center my-2">New Message</h5>
+
+            @using (Html.BeginForm("Create", "Messages", FormMethod.Post, new { @class = "new-msg-form" }))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label control-label" for="RecipientId">To:</label>
+                    <div class="col-md-8 px-0">
+                        @Html.DropDownList("RecipientId", (IEnumerable<SelectListItem>)ViewData["listOfUsers"], "", htmlAttributes: new { @class = "form-control", required = "required" })
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label control-label" for="Subject">Subject:</label>
+                    <div class="col-md-8 px-0">
+                        <input id="Subject" name="Subject" type="text" autocomplete="off" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group row px-0">
+                    <label class="col-sm-2 col-form-label control-label" for="Body">Body:</label>
+                    <div class="col-md-8 px-0">
+                        <textarea class="form-control" id="Body" name="Body"></textarea>
+                    </div>
+                </div>
+                <input id="ParentId" name="ParentId" type="hidden" value="">
+                <div class="form-group row">
+                    <label id="btn-label" class="col-md-2 col-form-label control-label"></label>
+                    <div class="col-md-8 px-0 text-right">
+                        <button type="button" class="btn btn-info float-left goBack">Go Back</button>
+                        <button type="submit" id="sendCurrentMsg" class="btn btn-primary">Send</button>
+                        <button type="reset" id="clearCurrentMsg" class="btn btn-danger"><i class="fa fa-trash" aria-hidden="true"></i></button>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Inbox tab -->
+        <div id="inbox" class="container tab-pane active my-4">
+            <!-- this div will be hid/shown upon clicking a msg -->
+            <div id="inboxList">
+                <table class="table table-hover">
+                    <thead>
+                        <tr class="inboxRow">
+                            <th class="checkbox">
+                                @Html.CheckBox("checkAll", false, new { @class = "top-check inbox-top-check" })
+                            </th>
+                            <th class="col-2">
+                                @Html.DisplayNameFor(model => model.SenderId)
+                            </th>
+                            <th class="col-5 inbox-subject">
+                                @Html.DisplayNameFor(model => model.Subject)
+                            </th>
+                            <th class="col-2 d-none">
+                                @Html.DisplayNameFor(model => model.Body)
+                            </th>
+                            <th class="col-1 inbox-sent-time">
+                                @Html.DisplayNameFor(model => model.SentTime)
+                            </th>
+                            <th class="col-1" id="badges"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Where(i => i.RecipientId == (string)ViewData["currentUserId"] && i.RecipientDeleted == null))
+                        {
+                            <tr class="inboxRow @(item.IsViewed.HasValue ? "" : "isviewed-false")" id="msg_@item.MessageId" data-msg_id="@item.MessageId" data-parent_id="" data-sender_id="@item.SenderId">
+                                <td>
+                                    @Html.CheckBox(item.MessageId.ToString(), new { @class = "to-be-deleted inbox-check", @value = item.MessageId })
+                                </td>
+                                <td class="col-2 msgFrom">
+                                    @item.Sender.LastName, @item.Sender.FirstName
+                                </td>
+                                <td class="col-5 msgSubject inbox-subject">
+                                    @Html.DisplayFor(modelItem => item.Subject)
+                                </td>
+                                <td class="col-2 d-none msgBody">
+                                    @Html.DisplayFor(modelItem => item.Body)
+                                </td>
+                                <td class="col-2 msgDate inbox-sent-time">
+                                    @Html.DisplayFor(modelItem => item.SentTime)
+                                </td>
+                                <td class="col-1 align-items-center text-center">
+                                    <span class="badge badge-pill badge-secondary list-reply">Reply</span>
+                                    <span class="badge badge-pill badge-danger listDel" data-toggle="modal" data-target="#deleteMessageMaster">
+                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                    </span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Reply form: A template with no data, click on msg will populate template with msg info and be displayed  -->
+            <div id="inboxDetails" data-msg_id="" data-parent_id="" data-sender_id="">
+                <h5 class="text-center my-2">Message</h5>
+                <form class="new-msg-form">
+                    <div class="form-group row">
+                        <label class="col-md-2 col-form-label control-label reply-label">From:</label>
+                        <div class="col-md-8 msgFrom form-control"></div>
+                    </div>
+                    <div class=" form-group row">
+                        <label class="col-md-2 col-form-label control-label reply-label">Date:</label>
+                        <div class="col-md-3 msgDate form-control"></div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label control-label reply-label">Subject:</label>
+                        <div class="col-md-8 msgSubject form-control"></div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label control-label reply-label">Body:</label>
+                        <textarea class="col-md-8 msgBody form-control" readonly></textarea>
+                    </div>
+                    <div class="form-group row">
+                        <label id="btn-label" class="col-md-2 col-form-label control-label"></label>
+                        <div class="col-md-8 px-0 text-right">
+                            <button type="button" class="btn btn-info float-left goBack">Go Back</button>
+                            <button type="button" id="reply" class="btn btn-primary">Reply</button>
+                            <button type="button" id="deleteCurrentMsg" class="btn btn-danger" data-toggle="modal" data-target="#deleteMessageMaster">
+                                <i class="fa fa-trash" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
+        <!-- Sent tab -->
+        <div id="sent" class="container tab-pane fade my-4">
+
+            <!-- this div will be hid/shown upon clicking a msg -->
+            <div id="sentList">
+                <table class="table table-hover">
+                    <thead>
+                        <tr class="sentRow">
+                            <th class="checkbox">
+                                @Html.CheckBox("checkAll", false, new { @class = "top-check sent-top-check" })
+                            </th>
+                            <th class="col-md-4 col-lg-2">
+                                @Html.DisplayNameFor(model => model.RecipientId)
+                            </th>
+                            <th class="col-md-5 col-lg-4 sent-subject">
+                                @Html.DisplayNameFor(model => model.Subject)
+                            </th>
+                            <th class="col-2 d-none">
+                                @Html.DisplayNameFor(model => model.Body)
+                            </th>
+                            <th class="col-2 sent-sent-time">
+                                @Html.DisplayNameFor(model => model.SentTime)
+                            </th>
+                            <th class="col-1" id="badges"></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in Model.Where(i => i.SenderId == (string)ViewData["currentUserId"] && i.SenderDeleted == null))
+                        {
+                            <tr class="sentRow" id="#msg_@item.MessageId" data-msg_id="@item.MessageId">
+                                <td>
+                                    @Html.CheckBox(item.MessageId.ToString(), new { @class = "to-be-deleted sent-check", @value = item.MessageId })
+                                </td>
+                                <td class="col-md-4 col-lg-2 msgTo">
+                                    @if (item.Recipient != null)
+                                    {
+                                        @: @item.Recipient.LastName, @item.Recipient.FirstName
+                                    }
+                                </td>
+                                <td class="col-md-5 col-lg-4 msgSubject sent-subject">
+                                    @Html.DisplayFor(modelItem => item.Subject)
+                                </td>
+                                <td class="col-2 d-none msgBody">
+                                    @Html.DisplayFor(modelItem => item.Body)
+                                </td>
+                                <td class="col-2 msgDate sent-sent-time">
+                                    @Html.DisplayFor(modelItem => item.SentTime)
+                                </td>
+                                <td class="col-1 text-center">
+
+                                    <span class="badge badge-pill badge-danger text-right listDel" data-toggle="modal" data-target="#deleteMessageMaster">
+                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                    </span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="sentDetails" data-msg_id="">
+                <h5 class="text-center my-2">Sent Message</h5>
+                <form class="form new-msg-form">
+                    <div class="form-group row">
+                        <label class="col-md-2 col-form-label control-label reply-label">To:</label>
+                        <div class="col-md-8 msgTo form-control"></div>
+                    </div>
+                    <div class=" form-group row">
+                        <label class="col-md-2 col-form-label control-label reply-label">Date:</label>
+                        <div class="col-md-3 msgDate form-control"></div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-2 col-form-label control-label reply-label">Subject:</label>
+                        <div class="col-md-8 msgSubject form-control"></div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-2 col-form-label control-label reply-label">Body:</label>
+                        <textarea class="col-md-8 msgBody form-control" readonly></textarea>
+                    </div>
+                    <div class="form-group row">
+                        <label id="btn-label" class="col-md-2 col-form-label control-label"></label>
+                        <div class="col-md-8 px-0 text-right">
+                            <button type="button" class="btn btn-info float-left goBack">Go Back</button>
+                            <button id="deleteCurrentMsg" type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteMessageMaster">
+                                <i class="fa fa-trash" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
+        <!-- Trash tab -->
+        <div id="trash" class="container tab-pane fade my-4">
+
+            <!-- this div will be hid/shown upon clicking a msg -->
+            <div id="trashList">
+                <table class="table table-hover">
+                    <thead>
+                        <tr class="trashRow">
+                            <th class="col-2">
+                                @Html.DisplayNameFor(model => model.RecipientId)
+                            </th>
+                            <th class="col-2 trash-sender">
+                                @Html.DisplayNameFor(model => model.SenderId)
+                            </th>
+                            <th class="col-3 trash-subject">
+                                @Html.DisplayNameFor(model => model.Subject)
+                            </th>
+                            <th class="col-2 d-none">
+                                @Html.DisplayNameFor(model => model.Body)
+                            </th>
+                            <th class="col-3 trash-delete-time">
+                                Time Deleted
+                            </th>
+                            <th class="col-1" id="badges"></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @*@foreach (var item in Model.Where(i => (i.SenderId == (string)ViewData["currentUserId"] && i.SenderDeleted != null) || (i.RecipientId == (string)ViewData["currentUserId"] && i.RecipientDeleted != null)).OrderByDescending(i => i.SenderDeleted ?? i.RecipientDeleted))*@
+                        @foreach (var item in Model.Where(i => (i.SenderId == (string)ViewData["currentUserId"] && i.SenderDeleted != null) || (i.RecipientId == (string)ViewData["currentUserId"] && i.RecipientDeleted != null)).OrderByDescending(i => i.SenderId == (string)ViewData["currentUserId"] ? i.SenderDeleted : i.RecipientDeleted))
+                        {
+                            <tr class="trashRow" id="trash_@item.MessageId" data-msg_id="@item.MessageId">
+
+                                @*<td>
+                                        @Html.CheckBox(item.MessageId.ToString(), new { @class = "to-be-deleted sent-check", @value = item.MessageId })
+                                    </td>*@
+
+                                <td class="col-2 msgTo ">
+                                    @if (item.Recipient != null)
+                                    {
+                                        @: @item.Recipient.LastName, @item.Recipient.FirstName
+                                    }
+                                </td>
+
+                                <td class="col-2 msgFrom trash-sender">
+                                    @if (item.Recipient != null)
+                                    {
+                                        @: @item.Sender.LastName, @item.Sender.FirstName
+                                    }
+                                </td>
+
+                                <td class="col-3 msgSubject trash-subject">
+                                    @Html.DisplayFor(modelItem => item.Subject)
+                                </td>
+                                <td class="col-2 d-none msgBody ">
+                                    @Html.DisplayFor(modelItem => item.Body)
+                                </td>
+                                <td class="col-3 msgDate trash-delete-time">
+                                    @if (item.SenderId == (string)ViewData["currentUserId"])
+                                    {
+                                        @Html.DisplayFor(modelItem => item.SenderDeleted)
+                                    }
+                                    else
+                                    {
+                                        @Html.DisplayFor(modelItem => item.RecipientDeleted)
+                                    }
+
+                                </td>
+                                <td class="col-1 text-right align-items-center text-center">
+                                    @* Recover Deleted Message *@
+                                    <span class="badge badge-pill badge-success listRecoverMsg" data-toggle="modal" data-target="#recoverMessageMaster">
+                                        Recover
+                                    </span>
+
+                                    @* Permanently Delete Message *@
+                                    <span class="badge badge-pill badge-danger listPermDel" data-toggle="modal" data-target="#permanentDeleteMaster">
+                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                    </span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="trashDetails" data-msg_id="">
+                <h5 class="text-center my-2">Deleted Message</h5>
+                <form class="new-msg-form">
+                    <div class="form-group row">
+                        <label class="col-md-2 col-form-label control-label reply-label">From:</label>
+                        <div class="col-md-8 msgFrom form-control"></div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-2 col-form-label control-label reply-label">To:</label>
+                        <div class="col-md-8 msgTo form-control"></div>
+                    </div>
+                    <div class=" form-group row">
+                        <label class="col-md-2 col-form-label control-label reply-label">Date:</label>
+                        <div class="col-md-3 msgDate form-control"></div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-2 col-form-label control-label reply-label">Subject:</label>
+                        <div class="col-md-8 msgSubject form-control"></div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-2 col-form-label control-label reply-label">Body:</label>
+                        <textarea class="col-md-8 msgBody form-control" readonly></textarea>
+                    </div>
+                    <div class="form-group row">
+                        <label id="btn-label" class="col-md-2 col-form-label control-label"></label>
+                        <div class="col-md-8 px-0 text-right">
+                            <button type="button" class="btn btn-info float-left goBack">Go Back</button>
+                            <button id="recoverCurrentMsg" type="button" class="btn btn-success" data-toggle="modal" data-target="#recoverMessageMaster">
+                                Recover Message
+                            </button>
+                            <button id="deleteCurrentMsg" type="button" class="btn btn-danger" data-toggle="modal" data-target="#permanentDeleteMaster">
+                                <i class="fa fa-trash"
+                                   aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@* Delete Message Modal *@
+<div class="modal modal-fade-scale text-black" id="deleteMessageMaster" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Do you want to delete this message?</h5>
+                <button type="button" class="close close-modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body text-left">
+                <h6>From:</h6> <div class="del_sender"></div><br />
+                <h6>To:</h6> <div class="del_recipient"></div><br />
+                <h6>Subject:</h6><div class="del_subject"></div><br />
+                <h6>Sent:</h6><div class="del_time"></div><br />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary close-modal">Close</button>
+                <button type="button" class="btn btn-danger delMsg">Confirm Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* Multiple Message Delete Modal *@
+<div class="modal text-black" id="checkboxDeleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete selected messages?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger list-del-multiple">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@* Permanently Delete Message Modal*@
+<div class="modal modal-fade-scale text-black" id="permanentDeleteMaster" tabindex="-1" role="dialog" aria-labelledby="permanentDeleteLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="permanentDeleteLabel">Permanently delete this message?</h5>
+                <button type="button" class="close close-modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body text-left">
+                <h6>From:</h6> <div class="pdm_sender"></div><br />
+                <h6>To:</h6> <div class="pdm_recipient"></div><br />
+                <h6>Subject:</h6><div class="pdm_subject"></div><br />
+                <h6>Sent:</h6><div class="pdm_date"></div><br />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary close-modal">Close</button>
+                <button type="button" class="btn btn-danger permDelMsg">Permanently Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* Recover Message Modal *@
+<div class="modal modal-fade-scale text-black" id="recoverMessageMaster" tabindex="-1" role="dialog" aria-labelledby="recoverMessageLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="recoverMessageLabel">Recover this message?</h5>
+                <button type="button" class="close close-modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body text-left">
+                <h6>From:</h6> <div class="rmm_sender"></div><br />
+                <h6>To:</h6> <div class="rmm_recipient"></div><br />
+                <h6>Subject:</h6><div class="rmm_subject"></div><br />
+                <h6>Sent:</h6><div class="rmm_date"></div><br />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary close-modal">Close</button>
+                <button type="button" class="btn btn-success recoverMsg">Recover Message</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="@Url.Content("~/Scripts/umd/popper.min.js")"></script>
+
+@section Scripts{
+
+    <script>
+    $(document).ready(function () {
+
+
+        //This clears the new message fields when the user clicks 'Compose'
+        $("#compose").on("click", function () {
+            var senderName = @Html.Raw(Json.Encode(ViewData["currentUserName"]));
+            $("#navTabs a[href='newMsg'").tab('show');
+            $("#newMsg").find('#clearCurrentMsg').trigger("click");
+            $('#newMsg #RecipientId option:not(:selected)').attr("disabled", false);
+
+
+
+        })
+
+        //compose message go back button
+        $("#newMsg .goBack").click(function () {
+            $("#inboxDetails").hide();
+            $("#inboxList").show();
+            $('#navTabs a[href="#inbox"]').tab('show');
+
+        });
+
+
+        // Populate the delete message modal
+        function populateDelMsg(msgId) {
+            var selectedEntryId = "#msg_" + msgId;
+            console.log(selectedEntryId + " " + msgId);
+            $("#deleteMessageMaster .delMsg").attr("msg_id", msgId);
+            if ($(selectedEntryId).find(".msgFrom").length) {
+                $("#deleteMessageMaster .del_sender").html($(selectedEntryId).find(".msgFrom").html());
+            } else {
+                $("#deleteMessageMaster .del_sender").html(@Html.Raw(Json.Encode(ViewData["currentUserName"])));
+            }
+            if ($(selectedEntryId).find(".msgTo").length) {
+                $("#deleteMessageMaster .del_recipient").html($(selectedEntryId).find(".msgTo").html());
+            } else {
+                $("#deleteMessageMaster .del_recipient").html(@Html.Raw(Json.Encode(ViewData["currentUserName"])));
+            }
+            $("#deleteMessageMaster .del_time").html($(selectedEntryId).find(".msgDate").html());
+            $("#deleteMessageMaster .del_subject").html($(selectedEntryId).find(".msgSubject").html());
+        }
+
+        // Triggers population of delete message modal on click list delete button
+        $(".listDel").on("click", function () {
+            var msgId = $(this).parent().parent().data("msg_id");
+            populateDelMsg(msgId);
+        });
+
+
+        //behavior of row in inboxList tab
+        $(".inboxRow").on("click", "td:not(:last-child,:first-child)", function () {
+            var msgId_str = $(this).parent().data("msg_id");
+            var senderId_str = $(this).parent().data("sender_id");
+
+            //if message is unread, then make it read by unbolding row
+            if ($(this).parent().hasClass("isviewed-false")) {
+
+                //ajax post and update isviewed to current date time, success - unbold
+                $.ajax({
+                    type: "POST",
+                    url: "/Messages/Edit/" + msgId_str,
+                    context: this,
+                    data: {
+                        "__RequestVerificationToken":
+                            $("input[name=__RequestVerificationToken]").val(),
+                        MessageId: msgId_str,
+                    },
+                    success: function () {
+                        $(this).parent().css("font-weight", "normal");
+                        $(this).parent().removeClass("isviewed-false");
+                        // Behavior for unread msg indicator
+                        if (!$(".isviewed-false")[0]) {
+                            $("span#unReadMsgIndicator").hide();
+                        }
+                        else if ($(".isviewed-false")[0]) {
+                            $("span#unReadMsgIndicator").show();
+                        }
+                    },
+                    error: function () {
+                        alert("An error has occurred.");
+                    }
+                });
+            }
+
+            $("#inboxList").hide();
+
+            populateDelMsg(msgId_str);
+
+            //code will populate #inboxDetails with correct msg info, hide/show speed not working, asynchronous?
+            $("#inboxDetails").data("msg_id", msgId_str);
+            $("#inboxDetails").data("sender_id", senderId_str);
+            var toName = @Html.Raw(Json.Encode(ViewData["currentUserName"]));
+            $("#inboxDetails .msgFrom").html($(this).parent().find(".msgFrom").html());
+            $("#inboxDetails .msgDate").html($(this).parent().find(".msgDate").html());
+            $("#inboxDetails .msgSubject").html($(this).parent().find(".msgSubject").html());
+            $("#inboxDetails .msgBody").html($(this).parent().find(".msgDate").html().trim() + ", " + $(this).parent().find(".msgFrom").html().trim() + " wrote:\n\n" + $(this).parent().find(".msgBody").html().trim());
+            $("#inboxDetails .msgFrom1").html($(this).parent().find(".msgFrom").html());
+            $("#inboxDetails .msgDate1").html($(this).parent().find(".msgDate").html());
+            $("#inboxDetails .msgSubject1").html($(this).parent().find(".msgSubject").html());
+            $("#inboxDetails .msgBody1").html($(this).parent().find(".msgBody").html());
+            $("#inboxDetails").show();
+
+
+
+        });
+
+        //reply button autofills in the sender and subject and posts a parentId to database as well
+        //reply will include the previous body content and also scroll down to the bottom of the message
+        $(".list-reply").on("click", function () {
+            var senderName = @Html.Raw(Json.Encode(ViewData["currentUserName"]));
+            var msgId_str = $(this).closest(".inboxRow").data("msg_id");
+            var senderId_str = $(this).closest(".inboxRow").data("sender_id");
+            $("#newMsg #RecipientId").val(senderId_str);
+            $("#newMsg #Subject").val("Re: " + $(this).closest(".inboxRow").find(".msgSubject").text().trim());
+            $("#newMsg #Body").val("\n\n\n=========================\n\n" + $(this).closest(".inboxRow").find(".msgDate").text().trim() + ", " + $(this).closest(".inboxRow").find(".msgFrom").text().trim() + " wrote:\n\n" + $(this).closest(".inboxRow").find(".msgBody").text().trim());
+            $("#newMsg #ParentId").val(msgId_str);
+            $('#navTabs a[href="#newMsg"]').tab('show');
+            $('#newMsg #RecipientId option:not(:selected)').attr("disabled", true);
+            $('#newMsg #Body').focus().setCursorPosition(0);
+            $('#newMsg #Body').scrollTop(0);
+        });
+
+        $.fn.setCursorPosition = function (pos) {
+            this.each(function (index, elem) {
+                if (elem.setSelectionRange) {
+                    elem.setSelectionRange(pos, pos);
+                } else if (elem.createTextRange) {
+                    var range = elem.createTextRange();
+                    range.collapse(true);
+                    range.moveEnd('character', pos);
+                    range.moveStart('character', pos);
+                    range.select();
+                }
+            });
+            return this;
+        };
+
+        //behavior of inboxDetails div
+        $("#inboxDetails .goBack").click(function () {
+            $("#inboxDetails").hide();
+            $("#inboxList").show();
+
+
+        });
+
+        //reply button autofills in the sender and subject and posts a parentId to database as well
+        //reply will include the previous body content and also scroll down to the bottom of the message
+        $("#inboxDetails #reply").on("click", function () {
+            var senderName = @Html.Raw(Json.Encode(ViewData["currentUserName"]));
+            var msgId_str = $(this).parents("#inboxDetails").data("msg_id");
+            var senderId_str = $(this).parents("#inboxDetails").data("sender_id");
+
+            $("#newMsg #RecipientId").val(senderId_str);
+            $("#newMsg #RecipientId option:not(:selected)").attr("disabled", true);
+            $("#newMsg #Subject").val("Re: " + $(this).parents("#inboxDetails").find(".msgSubject").text().trim());
+            $("#newMsg #Body").val("\n\n\n=========================\n\n" + $(this).parents("#inboxDetails").find(".msgBody").text().trim());
+            $("#newMsg #ParentId").val(msgId_str);
+            $('#navTabs a[href="#newMsg"]').tab('show');
+            $('#newMsg #Body').focus().setCursorPosition(0);
+            $('#newMsg #Body').scrollTop(0);
+        });
+
+
+        // Delete Message
+        $("#deleteMessageMaster .delMsg").on("click", function () {
+            var msgId_str = $(this).attr("msg_id");
+            console.log(msgId_str);
+            $.ajax({
+                type: "POST",
+                url: "/Messages/Delete/" + msgId_str,
+                context: this,
+                data: {
+                    "__RequestVerificationToken":
+                        $("input[name=__RequestVerificationToken]").val(),
+                    id: msgId_str,
+                },
+                success: function () {
+                    var selectedMessage = "#msg_" + msgId_str;
+                    if ($(selectedMessage).hasClass("inboxRow")) {
+                        $(selectedMessage).closest(".inboxRow").remove();
+                    } else if ($(selectedMessage).hasClass("sentRow")) {
+                        $(selectedMessage).closest(".sentRow").remove();
+                    }
+                    location.reload();
+                },
+                error: function () {
+                    alert("an error has occurred.");
+                    location.reload();
+                }
+            });
+        });
+
+        //behavior of row on sent tab
+        $(".sentRow").on("click", "td:not(:last-child,:first-child)", function () {
+            var msgId_str = $(this).parent().data("msg_id");
+            var senderName = @Html.Raw(Json.Encode(ViewData["currentUserName"]));
+
+            $("#sentList").hide();
+            populateDelMsg(msgId_str);
+
+            //code will populate #sentDetails with correct msg info, hide/show speed not working, asynchronous?
+            $("#sentDetails").data("msg_id", msgId_str);
+            $("#sentDetails .msgTo").html($(this).parent().find(".msgTo").html());
+            $("#sentDetails .msgDate").html($(this).parent().find(".msgDate").html());
+            $("#sentDetails .msgSubject").html($(this).parent().find(".msgSubject").html());
+            $("#sentDetails .msgBody").val($(this).parent().find(".msgDate").html().trim() + ", " + senderName + " wrote:\n\n" + $(this).parent().find(".msgBody").text().trim());
+            $("#sentDetails").show();
+        });
+
+        //behavior of sentDetails div
+        $("#sentDetails .goBack").click(function () {
+            $("#sentDetails").hide();
+            $("#sentList").show();
+        });
+
+        // Populate the Permanently delete message modal
+        function populatePermDel(msgId) {
+            var selectedEntryId = "#trash_" + msgId;
+            $("#permanentDeleteMaster .permDelMsg").attr("msg_id", msgId);
+            $("#permanentDeleteMaster .pdm_sender").html($(selectedEntryId).find(".msgFrom").html());
+            $("#permanentDeleteMaster .pdm_recipient").html($(selectedEntryId).find(".msgTo").html());
+            $("#permanentDeleteMaster .pdm_date").html($(selectedEntryId).find(".msgDate").html());
+            $("#permanentDeleteMaster .pdm_subject").html($(selectedEntryId).find(".msgSubject").html());
+        }
+
+        // Triggers population of Permanently delete message modal on click list delete button
+        $(".listPermDel").on("click", function () {
+            var msgId = $(this).parent().parent().data("msg_id");
+            populatePermDel(msgId);
+        });
+
+
+        // Populate the Recover message modal
+        function populateRecover(msgId) {
+            var selectedEntryId = "#trash_" + msgId;
+            $("#recoverMessageMaster .recoverMsg").attr("msg_id", msgId);
+            $("#recoverMessageMaster .rmm_sender").html($(selectedEntryId).find(".msgFrom").html());
+            $("#recoverMessageMaster .rmm_recipient").html($(selectedEntryId).find(".msgTo").html());
+            $("#recoverMessageMaster .rmm_date").html($(selectedEntryId).find(".msgDate").html());
+            $("#recoverMessageMaster .rmm_subject").html($(selectedEntryId).find(".msgSubject").html());
+        }
+
+        // Triggers population of Recover message modal on click list recoverbutton
+        $(".listRecoverMsg").on("click", function () {
+            var msgId = $(this).parent().parent().data("msg_id");
+            console.log(msgId);
+            populateRecover(msgId);
+        });
+
+        //behavior of row on trash tab
+        $(".trashRow").on("click", function () {
+            var msgId_str = $(this).parent().data("msg_id");
+            var senderName = @Html.Raw(Json.Encode(ViewData["currentUserName"]));
+
+            $("#trashList").hide();
+
+            populatePermDel(msgId_str);
+            populateRecover(msgId_str);
+
+            //code will populate #trashDetails with correct msg info, hide/show speed not working, asynchronous?
+            $("#trashDetails").data("msg_id", msgId_str);
+            $("#trashDetails .msgFrom").html($(this).parent().find(".msgFrom").html());
+            $("#trashDetails .msgTo").html($(this).parent().find(".msgTo").html());
+            $("#trashDetails .msgDate").html($(this).parent().find(".msgDate").html());
+            $("#trashDetails .msgSubject").html($(this).parent().find(".msgSubject").html());
+            $("#trashDetails .msgBody").val($(this).parent().find(".msgDate").html().trim() + ", " + senderName + " wrote:\n\n" + $(this).parent().find(".msgBody").text().trim());
+
+            $("#trashDetails").show();
+        });
+
+        //behavior of trashDetails div
+        $("#trashDetails .goBack").click(function () {
+            $("#trashDetails").hide();
+            $("#trashList").show();
+        });
+    });
+
+
+
+
+
+
+    $(".close-modal").click(function () {
+        $(".modal-fade-scale").removeClass("show");
+        $(".modal-backdrop").remove();
+        $("nav").removeAttr("style");
+        $("body").removeClass("modal-open").removeAttr("style");
+        setTimeout(function () {
+            $(".modal-fade-scale").trigger("click");
+        }, 500);
+    });
+
+      //this checks all boxes if top checkbox is checked
+      $('.inbox-top-check').click(function () {
+        if ($(this).is(':checked')) {
+          $('.inbox-check').prop('checked', true);
+
+        }
+        else {
+          $('.inbox-check').prop('checked', false);
+        }
+      });
+
+      $('.sent-top-check').click(function () {
+        if ($(this).is(':checked')) {
+          $('.sent-check').prop('checked', true);
+        }
+        else {
+          $('.sent-check').prop('checked', false);
+        }
+      });
+
+    //if all boxes are checked, top box will be checked
+    $(".inbox-check").change(function () {
+      var checked = $(".inbox-check").filter(":checked").length;
+      var allChecks = $(".inbox-check").map(function () {
+        return this.innerHTML;
+      }).get();
+      if (checked == allChecks.length) {
+        $('.inbox-top-check').prop('checked', true);
+      }
+      else {
+        $('.inbox-top-check').prop('checked', false);
+      }
+    });
+
+    $(".sent-check").change(function () {
+      var checked = $(".sent-check").filter(":checked").length;
+      var allChecks = $(".sent-check").map(function () {
+        return this.innerHTML;
+      }).get();
+      if (checked == allChecks.length) {
+          $('.sent-top-check').prop('checked', true);
+        }
+        else {
+          $('.sent-top-check').prop('checked', false);
+        }
+      });
+
+    //this toggles trash can style and active/inactive
+    $("input[type='checkbox'].to-be-deleted").click(function () {
+      var trash = $(".msg-del-btn");
+      var checks = $("input[type='checkbox'].to-be-deleted");
+      if (checks.filter(':checked').length >= 1) {
+        trash.removeClass("inactive");
+      } else {
+        trash.addClass("inactive");
+      }
+    });
+
+    $("input[type='checkbox'].top-check").click(function () {
+      var trash = $(".msg-del-btn");
+      if ($(this).is(':checked')) {
+        trash.removeClass("inactive");
+      } else {
+        trash.addClass("inactive");
+      }
+    });
+
+    //this will reset checkmarks and trash when another tab is clicked
+    $("a[id='compose']").on("click", reset);
+    $("a[id='msgInboxTab']").on("click", reset);
+    $("a[id='msgSentTab']").on("click", reset);
+    $("a[id='msgTrashTab']").on("click", reset);
+
+
+    function reset() {
+      var trash = $(".msg-del-btn");
+      if (!trash.hasClass("inactive")) {
+        trash.addClass("inactive");
+        $('input:checkbox').prop('checked', false)
+      }
+    }
+
+    //message delete function for deleted multiple messages
+    function deleteMsg(msgId) {
+      $.ajax({
+        type: "POST",
+        url: "/Messages/Delete/" + msgId,
+        context: this,
+        data: {
+          "__RequestVerificationToken":
+            $("input[name=__RequestVerificationToken]").val(),
+          id: msgId,
+        },
+        success: function () {
+          $(this).closest(".inboxRow").remove();
+          location.reload();
+        },
+        error: function () {
+          alert("an error has occurred.");
+          location.reload();
+        }
+      });
+    }
+
+    //this deletes checkmarked messages
+    $(".list-del-multiple").on("click", function () {
+      var messages = $(".to-be-deleted");
+      messages.each(function () {
+        if ($(this).is(':checked')) {
+          msgId = this.value;
+          deleteMsg(msgId);
+        }
+      });
+    });
+
+
+    // Send message data to recover
+    $(".recoverMsg").on("click", function () {
+        //var msgid_str = $(this).closest(".trashRow").data("msg_id");
+        var msgId = $(this).attr("msg_id");
+        //recoverMsg(msgid_str);
+        $.ajax({
+            type: "POST",
+            url: "/Messages/Recover/" + msgId,
+            context: this,
+            data: {
+                "__RequestVerificationToken":
+                    $("input[name=__RequestVerificationToken]").val(),
+                id: msgId,
+            },
+            success: function () {
+                $(this).closest(".trashRow").remove();
+                location.reload();
+            },
+            error: function () {
+                alert("an error has occurred.");
+                location.reload();
+            }
+        });
+    });
+
+
+    // Send message data to mark as permanently deleted
+    $(".permDelMsg").on("click", function () {
+        var msgId = $(this).attr("msg_id");
+        $.ajax({
+            type: "POST",
+            url: "/Messages/PermDel/" + msgId,
+            context: this,
+            data: {
+                "__RequestVerificationToken":
+                    $("input[name=__RequestVerificationToken]").val(),
+                id: msgId,
+            },
+            success: function () {
+                $(this).closest(".trashRow").remove();
+                location.reload();
+            },
+            error: function () {
+                alert("an error has occurred.");
+                location.reload();
+            }
+        });
+    });
+
+
+
+    </script>
+
+}

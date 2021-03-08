@@ -1,0 +1,177 @@
+﻿@using Microsoft.AspNet.Identity
+@model TheatreCMS.Models.ApplicationUser
+
+@{
+    ViewBag.Title = "Index";
+}
+
+    <body class="subbody">
+            <h1 class="subback1">WELCOME TO THE SUBSCRIBER AREA</h1>
+
+
+                <div class="accountbox">
+                    <h2 class="subback2">Your Upcoming Shows</h2>   
+                    <table class="shows" cellpadding="10">
+                            <tr>
+                                <th>Performance</th>
+                                <th>Date and Time</th>
+                                <th>Change or Cancel</th>
+                            </tr>
+                            <tr>
+                                <td>Merchant of Venice</td>
+                                <td>June 22nd, 7pm</td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button class="subsave">Click Here</button>
+                                        <div class="dropdown-content">
+                                            <a href="#">Change Date</a>
+                                            <a href="#">Cancel</a>
+                                        </div>
+                                    </div>
+                                </td></tr>
+                        <tr>
+                            <td>Dumb Ghost</td>
+                            <td>July 3rd, 7pm</td>
+                            <td><div class="dropdown">
+                            <button class="subsave">Click Here</button>
+                            <div class="dropdown-content">
+                                <a href="#">Change Date</a>
+                                <a href="#">Cancel</a>
+                            </div>
+                        </div></td>
+                        </tr>
+                        <tr>
+                            <td>Death of A Salesman</td>
+                            <td>July 27th, 7pm</td>
+                            <td><div class="dropdown">
+                                <button class="subsave">Click Here</button>
+                                <div class="dropdown-content">
+                                    <a href="#">Change Date</a>
+                                    <a href="#">Cancel</a>
+                                </div>
+                            </div></td>
+                        </tr>
+
+
+                        </table>
+                    </div>
+            <div class="accountbox">
+                <div class="accountinfo">
+                    <form>
+                        <h2 class="subback2">Manage Your Account</h2>
+                        <div class="container sub-manage">
+                            <div class="row no-gutters word-wrap">
+                                <div class="col-lg-3 col-md-6 col-sm-12">
+                                    <div class="sub-header">First Name</div>
+                                    <div class="sub-info">@Html.DisplayFor(model => model.FirstName) </div>
+                                </div>
+                                <div class="col-lg-3 col-md-6 col-sm-12">
+                                    <div class="sub-header">Last Name</div>
+                                    <div class="sub-info">@Html.DisplayFor(model => model.LastName) </div>
+                                </div>
+                                <div class="col-lg-3 col-md-6 col-sm-12">
+                                    <div class="sub-header">Current Address</div>
+                                    <div class="sub-info">@Html.DisplayFor(model => model.StreetAddress) </div>
+                                </div>
+                               <div class="col-lg-3 col-md-6 col-sm-12">
+                                    <div class="sub-header">Email Address</div>
+                                    <div class="sub-info">@Html.DisplayFor(model => model.Email) </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <label for="inputFirst">First Name</label>
+                                <input type="text" class="form-control name" id="inputFirst" placeholder="Edit">
+                            </div>
+                            <div class="col">
+                                <label for="inputLast">Last Name</label>
+                                <input type="text" class="form-control name" id="inputLast" placeholder="Edit">
+                            </div>
+                        </div>
+                    </form>
+        <div class="form-group">
+            <label for="inputAddress">Address</label>
+            <input type="text" class="form-control" id="inputAddress" placeholder="Edit">
+        </div>
+        <div class="form-group">
+            <label for="inputAddress2">Address 2</label>
+            <input type="text" class="form-control" id="inputAddress2" placeholder="Edit">
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="inputCity">City</label>
+                <input type="text" class="form-control" id="inputCity" placeholder="Edit">
+            </div>
+            <div class="form-group col-md-4">
+                <label for="inputState">State</label>
+                <select id="inputState" class="form-control">
+                    <option selected>Edit</option>
+                    <option>...</option>
+                </select>
+            </div>
+            <div class="form-group col-md-2">
+                <label for="inputZip">Zip</label>
+                <input type="text" class="form-control" id="inputZip" placeholder="Edit">
+            </div>
+        </div>
+        <div>
+            <button type="button" class="subsave">Save</button>
+        </div>    
+        </div>
+        </div>
+
+            <div class="accountbox">
+              <h2 class="subback2">Manage Your Subscription</h2>
+              @* C# form passing selected Subscription Plan option to dashboard controller method *@
+              @using (Html.BeginForm("ChangeSubscriptionPlan", "Dashboard", FormMethod.Post)) {
+                
+                <div>
+                  <h2>Current Subscription Level: @Html.DisplayFor(models => models.SubscriberPerson.SubscriptionPlan.SubscriptionLevel)</h2>
+                  <p><button type="button" class="subsave">Renew Subscription</button></p>
+                </div>
+                <div>
+                  <p>
+                    <label for="sublevel">Subscription Level</label>
+                    @*onchange calls JS function to disable submit button if the subscription plan option selected is the same as the users current plan*@
+                    <select id="sublevel" name="sublevel" onchange="subsubmitdisable()">
+                      <option value="Platinum">Platinum &nbsp;&nbsp;  /  &nbsp;&nbsp;   all shows &nbsp;&nbsp;    /   &nbsp;&nbsp;  $500/yr</option>
+                      <option value="Gold">Gold   &nbsp;&nbsp;  /   &nbsp;&nbsp;  any ten shows &nbsp;&nbsp;    /  &nbsp;&nbsp;   $300/yr</option>
+                      <option value="Silver">Silver &nbsp;&nbsp;    /    &nbsp;&nbsp; any five shows  &nbsp;&nbsp;  /  &nbsp;&nbsp;   $200/yr</option>
+                    </select>
+                  </p>
+                  <button type="submit" class="subsave" id="subsave">Update Subscription</button>
+                  <script type="text/javascript">
+                    //assignment of the subscribers current subscripton plan to a golbal variable 
+                    var currentsubscription = '@Model.SubscriberPerson.SubscriptionPlan.SubscriptionLevel';
+                    //assignment of the selected option value within the 'sublevel' select tags to a global variable
+                    var sublevel = document.getElementById("sublevel");
+                    //assigment of the 'subsave' button to a global variable
+                    var subsave = document.getElementById("subsave");
+                    // calls the function on page load. Ensures at page load if preselected option matches subscribers plan that button will be disabled
+                    subsubmitdisable();
+
+                    //disables and changes apperance of submit button if the subscription plan option selected is the same as the users current plan
+                    function subsubmitdisable() {
+                      subsave.disabled = (currentsubscription == sublevel.value);
+                  }
+                  </script>
+                </div>
+              }
+
+              <form action="/action_page.php">
+                <label for="upshows">Upcoming Shows</label>
+                <select id="upshows" name="upshows">
+                  <option value="mechant1">Merchant of Venice  &nbsp;&nbsp;&nbsp; June 24th, 7pm</option>
+                  <option value="merchant2">Merchant of Venice &nbsp;&nbsp;&nbsp; June 25th, 7pm</option>
+                  <option value="dumb1">Dumb Ghost &nbsp;&nbsp;&nbsp; July 5th, 7pm</option>
+                  <option value="dumb2">Dumb Ghost &nbsp;&nbsp;&nbsp;  July 6th, 7pm</option>
+                </select>
+                <div>
+                  <button type="button" class="subsave">Add to Schedule</button>
+                </div>
+              </form>
+
+            </div>
+
+    </body>

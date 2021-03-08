@@ -1,0 +1,142 @@
+﻿@model TheatreCMS.Models.Award
+
+@{
+    ViewBag.Title = "Edit";
+}   
+
+<h2>Edit</h2>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    // Added awardForm class to form div.
+    <div class="form-horizontal awardForm">
+        <h4>Award</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.AwardId)
+
+        <div class="form-group mx-auto">
+            @Html.LabelFor(model => model.Year, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @*@Html.EditorFor(model => model.Year, new { htmlAttributes = new { @class = "form-control" } })*@
+                @*@Html.DropDownList("Year", null, "Select a Year", htmlAttributes: new { @class = "form-control awardYear" })
+                @Html.ValidationMessageFor(model => model.Year, "", new { @class = "text-danger" })*@
+                @Html.DropDownListFor(
+                    model => model.Year,
+                    new SelectList(Enumerable.Range(1997, (DateTime.Now.Year - 1997 + 2))),
+                    "Select a Year", htmlAttributes: new { @class = "form-control awardYear" })
+                @Html.ValidationMessageFor(model => model.Year, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Type, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EnumDropDownListFor(model => model.Type, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Type, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Category, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Category, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Category, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Recipient, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Recipient, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Recipient, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ProductionId, "ProductionId", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("ProductionId", null, "Select a Production", htmlAttributes: new { @class = "form-control awardProduction" })
+                
+                @Html.ValidationMessageFor(model => model.ProductionId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.CastMemberId, "CastMemberId", htmlAttributes: new { @class = "control-label col-md-2",  @onchange="GetMember()"})
+            <div class="col-md-10">
+                @Html.DropDownList("CastMemberId", null, "Select a Cast Member", htmlAttributes: new { @class = "form-control awardCastMember" })
+                @Html.ValidationMessageFor(model => model.CastMemberId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.OtherInfo, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.OtherInfo, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.OtherInfo, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-main" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+<script>
+        // Function changes Year in Award dropdown when changing Production.
+        $(".awardForm .awardProduction").change(function () {
+        var production = $(this).children("option:selected").text();
+        var productionId = $(this).children("option:selected").attr("value");
+            var productionYear = 0;
+            var arrayYears = @Html.Raw(Json.Encode(@ViewBag.ProductionYears));
+
+        if (production == "Select a Production") {
+
+            var dropDown = document.getElementById("Year");
+            dropDown.selectedIndex = 0;
+        } else {
+
+            for (var i = 0; i < arrayYears.length; i++) {
+                if (i + 1 == productionId) {
+                    productionYear = arrayYears[i];
+                }
+            }
+            document.getElementById("Year").value = productionYear;
+        }
+        });
+    // Function changes Recipient when chosing CastMember and Recipient is Empty.
+    // After that it keeps changing Recipient as change made to CastMember before saving.
+    $(".awardForm .awardCastMember").change(function () {
+        var selectedMember = $(this).children("option:selected").text();
+        var arrayCastMembers = @Html.Raw(Json.Encode(@ViewBag.CastMembers));
+        if (selectedMember != "Select a Cast Member") {
+            if (!$('#Recipient').val() || arrayCastMembers.indexOf($('#Recipient').val()) > -1)
+            {
+                document.getElementById("Recipient").value = selectedMember;
+            }
+        }
+    });
+
+</script>
+
+}

@@ -1,0 +1,136 @@
+﻿@model IEnumerable<TheatreCMS.Models.Award>
+
+@{
+    ViewBag.Title = "Awards";
+}
+<div class="awards">
+  <h2>Awards</h2>
+
+  @*
+        @Html.ActionLink("Create New", "Create")
+    </p>*@
+
+
+  <!--light Navbar for Creating & Searching Content-->
+  <nav class="navbar navbar-light">
+    <div class="navbar-nav mr-auto mt-2 mt-lg-0">
+      <button class="iconBtn" onclick="window.location.href ='@Url.Action("Create", "Awards")'">
+        <!-- or buttons can be in their own container-->
+        <i class="fa fa-plus-square fa-fw"></i>Create New<!-- This button is a link to a different page -->
+      </button>
+    </div>
+    <form class="form-inline my-2 my-lg-0">
+      <!--filters table values based on text value-->
+      <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" id="searchFilter">
+      <!-- clears search bar and resets to normal page after the onclick-->
+      <button class="iconBtn" type='button' title="Reset Search" id="clearSearch">
+        <!--Code below was initially part of above button, separated and commented out to replace with clearSearch function in jQuery-->
+        <!--onclick="document.getElementById('Search').value = ''; $('#award-search tr').show(); "-->
+        <i class="fas fa-undo"></i> <!--This button refreshes the page-->
+      </button>
+    </form>
+  </nav>
+
+
+  <table class="table" style="color:white">
+    <tr>
+      <th>
+        @Html.DisplayNameFor(model => model.Production.Title)
+      </th>
+      <th>
+        @Html.DisplayNameFor(model => model.Year)
+      </th>
+      <th>
+        @Html.DisplayNameFor(model => model.Name)
+      </th>
+      <th>
+        @Html.DisplayNameFor(model => model.Type)
+      </th>
+      <th>
+        @Html.DisplayNameFor(model => model.Category)
+      </th>
+      <th>
+        @Html.DisplayNameFor(model => model.Recipient)
+      </th>
+      <th>
+        @Html.DisplayNameFor(model => model.OtherInfo)
+      </th>
+      <th>Options</th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+      <tbody id="awardTable">
+        <tr>
+          <td>
+            @Html.DisplayFor(modelItem => item.Production.Title)
+          </td>
+          <td>
+            @Html.DisplayFor(modelItem => item.Year)
+          </td>
+          <td>
+            @Html.DisplayFor(modelItem => item.Name)
+          </td>
+          <td>
+            @Html.DisplayFor(modelItem => item.Type)
+          </td>
+          <td>
+            @Html.DisplayFor(modelItem => item.Category)
+          </td>
+          <td>
+            @if (item.CastMemberId != null)
+            {
+
+
+              <i class="fa fa-info-circle" data-target="#CastMemberInfo" onclick="getCastMemberDetails(@item.CastMemberId)">
+              </i>
+
+              <span class="font-italic">
+                @Html.DisplayFor(modelItem => item.CastMember.Name)
+              </span>
+            }
+            else
+            {
+              @Html.DisplayFor(modelItem => item.Recipient)
+            }
+          </td>
+          <td>
+            @Html.DisplayFor(modelItem => item.OtherInfo)
+          </td>
+          <td>
+            <button class="iconBtn" onclick="window.location.href ='@Url.Action("Edit", "Awards",  new { id = item.AwardId } )'">
+              <!-- or buttons can be in their own container-->
+              <i class="fa fa-edit fa-fw"></i>Edit<!-- This button is a link to a different page -->
+            </button>
+            <button class="iconBtn" onclick="window.location.href ='@Url.Action("Delete", "Awards",  new { id = item.AwardId } )'">
+              <!-- or buttons can be in their own container-->
+              <i class="fa fa-trash-alt fa-fw"></i>Delete<!-- This button is a link to a different page -->
+            </button>
+            <button class="iconBtn" onclick="window.location.href ='@Url.Action("Details", "Awards",  new { id = item.AwardId } )'">
+              <!-- or buttons can be in their own container-->
+              <i class="fa fa-info-circle fa-fw"></i>Details<!-- This button is a link to a different page -->
+            </button>
+          </td>
+        </tr>
+      </tbody>
+
+    }
+    @*onclick="window.location.href ='@Url.Action("Details", "CastMembers", new { id = item.CastMemberId })'" class="fa fa-info-circle fa-fw" data-toggle="modal" data-target="#CastMemberInfo">*@
+  </table>
+</div>
+
+<!--Filter table values based off text in search bar, refresh button undoes filter.-->
+<script>
+  $(document).ready(function() {
+    $("#searchFilter").on("keyup", function() {
+      var searchText = $(this).val().toLowerCase();
+      $("#awardTable tr").filter(function() {
+        $(this).toggle($(this).text().toLowerCase().indexOf(searchText) > -1)
+      });
+    });
+    $('#clearSearch').click(function () {
+      $("#searchFilter").val("");
+      $("#searchFilter").trigger("keyup")
+    });
+  });
+</script>

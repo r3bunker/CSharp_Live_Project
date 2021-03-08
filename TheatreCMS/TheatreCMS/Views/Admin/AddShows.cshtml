@@ -1,0 +1,93 @@
+﻿@model TheatreCMS.Models.AdminSettings
+
+@{
+    ViewBag.Title = "AddShows";
+}
+
+
+<div class="container" id="dash">
+    <form>
+        <div class="form-group">
+            <h2>Add Shows</h2>
+            <label>Shows:</label>
+            <select class="form-group">
+                <option selected>Choose...</option>
+                <option value="Wicked">Wicked</option>
+                <option value="How to Succeed in Business Without Really Trying">How to Succeed in Business Without Really Trying</option>
+                <option value="The Book of Mormon">The Book of Mormon</option>
+                <option value="Hamilton">Hamilton</option>
+                <option value="Phantom of the Opera">Phantom of the Opera</option>
+            </select>
+        </div>
+
+        <div>
+            <h3>Matinee Days</h3>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="Monday">
+                <label class="form-check-label" for="inlineCheckbox1">Monday</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="Tuesday">
+                <label class="form-check-label" for="inlineCheckbox2">Tuesday</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="Wednesday">
+                <label class="form-check-label" for="inlineCheckbox3">Wednesday</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="Thursday">
+                <label class="form-check-label" for="inlineCheckbox4">Thursday</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="Friday">
+                <label class="form-check-label" for="inlineCheckbox5">Friday</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="Saturday">
+                <label class="form-check-label" for="inlineCheckbox6">Saturday</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="Sunday">
+                <label class="form-check-label" for="inlineCheckbox7">Sunday</label>
+            </div>
+        </div>
+
+        <div>
+            <h3>Evening Days</h3>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="Monday">
+                <label class="form-check-label" for="inlineCheckbox1">Monday</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="Tuesday">
+                <label class="form-check-label" for="inlineCheckbox2">Tuesda</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="Wednesday">
+                <label class="form-check-label" for="inlineCheckbox3">Wednesday</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="Thursday">
+                <label class="form-check-label" for="inlineCheckbox4">Thursday</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="Friday">
+                <label class="form-check-label" for="inlineCheckbox5">Friday</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="Saturday">
+                <label class="form-check-label" for="inlineCheckbox6">Saturday</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="inlineCheckbox3" value="Sunday">
+                <label class="form-check-label" for="inlineCheckbox7">Sunday</label>
+            </div>
+        </div>
+
+        <div class="iconBtnContainer">
+            <button type="submit" class="iconBtn">
+                <i class="fa fa-plus-square fa-fw"></i>Create Shows
+            </button>
+        </div>
+    </form>
+    </div>

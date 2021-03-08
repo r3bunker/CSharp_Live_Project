@@ -1,0 +1,160 @@
+﻿@model TheatreCMS.Models.Photo
+@{
+  ViewBag.Title = "Edit";
+}
+
+<h2>Edit</h2>
+
+@{
+  // Create a global scope variable to assign the output of the FindDependencies() method.
+  var dependencies = TheatreCMS.Controllers.PhotoController.FindDependencies(Model.PhotoId);
+}
+
+@using (Html.BeginForm("Edit", "Photo", null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+  @Html.AntiForgeryToken()
+  <div class="formContainer2 ">
+    <div class="form-horizontal">
+      <h4 class="formHeader">Photo</h4>
+      <hr />
+      <div class="inputBox2">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.PhotoId)
+
+        <div class="form-group">
+          <img class="medium_size" src='@Url.Action("DisplayPhoto", "Photo", new { id = Model.PhotoId })' />
+          <p class="font-weight-bolder lead">Height :  @Html.DisplayFor(model => model.OriginalHeight) px | Width : @Html.DisplayFor(model => model.OriginalWidth) px</p>
+          @*@Html.LabelFor(model => model.PhotoFile, htmlAttributes: new { @class = "control-label col-md-4 inputLabel" })
+            <div class="col-md-10 formBox">
+                @Html.EditorFor(model => model.PhotoFile, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.PhotoFile, "", new { @class = "text-danger" })
+            </div>*@
+        </div>
+
+        <div class="form-group">
+          @Html.LabelFor(model => model.PhotoFile, htmlAttributes: new { @class = "control-label col-md-4 inputLabel" })
+          <div class="col-md-10 formBox">
+            @Html.TextBoxFor(model => model.PhotoFile, new { type = "file", Name = "file", Id = "PhotoFile", Class = "fileSelect" })
+            @Html.Raw(HttpUtility.HtmlDecode(Html.ValidationMessageFor(model => model.PhotoFile, "", new { @class = "text-white" }).ToHtmlString()))
+            @*@Html.ValidationMessageFor(model => model.PhotoFile, "", new { @class = "text-danger" });*@
+          </div>
+        </div>
+
+        @*<div class="form-group">
+              @Html.LabelFor(model => model.OriginalHeight, htmlAttributes: new { @class = "control-label col-md-4 inputLabel" })
+              <div class="col-md-10 formBox">
+                  @Html.EditorFor(model => model.OriginalHeight, new { htmlAttributes = new { @class = "form-control" } })
+                  @Html.ValidationMessageFor(model => model.OriginalHeight, "", new { @class = "text-danger" })
+              </div>
+          </div>
+
+          <div class="form-group">
+              @Html.LabelFor(model => model.OriginalWidth, htmlAttributes: new { @class = "control-label col-md-4 inputLabel" })
+              <div class="col-md-10 formBox">
+                  @Html.EditorFor(model => model.OriginalWidth, new { htmlAttributes = new { @class = "form-control" } })
+                  @Html.ValidationMessageFor(model => model.OriginalWidth, "", new { @class = "text-danger" })
+              </div>
+          </div>*@
+
+        <div class="form-group">
+          @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label col-md-4 inputLabel" })
+          <div class="col-md-10 formBox">
+            @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-white" })
+          </div>
+        </div>
+
+        @* Use variable dependencies to check for an evaluation of false. *@
+        @if (!dependencies.HasDependencies)
+        {
+          <div>
+            This photo is not being used
+          </div>
+        }
+        else
+        {
+          <div>
+            This photo is being used by the following items:
+          </div>
+          <div>
+            <ul class="dependency">
+              @* Foreach production in the dependencies.ProductionPhotos List, get the title and season of each production. *@
+              @foreach (var productionPhoto in dependencies.ProductionPhotos)
+              {
+                <li>
+                  @productionPhoto.Title - Season: @productionPhoto.Production.Season
+                  @Html.ActionLink("View", "Details", "ProductionPhotos", new { id = productionPhoto.ProPhotoId }, new { @class = "badge badge-pill badge-dark" })
+                  @Html.ActionLink("Edit", "Edit", "ProductionPhotos", new { id = productionPhoto.ProPhotoId}, new { @class = "badge badge-pill badge-dark" })
+                </li>
+              }
+              @* Foreach sponsor in the dependencies.Sponsors List, get the name of each sponsor. *@
+              @foreach (var sponsor in dependencies.Sponsors)
+              {
+                <li>
+                  @sponsor.Name
+                  @Html.ActionLink("View", "Details", "Sponsors", new { id = sponsor.SponsorId }, new { @class = "badge badge-pill badge-dark" })
+                  @Html.ActionLink("Edit", "Edit", "Sponsors", new { id = sponsor.SponsorId }, new { @class = "badge badge-pill badge-dark" })
+                </li>
+              }
+              @foreach (var castMember in dependencies.CastMembers)
+              {
+                <li>
+                  @castMember.Name, @castMember.MainRole
+                  @Html.ActionLink("View", "Details", "CastMembers", new { id = castMember.CastMemberID }, new { @class = "badge badge-pill badge-dark" })
+                  @Html.ActionLink("Edit", "Edit", "CastMembers", new { id = castMember.CastMemberID }, new { @class = "badge badge-pill badge-dark" })
+                </li>
+              }
+            </ul>
+          </div>
+        }
+
+        <!--Will display warning message only if the photo has dependencies-->
+        @* Use variable dependencies to check for an evaluation of true. *@
+        @if (dependencies.HasDependencies)
+        {
+          <!-- Button trigger modal -->
+          <button type="button" class="submitButton2" data-toggle="modal" data-target="#exampleModalCenter">
+            Save
+          </button>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLongTitle">Warning</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    You are trying to upload an image for a photo that has dependencies.  Are you sure you want to proceed?
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-main" data-dismiss="modal">No</button> <!--"No" button highlighted blue by default--> <!-- btn-main originally btn-primary, save for possible reversion -->
+                                    <button type="submit" class="btn btn-main" value="Save">Yes</button> <!-- btn-main originally btn-secondary, save for possible reversion -->
+
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+        else
+        {
+          <div class="form-group">
+            <div class="col-md-offset-2 col-md-10 formBox">
+              <input type="submit" value="Save" class="submitButton2" />
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+  <div>
+    @Html.ActionLink("Back to List", "Index")
+  </div>
+}
+
+@section Scripts {
+  @Scripts.Render("~/bundles/jqueryval")
+}

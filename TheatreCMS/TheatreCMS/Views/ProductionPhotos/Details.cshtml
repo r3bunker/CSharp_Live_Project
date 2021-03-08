@@ -1,0 +1,109 @@
+﻿@using TheatreCMS.Controllers
+@model TheatreCMS.Models.ProductionPhotos
+
+@{
+    ViewBag.Title = "Details";
+}
+
+
+
+    <div class="container">
+        <h2>Production Photos - Details</h2>
+        <div>
+            <hr />
+            <div class="row productionphotos-cardborder">
+                <div class="col-sm-6">
+                    <div class="card bg-black">
+                        <div class="card-body">
+                            <h5>
+                                Photo @Html.DisplayNameFor(model => model.Title)
+                            </h5>
+                            <p class="card-text">
+                                @Html.DisplayFor(model => model.Title)
+                            </p>
+                            <h5>
+                                @Html.DisplayNameFor(model => model.Description)
+                            </h5>
+                            <p class="card-text">
+                                @Html.DisplayFor(model => model.Description)
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="card bg-black">
+                        <div class="card-body">
+                            <h5>
+                                Production @Html.DisplayNameFor(model => model.Production.Title)
+                            </h5>
+                            <p class="card-text">
+                                @Html.DisplayFor(model => model.Production.Title)
+                            </p>
+                            <h5>
+                                @Html.DisplayNameFor(model => model.Production.Season)
+                            </h5>
+                            <p class="card-text">
+                                @Html.DisplayFor(model => model.Production.Season)
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="center">
+                <dl>
+                    @*@Html.DisplayFor(model => model.PhotoId)*@
+                    <td>
+                        <img src='@Url.Action("DisplayPhoto", "Photo", new { id = Model.PhotoId })' />
+                    </td>
+                </dl>
+            </div>
+        </div>
+        <p>
+            @Html.ActionLink("Edit", "Edit", new { id = Model.ProPhotoId }) |
+            @Html.ActionLink("Back to List", "Index")
+        </p>
+    </div>
+
+
+
+
+
+
+        @*<dt>
+                    @Html.DisplayNameFor(model => model.Production)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Production.Title)
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Production.Season)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Production.Season)
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => model.PhotoId)
+                </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PhotoId)
+            <td>
+                <img src='@Url.Action("DisplayPhoto", "Photo", new { id = Model.PhotoId })' />
+            </td>
+        </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.Title)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Title)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.Description)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Description)
+                </dd>*@

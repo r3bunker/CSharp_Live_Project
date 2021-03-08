@@ -1,0 +1,137 @@
+﻿@model TheatreCMS.Models.Sponsor
+@using TheatreCMS.Controllers
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>Edit</h2>
+
+
+@using (Html.BeginForm("Edit", "Sponsors", null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="formContainer2 ">
+        <div class="form-horizontal">
+            <h4 class="formHeader">Sponsor</h4>
+            <hr />
+            <div class="inputBox2">
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                @*sends the SponsorId and LogoId of each sponsor object to controller*@
+                @Html.HiddenFor(model => model.SponsorId)
+                @Html.HiddenFor(model => model.PhotoId)
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-4 inputLabel" })
+                    <div class="col-md-10 formBox">
+                        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="control-label col-md-4 inputLabel mx-auto">Current Logo</div>
+                    <img class="medium_size my-3" src="@Url.Action("DisplayPhoto", "Photo", new { id = Model.PhotoId })" alt="Sponsor Logo Image" />
+
+                    <div class="control-label col-md-4 inputLabel mx-auto">New Logo</div>
+
+                    <div class="col-md-auto">
+                        <input type="file" class="fileSelect mb-2" name="upload"
+                               onchange="showPreview(this)" />
+                        @*@Html.EditorFor(model => model.LogoId, new { htmlAttributes = new { @class = "form-control" } })*@
+                        @*{
+                                <img src="@Url.Action("DisplayPhoto", "Photo", new { id = item.LogoId })" />
+                string img = "";
+                if (Model.Logo != null)
+                {
+                    byte[] thumbBytes = ImageUploadController.ImageThumbnail(Model.Logo, 100, 100);
+                    var base64 = System.Convert.ToBase64String(thumbBytes);
+                    img = String.Format("data:image/png;base64,{0}", base64);
+                }
+
+            <img src="@img" />}*@
+                        @Html.ValidationMessageFor(model => model.PhotoId, "", new { @class = "text-danger" })
+                    </div>
+                    <div id="logo_preview_div" class="col-md-auto"></div>
+
+                </div>
+
+                
+
+                @*<div class="form-group">
+                    @Html.LabelFor(model => model.Photo.OriginalHeight, htmlAttributes: new { @class = "control-label col-md-4 inputLabel" })
+                    <div class="col-md-10 formBox">
+                        @Html.EditorFor(model => model.Photo.OriginalHeight, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Photo.OriginalHeight, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Photo.OriginalWidth, htmlAttributes: new { @class = "control-label col-md-4 inputLabel" })
+                    <div class="col-md-10 formBox">
+                        @Html.EditorFor(model => model.Photo.OriginalWidth, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Photo.OriginalWidth, "", new { @class = "text-danger" })
+                    </div>
+                </div>*@
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Current, htmlAttributes: new { @class = "control-label col-md-2 inputLabel" })
+                    <div class="col-md-10 formBox">
+                        @Html.CheckBoxFor(model => model.Current, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Current, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Link, htmlAttributes: new { @class = "control-label col-md-4 inputLabel" })
+                    <div class="col-md-10 formBox">
+                        @Html.TextBoxFor(model => model.Link, new { type = "url", Class = "form-control" })
+                        @*@Html.EditorFor(model => model.Link, new { htmlAttributes = new { @class = "form-control" } })*@
+                        @Html.ValidationMessageFor(model => model.Link, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10 formBox">
+                        <button type="submit" class="iconBtn">
+                            <i class="fa fa-save fa-fw"></i>Save
+                        </button>
+                        @*<input type="submit" value="Save" class="submitButton2" />*@
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<div>
+    <div class="iconBtnContainer">
+        <button class="iconBtn" onclick="window.location.href ='@Url.Action("Index", "Sponsors")'">
+            <i class="fa fa-hand-point-left fa-fw"></i>Back To List
+        </button>
+    </div>
+
+    @*@Html.ActionLink("Back to List", "Index")*@
+</div>
+
+
+<script>
+    //shows a preview of the file selected
+    function showPreview(input) {
+        var img_div = document.getElementById("logo_preview_div");
+        if (img_div.hasChildNodes()) {
+            img_div.removeChild(img_div.childNodes[0]);
+        }
+        if (input.files.length != 0) {
+            var img = document.createElement("img");
+            img.src = window.URL.createObjectURL(input.files[0]);
+            img.alt = "Sponsor Logo Preview";
+            img.className = "medium_size";
+            img_div.appendChild(img);
+        }
+    }
+
+</script>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

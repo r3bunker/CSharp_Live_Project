@@ -1,0 +1,34 @@
+{
+  "season_productions": {
+    "fall": 4,
+    "winter": 3,
+    "spring": 2
+  },
+  "FooterInfo": {
+    "AddressStreet": "2110 SE 10TH AVE",
+    "AddressCityStateZip": "PORTLAND OR 97214",
+    "PhoneSales": "(503) 482-8655",
+    "PhoneGeneral": "(503) 482-8655",
+    "CopyrightYear": 2022,
+    "EmailAddress": "test2@test.com"
+  },
+  "models_missing_photos": {
+    "Productions": [],
+    "CastMembers": [],
+    "Sponsors": [],
+    "ProductionPhotos": []
+  },
+  "recent_definition": {
+    "bUsingSpan": false,
+    "span": 57,
+    "date": "2020-04-29T00:00:00"
+  },
+  "on_stage": 5,
+  "current_season": 24,
+  "current_productions": [
+    4
+  ],
+  "BugReport": {
+    "tab_open": true
+  }
+}

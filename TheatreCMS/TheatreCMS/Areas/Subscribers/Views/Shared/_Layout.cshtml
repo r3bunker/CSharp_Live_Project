@@ -1,0 +1,78 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+</head>
+
+<body class="bg_1">
+  <nav class="navbar fixed-top navbar-expand-lg sub-navbar-back sub-dropdown-content">
+    <div class="navbar-collapse collapse w-100 order-1 order-lg-0 dual-collapse2">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="nav-link sub-navbar-btn" href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link sub-navbar-btn" href="@Url.Action("Index", "SeasonManager")">My Season</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link sub-navbar-btn" href="@Url.Action("Index", "Subscriber")">My Account</a>
+        </li>
+      </ul>
+    </div>
+    <div class="mx-auto order-0 order-lg-1">
+      <a class="navbar-brand mx-auto sub-navbar-btn-h" href="@Url.Action("Index", "Dashboard")">SUBSCRIPTION AREA</a>
+      <button class="navbar-toggler sub-navbar-collapse-btn" type="button" data-toggle="collapse" data-target=".dual-collapse2">
+        <span class="navbar-toggler-icon sub-toggler-icon"><i class="fas fa-align-justify"></i></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+      <ul class="navbar-nav ml-auto">
+        <li>
+          <div>
+            @Html.Partial("_LoginPartial")
+          </div>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link sub-navbar-btn sub-btn-main" href="@Url.Action("Index", "Home", new { area = "" })">Main Site</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  @*<div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                </ul>
+            </div>
+        </div>
+    </div>*@
+
+  <div class="container body-content">
+    @RenderBody()
+    <hr />
+    <footer>
+      <p>&copy; @DateTime.Now.Year</p>
+    </footer>
+  </div>
+
+  @Scripts.Render("~/bundles/jquery")
+  @Scripts.Render("~/bundles/bootstrap")
+  @Scripts.Render("~/bundles/javascript")
+  @Scripts.Render("~/bundles/fullcalendar")
+  @RenderSection("scripts", required: false)
+</body>
+</html>

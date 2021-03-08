@@ -1,0 +1,117 @@
+﻿@model TheatreCMS.Models.RegisterViewModel
+@{
+    ViewBag.Title = "Register";
+}
+
+<br />
+<h2>@ViewBag.Title.</h2>
+
+@using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal", @role = "form" }))
+{
+    @Html.AntiForgeryToken();
+        <h4 class="heading">Create a new account.</h4>
+        <p class="small-heading"> If you already have an account, please <a href="~/Account/Login">Log in</a>.</p>
+        <hr />
+@Html.ValidationSummary("", new { @class = "text-danger" })
+<div class="container-fluid palette-body justify-content-center">
+        <h5 class="registerTextHead center pt-5 pb-3">Account Info</h5>
+
+        <div class="row justify-content-center">
+            <div class="col-auto">
+                <div class="registerText">
+                    @Html.LabelFor(m => m.FirstName, new { @class = "control-label" })
+                    <div class="registerInput">
+                        @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control rounded-0", @type = "name" })
+                    </div>
+                </div>
+                <div class="registerText">
+                    @Html.LabelFor(m => m.LastName, new { @class = "control-label" })
+                    <div class="registerInput">
+                        @Html.TextBoxFor(m => m.LastName, new { @class = "form-control rounded-0", @type = "name" })
+                    </div>
+                </div>
+                <div class="registerText">
+                    @Html.LabelFor(m => m.Email, new { @class = "control-label" })
+                    <div class="registerInput">
+                        @Html.TextBoxFor(m => m.Email, new { @class = "form-control rounded-0", @type = "email" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-auto">
+                <div class="registerText">
+                    @Html.LabelFor(m => m.UserName, new { @class = "control-label" })
+                    <div class="registerInput">
+                        @Html.TextBoxFor(m => m.UserName, new { @class = "form-control rounded-0", @type = "name" })
+                    </div>
+                </div>
+                <div class="registerText">
+                    @Html.LabelFor(m => m.Password, new { htmlAttributes = new { @class = "control-label" } })
+                    <div class="registerInput">
+                        @Html.TextBoxFor(m => m.Password, new { @class = "form-control rounded-0", @type = "password" })
+                    </div>
+                </div>
+                <div class="registerText">
+                    @Html.LabelFor(m => m.ConfirmPassword, new { @class = "control-label" })
+                    <div class="registerInput">
+                        @Html.TextBoxFor(m => m.ConfirmPassword, new { @class = "form-control rounded-0", @type = "password" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+
+        @*<h5 class="registerTextHead center">Address</h5>*@
+
+        <div class="row justify-content-center">
+            <div class="col-auto">
+                <div class="registerText">
+                    @Html.LabelFor(m => m.StreetAddress, new { @class = "control-label" })
+                    <div class="registerInput">
+                        @Html.TextBoxFor(m => m.StreetAddress, new { @class = "form-control rounded-0", @type = "address" })
+                    </div>
+                </div>
+                <div class="registerText">
+                    @Html.LabelFor(m => m.City, new { @class = "control-label" })
+                    <div class="registerInput">
+                        @Html.TextBoxFor(m => m.City, new { @class = "form-control rounded-0", @type = "city" })
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="col-auto">
+                <div class="registerText">
+                    @Html.LabelFor(m => m.State, new { @class = "control-label" })
+                    <div class="registerInput">
+                        @Html.TextBoxFor(m => m.State, new { @class = "form-control rounded-0", @type = "state" })
+                    </div>
+                </div>
+                <div class="registerText">
+                    @Html.LabelFor(m => m.ZipCode, new { @class = "control-label" })
+                    <div class="registerInput">
+                        @Html.TextBoxFor(m => m.ZipCode, new { @class = "form-control rounded-0", @type = "zipcode" })
+                    </div>
+                    <br />
+                </div>
+            </div>
+        </div>
+        <br />
+
+
+        <div class="center">
+            <button type="submit" class="btn btn-main registerButton w-25 mb-5" value="Register">Register</button>
+        </div>
+ </div>
+    
+
+<br />
+
+
+
+
+
+
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

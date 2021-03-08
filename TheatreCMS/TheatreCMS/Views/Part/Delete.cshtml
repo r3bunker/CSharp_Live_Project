@@ -1,0 +1,74 @@
+﻿@model TheatreCMS.Models.Part
+  @using TheatreCMS.Controllers
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+  <div class="card mx-auto col-lg-6 bg-black justify-content-center">
+    <h3 class="pt-3 pb-2">Are you sure you want to delete this Part?</h3>
+    <div>
+
+
+      <dl class="dl-horizontal">
+        <dt>
+          @Html.DisplayNameFor(model => model.Production)
+        </dt>
+
+        <dd>
+          @Html.DisplayFor(model => model.Production.Title)
+        </dd>
+
+        <dt>
+          @Html.DisplayNameFor(model => model.Person)
+        </dt>
+
+        <dd>
+          @Html.DisplayFor(model => model.Person.Name)
+        </dd>
+
+        <dt>
+          @Html.DisplayNameFor(model => model.Character)
+        </dt>
+
+        <dd>
+          @Html.DisplayFor(model => model.Character)
+        </dd>
+
+        <dt>
+          @Html.DisplayNameFor(model => model.Type)
+        </dt>
+
+        <dd>
+          @Html.DisplayFor(model => model.Type)
+        </dd>
+
+        <dt>
+          @Html.DisplayNameFor(model => model.Details)
+        </dt>
+
+        <dd>
+          @Html.DisplayFor(model => model.Details)
+        </dd>
+
+      </dl>
+
+      @using (Html.BeginForm())
+      {
+        @Html.AntiForgeryToken()
+
+    <div class="row justify-content-center">
+
+      <button type="button" class="iconBtn" onclick="window.location.href ='@Url.Action("Index", "Part")'">
+        <i class="fa fa-hand-point-left fa-fw"></i>Back To List
+      </button>
+      <button class="iconBtn">
+        <i class="fa fa-trash-alt fa-fw"></i>Delete
+      </button>
+    </div>
+
+
+
+      }
+    </div>
+  </div>

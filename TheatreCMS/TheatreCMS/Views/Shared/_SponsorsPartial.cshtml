@@ -1,0 +1,42 @@
+﻿@model IEnumerable<TheatreCMS.Models.Sponsor>
+<div class="text-center">
+    <h3 class="sponsor-title">Our Sponsors</h3>
+
+    @foreach (var item in Model)
+    {
+        <figure class="sponsors-partial-column">
+            @*<img class="sponsor-partial-pic" src="data:image;base64,@System.Convert.ToBase64String(item.Logo)" />*@
+            <div>
+                <a href="@item.Link" target="_blank">
+
+                    <img src="@Url.Action("DisplayPhoto", "Photo", new { id = item.PhotoId })" style="width:350px" alt="Sponsor Logo Image" /> @*temporary css styling*@
+                </a>
+            </div>
+            <br />
+            <figcaption class="sponsor-text">@Html.DisplayFor(modelItem => item.Name)</figcaption>
+        </figure>
+    }
+    @*<div class="center">
+        <button type="button" class="btn btn-lg sponsor-donate-btn">Donate</button>
+    </div>*@
+
+</div>
+
+
+
+
+@*<div id="sponsor-body">
+        <div class="synopsisTitle center">Our Proud Sponsors</div>
+        <div class="center">
+            <img class="sponsor-partial-pic" src="~/Content/Images/Ellyn-Bye-Logo.png" />
+            <img class="sponsor-partial-pic" src="~/Content/Images/OCF-logo-in-white-with-tagline-lg.png" />
+            <img class="sponsor-partial-pic" src="~/Content/Images/RACC2.png" />
+            <img class="sponsor-partial-pic" src="~/Content/Images/Ninkasi-white-text.png" />
+            <img class="sponsor-partial-pic" src="~/Content/Images/LogoRoundColor.png" />
+        </div>
+        <div class="center">
+            <button type="button" class="btn btn-lg sponsor-donate-btn">Donate</button>
+        </div>
+    </div>*@
+
+

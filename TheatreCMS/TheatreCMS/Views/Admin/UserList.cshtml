@@ -1,0 +1,133 @@
+﻿@model IEnumerable<TheatreCMS.Models.ApplicationUser>
+@using TheatreCMS.Controllers
+@{
+    ViewBag.Title = "UserList";
+    string DecideCaret(string fieldName)
+    {
+        if (ViewBag.SortOrder.Contains(fieldName))
+        {
+            string caret = ViewBag.SortOrder.Contains("_desc") ? "&#9662;" : "&#9652;";
+            return caret;
+        }
+        return null;
+    }
+}
+
+<h2>UserList</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table-styling">
+    <tr class="tr-styling">
+        <th class="th-styling">
+            @Html.Raw(DecideCaret(Html.DisplayNameFor(model => model.UserName).ToString()))
+            @Html.ActionLink(Html.DisplayNameFor(model => model.UserName).ToString(), "UserList", "Admin", new { requestedSort = "UserName", currentSortOrder = ViewBag.SortOrder }, new { @class = "text-white" })
+        </th>
+        <th class="th-styling">
+            @Html.Raw(DecideCaret(Html.DisplayNameFor(model => model.FirstName).ToString()))
+            @Html.ActionLink(Html.DisplayNameFor(model => model.FirstName).ToString(), "UserList", "Admin", new { requestedSort = "FirstName", currentSortOrder = ViewBag.SortOrder }, new { @class = "text-white" })
+        </th>
+        <th class="th-styling">
+            @Html.Raw(DecideCaret(Html.DisplayNameFor(model => model.LastName).ToString()))
+            @Html.ActionLink(Html.DisplayNameFor(model => model.LastName).ToString(), "UserList", "Admin", new { requestedSort = "LastName", currentSortOrder = ViewBag.SortOrder }, new { @class = "text-white" })
+        </th>
+        <th class="th-styling">
+            @Html.Raw(DecideCaret(Html.DisplayNameFor(model => model.Role).ToString()))
+            @Html.ActionLink(Html.DisplayNameFor(model => model.Role).ToString(), "UserList", "Admin", new { requestedSort = "Role", currentSortOrder = ViewBag.SortOrder }, new { @class = "text-white" })
+        </th>
+        <th class="th-styling">
+            <div class="text-white">
+            Options
+            </div>
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr class="tr-styling">
+            <td class="td-styling">
+                @Html.DisplayFor(modelItem => item.UserName)
+            </td>
+            <td class="td-styling">
+                @Html.DisplayFor(modelItem => item.FirstName)
+            </td>
+            <td class="td-styling">
+                @Html.DisplayFor(modelItem => item.LastName)
+            </td>
+            <td class="td-styling">
+                @Html.DisplayFor(modelItem => item.Role)
+            </td>
+            <td class="text-center">
+              @if (item.Role == "Subscriber")
+              {
+                <div class="text-center">
+                  <a href="@Url.Action("Details", "Subscriber", new { id = item.SubscriberPerson.SubscriberId, area = "Subscribers" }, null)">Details</a>&nbsp;|&nbsp;
+                  <a href="@Url.Action("Edit", "Subscriber", new { id = item.SubscriberPerson.SubscriberId, area="Subscribers"}, null)">Edit</a>&nbsp;|&nbsp;
+                  <a href="#" data-toggle="modal" data-target="#@item.UserName">Delete</a>
+                </div>
+                <!-- Delete Confirmation Modal -->
+                <div class="modal fade" id="@item.UserName" tabindex="-1" aria-labelledby="confirmDeleteUser" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title text-danger" id="exampleModalLabel">Confirm Delete User</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body text-danger">
+                        Are you sure you want to delete @item.UserName?
+                      </div>
+                      <div class="modal-footer">
+                        @using (Html.BeginForm("DeleteUser", "Admin", FormMethod.Post))
+                        {
+                          @Html.AntiForgeryToken()
+                          <input type="hidden" id=@item.Id value=@item.Id name="id" />
+                          <button type="submit" class="iconBtn"><i class="fa fa-trash-alt fa-fw"></i>Delete</button>
+                          <button type="button" class="iconBtn bg-secondary" data-dismiss="modal" aria-label="Close">Cancel</button>
+                            }
+                        </div>
+                    </div>
+                  </div>
+                </div>
+
+              }
+              @if (item.Role == "Member")
+              {
+                <div class="">
+                  <a href="@Url.Action("Details", "CastMembers", new { id = item.CastMemberUserID}, null)">Details</a>&nbsp;|&nbsp;
+                  <a href="@Url.Action("Edit", "CastMembers", new { id = item.CastMemberUserID}, null)">Edit</a>&nbsp;|&nbsp;
+                  <a href="#" data-toggle="modal" data-target="#@item.UserName">Delete</a>
+                </div>
+
+                <!-- Delete Confirmation Modal -->
+                <div class="modal fade" id="@item.UserName" tabindex="-1" aria-labelledby="confirmDeleteUser" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title text-danger" id="exampleModalLabel">Confirm Delete User</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body text-danger">
+                        Are you sure you want to delete @item.UserName?
+                      </div>
+                      <div class="modal-footer">
+                        @using (Html.BeginForm("DeleteUser", "Admin", FormMethod.Post))
+                        {
+                          @Html.AntiForgeryToken()
+                          <input type="hidden" id=@item.Id value=@item.Id name="id" />
+                          <button type="submit" class="iconBtn"><i class="fa fa-trash-alt fa-fw"></i>Delete</button>
+                          <button type="button" class="iconBtn bg-secondary" data-dismiss="modal" aria-label="Close">Cancel</button>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              }
+            </td>
+        </tr>
+    }
+ </table>

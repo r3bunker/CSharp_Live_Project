@@ -1,0 +1,96 @@
+﻿@model TheatreCMS.Areas.Subscribers.Models.Subscriber
+
+@{
+    ViewBag.Title = "Delete Subscriber";
+    ViewBag.User = Model.SubscriberPerson.FirstName + " " + Model.SubscriberPerson.LastName;
+}
+
+<div class="card sub-delete-back">
+  <div class="card-body">
+    <h2 class="card-title text-center">Delete Subscriber</h2>
+
+  <h3 class="text-center">Are you sure you want to delete this?</h3>
+    <div class="card-text">
+      <hr />
+      <h5 class="font-weight-bold text-center">@(ViewBag.User)</h5>
+      <table class="mx-auto">
+          <tr>
+            <th>
+              @Html.DisplayNameFor(model => model.CurrentSubscriber)
+            </th>
+            <td class="sub-delete-table-td">
+              @Html.DisplayFor(model => model.CurrentSubscriber)
+            </td>
+          </tr>
+          <tr>
+              <th>
+                @Html.DisplayNameFor(model => model.HasRenewed)
+              </th>
+              <td class="sub-delete-table-td">
+                @Html.DisplayFor(model => model.HasRenewed)
+              </td>
+          </tr>
+        <tr>
+              <th>
+                @Html.DisplayNameFor(model => model.Newsletter)
+              </th>
+              <td class="sub-delete-table-td">
+                @Html.DisplayFor(model => model.Newsletter)
+              </td>
+        </tr>
+        <tr>
+              <th>
+                @Html.DisplayNameFor(model => model.RecentDonor)
+              </th>
+              <td class="sub-delete-table-td">
+                @Html.DisplayFor(model => model.RecentDonor)
+              </td>
+        </tr>
+        <tr>
+              <th>
+                @Html.DisplayNameFor(model => model.LastDonated)
+              </th>
+              <td class="sub-delete-table-td">
+                @Html.DisplayFor(model => model.LastDonated)
+              </td>
+        </tr>
+        <tr>
+              <th>
+                @Html.DisplayNameFor(model => model.LastDonationAmt)
+              </th>
+              <td class="sub-delete-table-td">
+                @Html.DisplayFor(model => model.LastDonationAmt)
+              </td>
+        </tr>
+        <tr>
+              <th>
+                @Html.DisplayNameFor(model => model.SpecialRequests)
+              </th>
+              <td class="sub-delete-table-td">
+                @Html.DisplayFor(model => model.SpecialRequests)
+              </td>
+        </tr>
+        <tr>
+              <th>
+                @Html.DisplayNameFor(model => model.Notes)
+              </th>
+              <td class="sub-delete-table-td">
+                @Html.DisplayFor(model => model.Notes)
+              </td>
+        </tr>
+      </table>
+      </div>
+
+      @using (Html.BeginForm()) {
+          @Html.AntiForgeryToken()
+
+          <div class="form-actions no-color text-center">
+              <input type="submit" value="Delete" class="btn sub-delete-btn my-4" /> <br />
+              <a class="sub-delete-cancel-btn" href="@Url.Action("Index")">Cancel</a>
+              @*<a class="sub-delete-return-btn" href="@Url.Action("Back to List", "Index")">Back to List</a>*@
+          </div>
+      }
+    </div>
+  </div>
+</div>  
+ 

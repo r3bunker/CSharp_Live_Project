@@ -1,0 +1,86 @@
+﻿@model TheatreCMS.Models.Photo
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<link href="https://fonts.googleapis.com/css?family=BioRhyme&display=swap" rel="stylesheet">
+
+<div class="photodetailspagedecorating">
+
+    <h2>Photo Details</h2>
+
+
+    <hr />
+    <dl class="dl-horizontal">
+        
+            
+        <dd class="photo-details-container">
+            <h3 class="text-left">@Html.DisplayFor(model => model.Title)</h3>
+            <img class="large_size m-auto" src='@Url.Action("DisplayPhoto", "Photo", new { id = Model.PhotoId })' />
+            <h6 class="text-right text-muted">@Html.DisplayFor(model => model.OriginalHeight) x @Html.DisplayFor(model => model.OriginalWidth)</h6>
+        </dd>
+            
+        
+        @{
+            // Create a local variable to assign the output of the FindDependencies() method.
+            var dependencies = TheatreCMS.Controllers.PhotoController.FindDependencies(Model.PhotoId);
+        }
+        @*Use variable dependencies.HasDependencies to check for an evaluation of false. *@
+        @if (!dependencies.HasDependencies)
+        {
+            <dd>
+                This photo is not being used
+            </dd>
+        }
+        else
+        {
+            <dd>
+                This photo is being used by the following items:
+            </dd>
+            <dd>
+                <ul>
+                    @* Foreach production in the dependencies.ProductionPhotos List, get the title and season of each production. *@
+                    @foreach (var productionPhoto in dependencies.ProductionPhotos)
+                    {
+                        <li>
+                            @productionPhoto.Title - Season: @productionPhoto.Production.Season
+                            @Html.ActionLink("View", "Details", "ProductionPhotos", new { id = productionPhoto.ProPhotoId }, new { @class = "badge badge-pill badge-danger" })
+                            @Html.ActionLink("Edit", "Edit", "ProductionPhotos", new { id = productionPhoto.ProPhotoId }, new { @class = "badge badge-pill badge-danger" })
+                        </li>
+                    }
+                    @* Foreach sponsor in the dependencies.Sponsors List, get the name of each sponsor. *@
+                    @foreach (var sponsor in dependencies.Sponsors)
+                    {
+                        <li>
+                            @sponsor.Name
+                            @Html.ActionLink("View", "Details", "Sponsors", new { id = sponsor.SponsorId }, new { @class = "badge badge-pill badge-danger" })
+                            @Html.ActionLink("Edit", "Edit", "Sponsors", new { id = sponsor.SponsorId }, new { @class = "badge badge-pill badge-danger" })
+                        </li>
+                    }
+                    @foreach (var castMember in dependencies.CastMembers)
+                    {
+                        <li>
+                            @castMember.Name, @castMember.MainRole
+                            @Html.ActionLink("View", "Details", "CastMembers", new { id = castMember.CastMemberID }, new { @class = "badge badge-pill badge-danger" })
+                            @Html.ActionLink("Edit", "Edit", "CastMembers", new { id = castMember.CastMemberID }, new { @class = "badge badge-pill badge-danger" })
+                        </li>
+                    }
+                </ul>
+            </dd>
+        }
+
+    </dl>
+</div>
+
+
+
+
+<div class="Photo_buttons text-center">
+    <button class="iconBtn" onclick="window.location.href ='@Url.Action("Edit", "Photo" , new { id=Model.PhotoId })'">
+        <i class="fa fa-edit fa-fw"></i>Edit
+    </button>
+    <button class="iconBtn" onclick="window.location.href ='@Url.Action("Index")'">
+        <i class="fa fa-hand-point-left fa-fw"></i>Back To List
+    </button>
+</div>

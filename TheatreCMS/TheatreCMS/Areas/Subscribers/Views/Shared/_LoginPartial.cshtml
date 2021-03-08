@@ -1,0 +1,30 @@
+﻿@using Microsoft.AspNet.Identity
+@if (Request.IsAuthenticated)
+{
+  using (Html.BeginForm("LogOff", "Account", new { area = "" }, FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+  {
+    @Html.AntiForgeryToken()
+
+    <ul class="nav nav-item navbar-nav">
+        <li>
+            @*@Html.ActionLink("Hello " + User.Identity.GetUserName() + "!", "Index", "Manage", new { area = ""}, htmlAttributes: new { title = "Manage", @class = "sub-navbar-register" })*@
+          <a class="nav-link sub-navbar-btn-login" href="@Url.Action("Index", "Manage", new { area = ""})">Hello @User.Identity.GetUserName()!</a>
+        </li>
+        <li><a class="nav-link sub-navbar-btn-login" href="javascript:document.getElementById('logoutForm').submit()">Log Off</a></li>
+    </ul>
+    }
+}
+else
+{
+    <ul class="nav nav-item navbar-nav">
+        <li>
+            
+            @*@Html.ActionLink("Register", "Register", "Account", new { area = ""}, htmlAttributes: new { id = "registerLink", @class = "sub-navbar-register"})*@
+          <a class="nav-link sub-navbar-btn-login" href="@Url.Action("Register", "Account", new { area = ""})">Register</a>
+        </li>
+        <li>
+            @*@Html.ActionLink("Log In", "Login", "Account", new { area = ""}, htmlAttributes: new { id = "loginLink", @class = "sub-navbar-login"})*@
+          <a class="nav-link sub-navbar-btn-login" href="@Url.Action("Login", "Account", new { area = ""})">Login</a>
+        </li>
+    </ul>
+}

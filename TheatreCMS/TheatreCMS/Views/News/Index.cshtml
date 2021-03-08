@@ -1,0 +1,71 @@
+﻿@model IEnumerable<TheatreCMS.Models.News>
+@using TheatreCMS.Controllers
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table text-light">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Headline)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Content)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CreateDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.LastSaveDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PublishDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.EmailDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Hidden)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Headline)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Content)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreateDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LastSaveDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PublishDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EmailDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Hidden)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.NewsId }) |
+                @Html.ActionLink("Details", "Details", new { id = item.NewsId }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.NewsId })
+            </td>
+        </tr>
+    }
+
+</table>

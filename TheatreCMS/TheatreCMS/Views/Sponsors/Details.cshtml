@@ -1,0 +1,79 @@
+﻿@model TheatreCMS.Models.Sponsor
+@using TheatreCMS.Controllers
+
+@{
+    ViewBag.Title = "Details";
+}
+<div class="container text-center">
+    <h2 class="mt-5">Sponsor Details</h2>
+    <div>
+        <hr />
+        <div class="row">
+            <dl class="dl-horizontal justify-content-start col-md-12">
+
+                <dd id="sponsor-details-sponsor-name">
+                    @Html.DisplayFor(model => model.Name)
+                </dd>
+
+
+                @*<dt>
+                        @Html.DisplayNameFor(model => model.LogoId)
+                    </dt>*@
+
+                <dd>
+                    <img src="@Url.Action("DisplayPhoto", "Photo", new { id = Model.PhotoId })" class="large_size" alt="Sponsor Logo Image" />
+                    @*{
+                            string img = "";
+                            if (Model.Logo != null)
+                            {
+                                byte[] thumbBytes = ImageUploadController.ImageThumbnail(Model.Logo, 100, 100);
+                                var base64 = System.Convert.ToBase64String(thumbBytes);
+                                img = String.Format("data:image/png;base64,{0}", base64);
+                            }
+
+                        <img src="@img" />}*@
+                </dd>
+                <dd>
+                    @Html.DisplayFor(model => model.Photo.OriginalHeight) &nbsp;<strong>x</strong>&nbsp; @Html.DisplayFor(model => model.Photo.OriginalWidth)
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Current)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Current)
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Link)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Link)
+                </dd>
+            </dl>
+        </div>
+    </div>
+</div>
+
+    <div>
+        
+            <div class="text-center">
+                <button class="iconBtn" onclick="window.location.href ='@Url.Action("Edit", "Sponsors", new { id = Model.SponsorId })'">
+                    <i class="fa fa-edit fa-fw"></i>Edit
+                </button>
+            </div>
+
+            <div class="iconBtnContainer">
+                <button class="iconBtn" onclick="window.location.href ='@Url.Action("Index", "Sponsors")'">
+                    <i class="fa fa-hand-point-left fa-fw"></i>Back To List
+                </button>
+            </div>
+            @*<p>
+                @Html.ActionLink("Edit", "Edit", new { id = Model.SponsorId }) |
+                @Html.ActionLink("Back to List", "Index")
+            </p>*@
+        
+    </div>
+
+@*<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.SponsorId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>*@

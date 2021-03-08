@@ -1,0 +1,193 @@
+﻿@model TheatreCMS.Models.Award
+
+@{
+    ViewBag.Title = "Details";
+}
+
+@Styles.Render("~/Content/Site.css")
+@*<h2>Details</h2>*@
+
+
+
+@*******************Main Award Details Container***********************@
+<div class="award-details-main-container container">
+    @*******************Award Details Container*****************@
+    <div id="awardDetailsContainer" class="container">
+
+        <div id="awardDetailsContent" class="rounded p-3">
+            <h4 class="text-center">Award Details</h4>
+
+            <div class="row pt-3">
+                <div class="col-5  mr-n5 font-weight-bold">
+                    @*Used a bootstrap column and used a negative margin to bring content closer to the property names*@
+                    Production Title: @*@Html.DisplayNameFor(model => model.Production.Title):*@ @*Need to change this to Production Title if necessary. Only shows up as "Title"*@
+                </div>
+                <div class="col">
+                    @Html.DisplayFor(model => model.Production.Title)
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-5  mr-n5 font-weight-bold">
+                    @Html.DisplayNameFor(model => model.Year):
+                </div>
+                <div class="col">
+                    @Html.DisplayFor(model => model.Year)
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-5  mr-n5 font-weight-bold">
+                    @Html.DisplayNameFor(model => model.Name):
+                </div>
+                <div class="col">
+                    @Html.DisplayFor(model => model.Name)
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-5 mr-n5 font-weight-bold">
+                    @Html.DisplayNameFor(model => model.Type):
+                </div>
+                <div class="col">
+                    @Html.DisplayFor(model => model.Type)
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-5 mr-n5 font-weight-bold">
+                    @Html.DisplayNameFor(model => model.Category):
+                </div>
+                <div class="col">
+                    @Html.DisplayFor(model => model.Category)
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-5 mr-n5 font-weight-bold">
+                    @Html.DisplayNameFor(model => model.Recipient):
+                </div>
+                <div class="col">
+                    @Html.DisplayFor(model => model.Recipient)@if (Model.Recipient != null)
+                    {<a id="showCastDetails" onclick="toggleCastDetails()"><i class="fa fa-info-circle fa-fw"></i></a>}
+                </div>
+            </div>
+
+            <p>
+                <div class="font-weight-bold">@Html.DisplayNameFor(model => model.OtherInfo):</div>
+                @Html.DisplayFor(model => model.OtherInfo)
+            </p>
+
+        </div>
+
+        <p class="p-1 ml-n2">
+            @*Button to Edit Page*@
+            <button class="iconBtn" onclick="window.location.href ='@Url.Action("Edit", "Awards", new { id = Model.AwardId })'">
+                <i class="fa fa-edit fa-fw"></i>Edit
+            </button>
+
+
+            @*Button Back to Awards Index Page*@
+            <button class="iconBtn" onclick="window.location.href ='@Url.Action("Index", "Awards")'">
+                <i class="fa fa-hand-point-left fa-fw"></i>Back to List
+            </button>
+        </p>
+
+    </div>
+
+    @***********************Container for Cast Member Details when info button Clicked***************************@
+    <div id="awardCastDetails" class="container">
+        <div class="card-img-top p-2">
+            @{
+                if (Model.CastMember != null)
+                {
+                    <img class="card-img-top" src="@Url.Action("DisplayPhoto", "Photo", new { id = Model.CastMember.PhotoId })" />;      /*If cast member has a photo, display this as image-cap*/
+                }
+                else
+                {
+                    <img class="card-img-top" src="@Url.Content("~/Content/Images/CastMember.jpg")" />;       /*If cast member has no photo, display this as image-cap*/
+                }
+            }
+        </div>
+
+        <div class="card-body p-2">
+            <div class="row">
+                <div class="col font-weight-bold">
+                    Year Joined:
+                </div>
+                <div class="col">
+                    @Html.DisplayFor(model => model.CastMember.YearJoined)
+                </div>
+            </div>
+            <div class="row">
+                <div class="col font-weight-bold">
+                    Debut Year:
+                </div>
+                <div class="col">
+                    @Html.DisplayFor(model => model.CastMember.DebutYear)
+                </div>
+            </div>
+            <div class="row">
+                <div class="col font-weight-bold">
+                    Year Left:
+                </div>
+                <div class="col">
+                    @Html.DisplayFor(model => model.CastMember.CastYearLeft)
+                </div>
+            </div>
+
+            <div class="row font-weight-bold">
+                <div class="col text-center">
+                    <br>Associate Artist</br>
+                    <p class="center">@Html.DisplayFor(model => model.CastMember.AssociateArtist)</p>
+                </div>
+                <div class="col text-center">
+                    <br>Ensemble Member</br>
+                    <p class="center">@Html.DisplayFor(model => model.CastMember.EnsembleMember)</p>
+                </div>
+                <div class="col text-center">
+                    <br>Current Member</br>
+                    <p class="center">@Html.DisplayFor(model => model.CastMember.CurrentMember)</p>
+                </div>
+            </div>
+
+            @************Button to Actor Bio*************@
+            @if (Model.CastMember != null)
+            {
+                <div class="col text-center">
+                    <button class="iconBtn btn-main p-3" onclick="window.location.href ='@Url.Action("Details", "CastMembers", new { id = Model.CastMember.CastMemberID } )'">
+                        More about @Html.DisplayFor(model => model.CastMember.Name)
+                    </button>
+                </div>
+            }
+        </div>
+
+
+
+    </div>
+</div>
+
+@******************JS OnClick Function***************@
+<script>
+    var castDetails = document.getElementById("awardCastDetails");
+    var awardDetails = document.getElementById("awardDetailsContainer");
+
+
+    function toggleCastDetails() {
+        //Expand the box
+       
+        if (awardDetails.className == "slideLeftAward") {
+            //shrink the box if it's open
+           
+            castDetails.className = "slideRightCast";
+            awardDetails.className = "slideRightAward";
+        }
+
+        else {
+            //Expand the box
+            awardDetails.className = "slideLeftAward";
+            castDetails.className = "slideLeftCast";
+            
+        }
+
+    }
+
+
+</script>
+
+

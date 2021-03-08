@@ -1,0 +1,142 @@
+﻿@model TheatreCMS.Areas.Subscribers.Models.SeasonManager
+
+@{
+    ViewBag.Title = "Delete";
+}
+<div class="page-format-DetailsDelete card nice-border col-md-8">
+    @*<h2>Delete</h2>*@
+
+    <h3 class="card-header banner-grey bold underline red">
+        Are you sure you want to delete this <br />
+        Season @Html.DisplayFor(modelItem => modelItem.Season) Manager?
+    </h3>
+    <div>
+        <br />
+        @*<hr />*@
+        <dl>
+            <dt class="m-1">
+                @Html.DisplayNameFor(model => model.NumberSeats)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.NumberSeats)
+            </dd>
+            <br />
+            <div class="mb-4">
+                <dt class="m-1">
+                    @Html.DisplayNameFor(model => model.BookedCurrent)
+                </dt>
+
+                <dd class="big-checkbox">
+                    @Html.DisplayFor(model => model.BookedCurrent)
+                </dd>
+            </div>
+            <div class="card b-on-g mb-2">
+
+                    <h4 class="card-header banner-grey m-2 underline">Fall Production</h4>
+
+                    <dt class="m-2">
+                        @Html.DisplayNameFor(model => model.FallProd)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.FallProd)
+                    </dd>
+                    <dt class="m-2">
+                        @Html.DisplayNameFor(model => model.FallTime)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.FallTime)
+                    </dd>
+                <div class="mb-2">
+                    <dt  class="m-2">
+                        @Html.DisplayNameFor(model => model.BookedFall)
+                    </dt>
+
+                    <dd class="big-checkbox">
+                        @Html.DisplayFor(model => model.BookedFall)
+                    </dd>
+                </div>
+            </div>
+            <div class="card b-on-g mb-2">
+
+                    <h4 class="card-header banner-grey m-2 underline">Winter Production</h4>
+
+                    <dt class="m-2">
+                        @Html.DisplayNameFor(model => model.WinterProd)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.WinterProd)
+                    </dd>
+
+                    <dt class="m-2">
+                        @Html.DisplayNameFor(model => model.WinterTime)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.WinterTime)
+                    </dd>
+                <div class="mb-2">
+                    <dt class="m-2">
+                        @Html.DisplayNameFor(model => model.BookedWinter)
+                    </dt>
+
+                    <dd class="big-checkbox">
+                        @Html.DisplayFor(model => model.BookedWinter)
+                    </dd>
+                </div>
+            </div>
+            <div class="card b-on-g mb-2">
+
+                    <h4 class="card-header banner-grey m-2 underline">Winter Production</h4>
+
+                    <dt class="m-2">
+                        @Html.DisplayNameFor(model => model.SpringProd)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.SpringProd)
+                    </dd>
+
+                    <dt class="m-2">
+                        @Html.DisplayNameFor(model => model.SpringTime)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.SpringTime)
+                    </dd>
+
+            <div class="mb-2">
+                    <dt class="m-2">
+                        @Html.DisplayNameFor(model => model.BookedSpring)
+                    </dt>
+
+                    <dd class="big-checkbox">
+                        @Html.DisplayFor(model => model.BookedSpring)
+                    </dd>
+            </div>
+        </div>
+        </dl>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+            <div class="form-actions col-md-4 col-centered">
+                <br />
+                <br />
+                <button type="submit" class="SmBtn">
+                    <i class="fa fa-trash-alt fa-fw"></i>Delete<!-- This button is a link to a different page-->
+                </button><!-- This demonstrates that multiple buttons can be in the same container-->
+            </div>
+            <br />
+            <div class="mb-3 col-md-12">
+
+                @Html.ActionLink("Back to List", "Index") |
+                @Html.ActionLink("Edit", "Edit", new { id = Model.SeasonManagerId })
+            </div>
+}
+        </div>
+    </div>

@@ -1,0 +1,45 @@
+﻿@model IEnumerable<TheatreCMS.Models.ContentSection>
+
+@{
+    ViewBag.Title = "Content Section";
+}
+
+<h2>Content Section</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table-styling">
+    <tr class="tr-styling">
+        <th class="th-styling">
+            @Html.DisplayNameFor(model => model.ContentType)
+        </th>
+        <th class="th-styling">
+            @Html.DisplayNameFor(model => model.ContentId)
+        </th>
+        <th class="th-styling">
+            @Html.DisplayNameFor(model => model.CssId)
+        </th>
+        @*<th class="th-styling"></th>*@
+    </tr>
+
+@foreach (var item in Model) {
+    <tr class="tr-styling">
+        <td class="td-styling">
+            @Html.DisplayFor(modelItem => item.ContentType)
+        </td>
+        <td class="td-styling">
+            @Html.DisplayFor(modelItem => item.ContentId)
+        </td>
+        <td class="td-styling">
+            @Html.DisplayFor(modelItem => item.CssId)
+        </td>
+        <td class="td-styling">
+            @Html.ActionLink("Edit", "Edit", new { id=item.SectionId }) |
+            @Html.ActionLink("Details", "Details", new { id=item.SectionId }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.SectionId })
+        </td>
+    </tr>
+}
+
+</table>

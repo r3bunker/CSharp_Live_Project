@@ -1,0 +1,395 @@
+﻿@model IEnumerable<TheatreCMS.Models.Production>
+@using TheatreCMS.Controllers
+@using TheatreCMS.Helpers
+@using System.Globalization
+@using TheatreCMS.ViewModels
+
+
+@{
+    ViewBag.Title = "Productions";
+
+    //Assign ViewBag seasonyears, showtimes, and runtimes to variables
+    Dictionary<int, string> seasonYears = (ViewBag.SeasonYears as Dictionary<int, string>);
+    var showTimes = (ViewBag.ShowTimes as IEnumerable<string>).ToList();
+    var runTimes = (ViewBag.RunTimes as IEnumerable<int>).ToList();
+}
+
+<h2 class="prod-index-header">Productions <i class="btn btn-light far fa-calendar-alt py-1 px-2"></i></h2> <!-- btn-main originally btn-light, save for possible reversion -->
+<div id="calendar" class="prod-index-cal mb-4"></div>
+
+@if (User.IsInRole("Admin"))
+{
+    <p class="prod-index-create">
+        @Html.ActionLink("Create New", "Create")
+    </p>
+}
+
+
+
+<div class="search-container">
+    <button class="search-button" type="button">
+        <div class="fa fa-search search-icon " />
+    </button>
+    <div class="search-form">
+        @using (Html.BeginForm("Index", "Productions", FormMethod.Get))
+        {
+            <p>
+                @Html.TextBox("SearchString", ViewBag.CurrentFilter as string, new { @class = "search-text", placeholder = "Search..." })
+                <select class="search-select" id="season" name="season">
+                    <!-- Check if searching, if searching hide default selected placeholder option-->
+                    @if (String.IsNullOrEmpty(ViewBag.CurrentSeason))
+                    {
+                        <option selected disabled hidden>Season</option>
+                        @* Hide if ViewBag.CurrentSeason HasValue *@
+                    }
+                    <option value="any">Any Season</option>
+                    @for (int i = seasonYears.Count(); i > 0; i--)
+                    {
+
+                        {
+                            if (!String.IsNullOrEmpty(ViewBag.CurrentSeason) && Int32.TryParse((string)ViewBag.CurrentSeason, out _) && i == Int32.Parse(ViewBag.CurrentSeason))
+                            {
+
+                                <option selected value="@i">@seasonYears[i]</option>
+                            }
+                            else
+                            {
+                                <option value="@i">@seasonYears[i]</option>
+                            }
+
+                        }
+                    }
+                </select>
+                <select class="search-select" id="month" name="month">
+                    @if (String.IsNullOrEmpty(ViewBag.CurrentMonth))
+                    {
+                        <option selected disabled hidden>Month</option>
+                    }
+                    <option value="any">Any Month</option>
+                    @for (int i = 0; i < 12; i++)
+                    {
+                        if (!String.IsNullOrEmpty(ViewBag.CurrentMonth) && Int32.TryParse((string)ViewBag.CurrentMonth, out _) && i == Int32.Parse(ViewBag.CurrentMonth))
+                        {
+
+                            <!-- DateTimeFormatInfo.InvariantInfo.MonthNames converts int to full month string -->
+                            <option selected value="@i">@DateTimeFormatInfo.InvariantInfo.MonthNames[i]</option>
+                        }
+                        else
+                        {
+                            <option value="@i">@DateTimeFormatInfo.InvariantInfo.MonthNames[i]</option>
+                        }
+
+                    }
+                </select>
+                <select class="search-select" id="day" name="day">
+                    @if (String.IsNullOrEmpty(ViewBag.CurrentDay))
+                    {
+                        <option selected disabled hidden>Day</option>
+                    }
+                    <option value="any">Any Day</option>
+                    @for (int i = 1; i <= 31; i++)
+                    {
+                        if (!String.IsNullOrEmpty(ViewBag.CurrentDay) && Int32.TryParse((string)ViewBag.CurrentDay, out _) && i == Int32.Parse((string)ViewBag.CurrentDay))
+                        {
+
+                            <!-- Controller includes integer extension method to give numbers suffixes-->
+                            <option selected value="@i">@i.DisplayWithSuffix()</option>
+                        }
+                        else
+                        {
+                            <option value="@i">@i.DisplayWithSuffix()</option>
+                        }
+
+                    }
+                </select>
+                @if (!String.IsNullOrEmpty(ViewBag.DayEx))
+                {
+                    @Html.ValidationMessage("day", ViewBag.DayEx as string, new { @class = "text-danger" }) <!-- Day validation error-->
+                }
+            <select class="search-select" id="showtime" name="showtime">
+                @if (String.IsNullOrEmpty(ViewBag.CurrentShowtime))
+                {
+                    <option selected disabled hidden>Showtime</option>
+                }
+                <option value="any">Any Showtime</option>
+                @foreach (var item in showTimes)
+                {
+                    if (!String.IsNullOrEmpty(ViewBag.CurrentShowtime) && DateTime.TryParse((string)ViewBag.CurrentShowtime, out _) && item == (string)ViewBag.CurrentShowtime)
+                    {
+                        <option selected value="@item">@item</option>
+                    }
+                    else
+                    {
+                        <option value="@item">@item</option>
+                    }
+
+                }
+            </select>
+                <select class="search-select" id="runtime" name="runtime">
+                    @if (String.IsNullOrEmpty(ViewBag.CurrentRuntime))
+                    {
+                        <option selected disabled hidden>Runtime</option>
+                    }
+                    <option value="any">Any Runtime</option>
+                    @foreach (var runTime in runTimes)
+                    {
+                        if (!String.IsNullOrEmpty(ViewBag.CurrentRuntime) && Int32.TryParse((string)ViewBag.CurrentRuntime, out _) && runTime == (Int32.Parse(ViewBag.CurrentRuntime)))
+                        {
+
+                            <option selected value="@runTime">@runTime</option>
+                        }
+                        else
+                        {
+                            <option value="@runTime">@runTime</option>
+                        }
+                    }
+                </select>
+                World Premiere
+                @if (ViewBag.WorldPremiere ?? false)
+                {
+                    <input type="checkbox" id="worldpremiere" name="worldpremiere" value="true" checked />
+                }
+                else
+                {
+                    <input type="checkbox" id="worldpremiere" name="worldpremiere" value="true" />
+                }
+                <input type="hidden" id="calBool" name="calBool" value="false">
+                <input id="search-submit" class="btn btn-main" type="submit" value="Search" /> <!-- btn-main originally btn-outline-primary and btn-sm, save for possible reversion -->
+                @if ((ViewBag.IsSearching ?? false) && String.IsNullOrEmpty(ViewBag.DayEx)) //Only display if isSearching == true and no day validation error
+                {
+                    <span>@ViewBag.Results Results.&nbsp;&nbsp;@Html.ActionLink("Reset search", "Index")</span>
+                }
+            </p>
+        }
+    </div>
+</div>
+
+
+
+
+
+@*
+    <div class="results-holder">
+        @if ((ViewBag.IsSearching ?? false) && String.IsNullOrEmpty(ViewBag.DayEx)) //Only display if isSearching == true and no day validation error
+        {
+            <span>@ViewBag.Results Results.&nbsp;&nbsp;@Html.ActionLink("Reset search", "Index")</span>
+        }
+    </div>*@
+<div class="container production-index-container">
+    <div class="row mx-2">
+        @foreach (var item in Model)
+        {
+            <div class="card pt-3 col-md-6 col-xl-4 bg-black prod-@item.ProductionId" id="production-info-parent">
+                @{
+                    if (item.DefaultPhoto != null)
+                    {
+                        <div class="prod-index-ribbon-parent">
+                            <a href="@Url.Action("Details", "Productions", new { id = item.ProductionId })">
+                                <img class="card-img-top production-index-img bg-black" src="@Url.Action("DisplayPhoto", "Photo", new { id = item.DefaultPhoto.PhotoId })" alt="Card image cap">
+                                <div class="prod-index-ribbon">
+                                    @if (item.IsCurrentlyShowing())
+                                    {
+                                        @: Onstage
+                                    }
+                                    else if (item.OpeningDay > DateTime.Now)
+                                    {
+                                        @: Coming Soon
+                                    }
+                                </div>
+                            </a>
+                        </div>
+                    }
+                    else
+                    {
+                        <a href="@Url.Action("Details", "Productions", new { id = item.ProductionId })">
+                            <img class="card-img-top production-index-img  bg-black" src="~/Content/Images/Unavailable.png" alt="Card image cap">
+                        </a>
+                    }
+                }
+            <div class="card-body production-index-card-inner justify-content-center">
+              <h4 class="card-title">@item.Title</h4>
+              <h5 class="card-title">@item.Playwright</h5>
+              @*<p class="card-text">@item.Description</p>*@
+
+              @* Pill badge displaying season number of each production.*@
+              <span class="badge badge-pill badge-secondary mb-2">
+                Season #@item.Season
+              </span>
+              @* Pill badge displayed when IsWorldPremiere is true.*@
+              @if (item.IsWorldPremiere)
+              {
+                <span class="badge badge-pill badge-primary">World Premiere</span>
+              }
+
+              <table class="w-100">
+                <tr class="production-index-tr-styling">
+                  <th class="productions-index-th-styling">
+                    @Html.DisplayNameFor(model => model.OpeningDay)
+                  </th>
+                  <td class="productions-index-td-styling">
+                    @item.OpeningDay.ToShortDateString()
+                    @*@Convert.ToString(item.OpeningDay).Replace(":00 PM", "")*@
+                  </td>
+                </tr>
+                <tr class="production-index-tr-styling">
+                  <th class="productions-index-th-styling">
+                    @Html.DisplayNameFor(model => model.ClosingDay)
+                  </th>
+                  <td class="productions-index-td-styling">
+                    @item.ClosingDay.ToShortDateString()
+                    @*@Convert.ToString(item.ClosingDay).Replace(":00 PM", "")*@
+                  </td>
+                </tr>
+                @if (item.ShowtimeMat.HasValue)
+                {
+                  <tr class="production-index-tr-styling">
+                    <th class="productions-index-th-styling">
+                      @Html.DisplayNameFor(model => model.ShowtimeMat)
+                    </th>
+                    <td class="productions-index-td-styling">
+                      @item.ShowtimeMat.GetValueOrDefault().ToShortTimeString()
+                    </td>
+                  </tr>
+                }
+
+                @if (item.ShowtimeEve.HasValue)
+                {
+                  <tr class="production-index-tr-styling">
+                    <th class="productions-index-th-styling">
+                      @Html.DisplayNameFor(model => model.ShowtimeEve)
+                    </th>
+                    <td class="productions-index-td-styling">
+                      @item.ShowtimeEve.GetValueOrDefault().ToShortTimeString()
+                    </td>
+                  </tr>
+                }
+              </table>
+              @* Removed table with Current Show property, World Premier property and checkboxes *@
+              @if (User.IsInRole("Admin"))
+              {
+                
+                  @Html.ActionLink("Edit", "Edit", "Productions", new { id = item.ProductionId }, new { @class = "btn btn-main mt-3" })
+                  @Html.ActionLink("Delete", "Delete", "Productions", new { id = item.ProductionId }, new { @class = "btn btn-main mt-3 ml-2" })
+                  @Html.ActionLink("Add Photos", "Create", "ProductionPhotos", new { id = item.ProductionId }, new { @class = "btn btn-main mt-3 ml-2" })
+                
+              }
+            </div>
+            </div>
+        }
+    </div>
+</div>
+
+@Scripts.Render("~/bundles/jquery")
+<script src="@Url.Content("~/Scripts/umd/popper.min.js")"></script>
+
+@section Scripts {
+    <!-- Toggle for search button, if currently searching show search form else hide search form  -->
+    <!-- Scroll function for search form -->
+    <script>
+            $(document).ready(function () {
+                $(document).scroll(function () {
+                    if ($(window).scrollTop() > 0 && window.matchMedia('(min-width: 769px)').matches) {
+                        $(".search-container").css({ top: '64px' });
+                    }
+                    if ($(window).scrollTop() === 0) {
+                        $('.search-container').removeAttr('style');
+                    }
+
+                });
+
+                var currentlySearching = "@((ViewBag.IsSearching).ToString())"
+
+                if (currentlySearching != "False") {
+                    $('.search-form').show();
+                    $('.search-button').addClass('active-search-button');
+                } else {
+                    $('.search-form').hide();
+                }
+
+                $('.search-button').click(function () {
+                    $('.search-form').slideToggle();
+                    if ($('.search-button').hasClass('active-search-button')) {
+                        $('.search-button').removeClass('active-search-button');
+                    } else {
+                        $('.search-button').addClass('active-search-button');
+                    }
+                });
+
+            });
+
+        //display calendar upon click of calendar icon
+        $(document).ready(function () {
+
+            var events = [];
+            var i = 0;
+            @foreach (string[] e in ViewData["events"] as string[][])
+            {
+               @: events[i] = { id: "@e[0]", title: "@e[1]", start: "@e[2]", end: "@e[3]", seats: "@e[4]", color: "@e[5]", prod: "@e[6]" };
+               @: i += 1;
+            }
+
+            //checks if calendar was displayed prior to search
+            if ("@((string)ViewData["calDisplay"])" == "true") {
+                showCalendar(events);
+            }
+
+            $(".fa-calendar-alt").on("click", function () {
+                if ($("#calendar").children().length > 0) {
+                    $('#calendar').fullCalendar('destroy');
+                    $("input[name='calBool']").val("false");
+                }
+                else {
+                    showCalendar(events);
+
+                }
+            })
+        });
+
+        //code for fullcalendar.io
+        function showCalendar(events)
+        {
+            $('#calendar').fullCalendar({
+                header: { center: 'month,agendaWeek' },
+                views: {
+                    week: {
+                        allDaySlot: false
+                    }
+                },
+                events: events,
+                eventClick: function (calEvent) {
+                    var idClass = "event-prod-" + calEvent.prod;
+                    //if event is not currently selected, then select
+                    if (!$(this).hasClass("active-event")) {
+                        $(this).css('border', '2px solid var(--main-secondary-color)'); //'this' refers to fc-event class
+                        $(this).addClass("active-event " + idClass);
+                        $('.prod-' + calEvent.prod).css('border', '2px solid var(--main-secondary-color)');
+                        $('.prod-' + calEvent.prod).addClass("active-prod");
+                    }
+                    //if event is currently selected, then deselect
+                    //tracks if a production has multiple events selected
+                    else {
+                        var tracker = $(".active-event." + idClass).length;
+                        if (tracker == 1) {
+                            $(this).css('border', '2px solid transparent'); //'this' refers to fc-event class
+                            $(this).removeClass("active-event " + idClass);
+                            $('.prod-' + calEvent.prod).css('border', '2px solid rgba(0, 0, 0, 0.125)');
+                            $('.prod-' + calEvent.prod).removeClass("active-prod " + idClass);
+                        }
+                        else if (tracker > 1) {
+                            $(this).css('border', '2px solid transparent'); //'this' refers to fc-event class
+                            $(this).removeClass("active-event " + idClass);
+                            tracker -= 1;
+                        }
+                        else {
+                            alert("An error has occured.");
+                        }
+                    }
+
+                },
+                allDayDefault: false
+            });
+            $("input[name='calBool']").val("true");
+        }
+
+    </script>
+}

@@ -1,0 +1,39 @@
+﻿@using Microsoft.AspNet.Identity
+@if (Request.IsAuthenticated)
+{
+    using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <ul class="nav nav-item navbar-nav">
+            <li>
+                <a class="nav-button message-icon-container" href="@Url.Action("Index", "Messages")">
+                    <span class="msg-stack-container fa-stack">
+                        <i class="far fa-envelope fa-stack-2x envelope-icon"> </i>
+                        @if ((bool)ViewData["unread"])
+                        {
+                            <span id="unReadMsgIndicator" class="fa fa-circle fa-stack-1x circle-notification"></span>
+                        }
+                    </span>
+                </a>
+            </li>
+            
+            <li>
+                @Html.ActionLink("Hello " + User.Identity.GetUserName() + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage", @class = "nav-button" })
+            </li>
+            
+            <li><a class="nav-button" href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
+        </ul>
+    }
+}
+else
+{
+    <ul class="nav nav-item navbar-nav">
+        <li>
+            @Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink", @class = "nav-button" })
+        </li>
+        <li>
+            @Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink", @class = "nav-button" })
+        </li>
+    </ul>
+}

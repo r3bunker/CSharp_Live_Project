@@ -1,0 +1,54 @@
+﻿@model IEnumerable<TheatreCMS.Models.DisplayLinks>
+
+@{
+  ViewBag.Title = "Display Links";
+}
+
+<h2>Display Links</h2>
+
+<p>
+  @Html.ActionLink("Create New", "Create")
+</p>
+
+
+<table class="table table-striped table-borderless displayLinkIndexTable">
+  <thead>
+    <tr>
+      <th>
+        @Html.DisplayNameFor(model => model.Name)
+      </th>
+      <th>
+        @Html.DisplayNameFor(model => model.Text)
+      </th>
+      <th>
+        @Html.DisplayNameFor(model => model.Link)
+      </th>
+      <th>&nbsp;</th>
+    </tr>
+  </thead>
+  <tbody>
+    @foreach (var item in Model)
+    {
+      <tr>
+        <td>
+          @Html.DisplayFor(modelItem => item.Name)
+        </td>
+        <td>
+          @Html.DisplayFor(modelItem => item.Text)
+        </td>
+        <td>
+          @Html.DisplayFor(modelItem => item.Link)
+        </td>
+        <td>
+          @Html.ActionLink("Edit", "Edit", new { id = item.LinkId }) |
+          @Html.ActionLink("Details", "Details", new { id = item.LinkId }) |
+          @Html.ActionLink("Delete", "Delete", new { id = item.LinkId })
+        </td>
+      </tr>
+    }
+  </tbody>
+</table>
+
+
+
+

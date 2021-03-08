@@ -1,0 +1,217 @@
+﻿@using TheatreCMS.Controllers
+@model IEnumerable<TheatreCMS.Models.ProductionPhotos>
+
+@{
+    ViewBag.Title = "Production Photos";
+}
+
+<div class="m-3 d-flex justify-content-center">
+  <h2>Production Photos</h2>
+  <a href="@Url.Action("Create")"  class="fa-stack fa-1x createNewIcon">
+      <i class="fa fa-circle fa-stack-1x productionPhotoCreateNewIconBackground fa-inverse"></i>
+      <i class="fa fa-plus-circle fa-stack-1x productionPhotoCreateNewIconForground"></i>
+  </a>
+</div>
+  
+<div class="prodphoto-bar m-3">
+    <label>Filter by Production</label>
+    @Html.DropDownList("ProductionList", (IEnumerable<SelectListItem>)ViewData["ProductionList"], "All", new { @class = "col-5 col-md-3 prodphoto-filter" })
+    <div class="prodphoto-search-container">
+        <input type="text" name="prodphoto-search" placeholder="Search..." class="prodphoto-searchbar" />
+        <button class="prodphoto-searchbtn"><i class="fa fa-search"></i></button>
+    </div>
+</div>
+
+
+ 
+<div>
+    <script>
+        var input = document.getElementsByClassName("prodphoto-searchbar");
+        console.log(input);
+        input[0].addEventListener("keyup", function (event) {
+            console.log("see if working");
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                document.getElementsByClassName("prodphoto-searchbtn")[0].click();
+                console.log("enter key worked");
+            }
+        });
+    </script>
+
+</div>
+
+<h4 class="text-center py-3" id="prodphoto-null-msg"></h4>
+
+<div class="prodphoto-content my-3 container">
+    @*sort by production season in descending order , then by opening day in ascending order*@
+
+    @foreach (var pro in Model.Where(i => i.Production != null).Select(i => i.Production).Distinct())
+    {
+        <div id="@pro.ProductionId-prodphoto-show" class="prodphoto-cards">
+            <h3 class="prodphoto-prod-title text-center my-3">@pro.Title <span class="badge badge-pill badge-light">@pro.Season</span></h3>
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-4 justify-content-center">
+                @foreach (var item in Model.Where(i => (i.Production != null) && (i.Production.Title == pro.Title)))
+                {
+                    <div class="col mb-4">
+                        <div class="card h-100">
+                            <img class="card-img-top" src="@Url.Action("DisplayPhoto", "Photo", new { id = item.PhotoId })" alt="Production Photo">
+                            <div class="card-body">
+                                <h5 class="card-title">@Html.DisplayFor(modelItem => item.Title)</h5>
+                                <p class="card-text text-secondary">@Html.DisplayFor(modelItem => item.Description)</p>
+                            </div>
+                            <div class="card-footer">
+                                @Html.ActionLink("Edit", "Edit", new { id = item.ProPhotoId }, new { @class = "badge badge-pill badge-danger" }) |
+                                @Html.ActionLink("Details", "Details", new { id = item.ProPhotoId }, new { @class = "badge badge-pill badge-danger" }) |
+                                @Html.ActionLink("Delete", "Delete", new { id = item.ProPhotoId }, new { @class = "badge badge-pill badge-danger" })
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            <br /><br />
+        </div>
+    }
+</div>
+
+<script src="/Scripts/jquery-3.4.1.js"></script>
+<script>
+
+    //sets opacity of card-footer to 1 when mouse hovers over card
+    $(".card").hover(
+        function () {
+            $(this).find(".card-footer").fadeTo(400, 1)
+        },
+        function () {
+            $(this).find(".card-footer").fadeTo(400, 0);
+        }
+    );
+
+    //sets the Card-groups display style to 'none' or 'block' based on filter value
+    var filter = document.getElementById("ProductionList");
+    var allCards = document.getElementsByClassName("prodphoto-cards");
+
+    //filter on change
+    filter.addEventListener("change", function () {
+
+        //start off with eveything set to 'none'
+        for (var i = 0; i < allCards.length; i++) {
+            allCards[i].style.display = 'none';
+        }
+        document.getElementById("prodphoto-null-msg").style.display = 'none';
+
+        //if filter is set to 'all', run the search function
+        if (filter.selectedIndex == 0) {
+            searchF();
+        }
+
+        //if a prod is selected, only run the filter function
+        else {
+            filterF();
+        }
+
+    });
+
+    //search button click
+    $(document).ready(function () {
+        $(".prodphoto-searchbtn").click(function () {
+            searchF();
+            searchHilight();
+            //if filter value is a prod, filter results after search is run
+            if (filter.selectedIndex != 0) {
+                $(".prodphoto-cards").hide();
+                filterF();
+            }
+        });
+    });
+
+    //filter cards based on production title
+    function filterF() {
+        var prodFilter = filter.options[filter.selectedIndex].value;
+        var filterId = prodFilter + "-prodphoto-show";
+        if (document.getElementById(filterId)) {
+            document.getElementById(filterId).style.display = 'block';
+        }
+        else {
+            var nullMsg = document.getElementById("prodphoto-null-msg");
+            nullMsg.style.display = 'block';
+            nullMsg.innerHTML = "This production does not have any photos yet.";
+        }
+    };
+
+    //search through card-body-s for user-input and display only those cards and production titles
+    function searchF() {
+        var value = $(".prodphoto-searchbar").val().toLowerCase();
+        $(".prodphoto-cards").hide();
+        $(".prodphoto-content .card").filter(function () {
+            var status = $(this).find(".card-body").text().toLowerCase().indexOf(value) > -1;
+            $(this).parent().toggle(status);
+            if (status) {
+                $(this).parents(".prodphoto-cards").show(); //displays the production section of the filtered cards
+            }
+        });
+    };
+
+    //Highlight the words searched by the user  + value +
+    function searchHilight() {
+        var value = $(".prodphoto-searchbar").val()
+        var regex = new RegExp('(' + value + ')', 'gi'); //a regular expression that finds every time the searched word is mentioned.
+        var cards = document.getElementsByClassName("card-body");
+
+        for (let item of cards) {                               // a for loop that loops through all of the production photo cards.
+            for (var i = 0; i < item.children.length; i++) {      // a for loop that loops through all of child classes of each card.
+                var node = item.children[i];
+                var text = node.innerText;
+                text = text.replace(regex, '<span style="background-color:lightblue;">$1</span>');  //puts the text into a span tag that changes the background color.
+                node.innerHTML = text;
+            }
+        }
+    };
+
+
+</script>
+
+@*  old code
+    <table class="table-styling">
+        <tr class="tr-styling">
+            <th class="th-styling">
+                @Html.DisplayNameFor(model => model.PhotoId)
+            </th>
+            <th class="th-styling">
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th class="th-styling">
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr class="tr-styling">
+                /@/*/@Html.DisplayFor(modelItem => item.PhotoId)/*/@/
+                <td class="td-styling">
+                    <img src='@Url.Action("DisplayPhoto", "Photo", new { id = item.PhotoId })' />
+                </td>
+
+                <td class="td-styling">
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td class="td-styling">
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td class="td-styling">
+                    @Html.ActionLink("Edit", "Edit", new { id = item.ProPhotoId }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.ProPhotoId }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.ProPhotoId })
+                </td>
+                </tr>
+                }
+
+                </table>
+*@<!--private void input_KeyDown(object sender, KeyEventArgs e)
+{
+    if(e.KeyData == Keys.Enter)
+    {
+        MessageBox.Show("Pressed enter.");
+    }
+}-->

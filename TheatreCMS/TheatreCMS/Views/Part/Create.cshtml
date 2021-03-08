@@ -1,0 +1,195 @@
+﻿@model TheatreCMS.Models.Part
+
+@{
+    ViewBag.Title = "Create";
+}
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="mt-4 container text-center">
+        <!--===== TYPE =====-->
+        <div class="form-row align-items-center justify-content-center form-group">
+            <div>
+                <h4>Create a new</h4>
+            </div>
+            <div class="mx-2">
+                @Html.EnumDropDownListFor(model => model.Type, htmlAttributes: new { @class = "form-control", @onchange = "GetType()" })
+                <!--===== IF anything except Actor type is selected, the Character field will be read only, hidden from view, and label changed to type and italic removed -->
+                <script type="text/javascript">
+                    function GetType() {
+                        var selectedType = $('#Type option:selected').text();
+                        //=== ACTOR
+                        if (selectedType !== "Actor") {
+                            $('#Character').attr('readonly', 'true')
+                            $('#Character').val($('#Person option:selected').text());
+                            $('#Character').addClass('hide');                            
+                            $('#Character-Label').html(selectedType);
+                            $('#Character-Label').removeClass('font-italic');
+                            $('#Character-Label').addClass('font-weight-bold');
+                            $('#Character-Label').addClass('mb-4');
+                        }
+                        //=== NON-ACTOR
+                        else
+                        {
+                            $('#Character').removeAttr('readonly')
+                            $('#Character').val("");
+                            $('#Character').removeClass('hide');
+                            $('#Character-Label').html('Playing');
+                            $('#Character-Label').addClass('font-italic');
+                            $('#Character-Label').removeClass('font-weight-bold');
+                            $('#Character-Label').removeClass('mb-4');
+                        }
+                    }
+                    $(document).ready(GetType);
+                </script>
+                @Html.ValidationMessageFor(model => model.Type, "", new { @class = "text-danger" })
+            </div>
+            <div>
+                <h4>Part</h4>
+            </div>            
+        </div>
+        
+        <!--========== CARD ==========-->
+        <div class="d-flex justify-content-center">
+            <div class="card part-create border-white">
+                <div class="card-body">
+                    @Html.ValidationSummary(true, "", new { @class = "text-white" })
+                    <!--===== PERSON - cast member =====-->
+                    <div class="form-group mb-0">
+                        @Html.DropDownList("Person", (IEnumerable<SelectListItem>)ViewData["CastMembers"], "Cast Member", htmlAttributes: new { @class = "form-control part-create pl-4", @onchange = "GetPerson()" })
+                        <!--=== takes the person name and populates it in character field if it is not Actor -->
+                        <script type="text/javascript">
+                            function GetPerson() {
+                                var selectedmember = $('#Person option:selected').text();
+                                var selectedType = $('#Type option:selected').text();
+                                if (selectedType !== "Actor")
+                                    document.getElementById("Character").value = selectedmember;                                    
+                            }
+                            $(document).ready(GetPerson);
+                        </script>
+                        @Html.ValidationMessageFor(model => model.Person, "", new { @class = "text-white" })
+                    </div>
+                    <hr class="mt-0 mb-5 bg-white" style="height:2px;">
+                    <!--===== CHARACTER - Use static label "Playing" when actor or type when not, character field hidden when not actor =====-->
+                    <div class="form-group mb-2">
+                        @Html.LabelFor(model => model.Character, "Playing", htmlAttributes: new { @id= "Character-Label", @class = "control-label font-italic mb-0" })
+                        @Html.EditorFor(model => model.Character, new { htmlAttributes = new { @class = "form-control part-create text-center", @placeholder = "Character" } })
+                        @Html.ValidationMessageFor(model => model.Character, "", new { @class = "text-white" })
+                    </div>
+                    <!--===== PRODUCTION - Use static label "In the Production" =====-->
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Production, "In the Production", htmlAttributes: new { @class = "control-label font-italic mb-0" })
+                        @Html.DropDownList("Production", (IEnumerable<SelectListItem>)ViewData["Productions"], "Production", htmlAttributes: new { @class = "form-control part-create" })
+                        @Html.ValidationMessageFor(model => model.Production, "", new { @class = "text-white" })
+                    </div>
+                    <!--===== DETAILS =====-->
+                    <div class="form-group mt-5">
+                        @Html.LabelFor(model => model.Details, htmlAttributes: new { @class = "control-label font-weight-bold mb-2" })
+                        @Html.TextAreaFor(model => model.Details, new { @class = "form-control part-create", @rows = 6, @placeholder = "Details..." })
+                        @Html.ValidationMessageFor(model => model.Details, "", new { @class = "text-white" })
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <!--===== SUBMIT =====-->
+        <div class="mt-4 form-row align-items-center justify-content-center form-group">
+           <button type="submit" value="Create" class="part-create btn btn-success btn-lg">Create</button>
+        </div>       
+    </div>
+
+    @*
+    <div class="formContainer2 ">
+        <div class="form-horizontal">
+            <h4 class="formHeader">Part</h4>
+            <hr />
+            <div class="inputBox2">
+              @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+              <div class="form-group">
+                @Html.LabelFor(model => model.Production, htmlAttributes: new { @class = "control-label col-md-4 inputLabel" })
+                <div class="col-md-10 formBox">
+                  @Html.DropDownList("Productions", (IEnumerable<SelectListItem>)ViewData["Productions"], htmlAttributes: new { @class = "form-control"})
+                  @Html.ValidationMessageFor(model => model.Production)
+                </div>
+              </div>
+
+              <div class="form-group">
+                @Html.LabelFor(model => model.Type, htmlAttributes: new { @class = "control-label col-md-4 inputLabel" })
+                <div class="col-md-10 formBox">
+                  @Html.EnumDropDownListFor(model => model.Type, htmlAttributes: new { @class = "form-control", @onchange = "GetType()" })
+                  <!-- if anything except Actor type is selected, the Character field will be read only -->
+                  <script type="text/javascript">
+                    function GetType() {
+                      var selectedType = $('#Type option:selected').text();
+                      if (selectedType !== "Actor") {
+                        $('#Character').attr('readonly', 'true')
+                        $('#Character').val($('#CastMembers option:selected').text());
+                      }
+                      else {
+                        $('#Character').removeAttr('readonly')
+                        $('#Character').val("");
+                      }
+                    }
+                    $(document).ready(GetType);
+                  </script>
+                  @Html.ValidationMessageFor(model => model.Type, "", new { @class = "text-danger" })
+                </div>
+              </div>
+
+              <div class="form-group">
+                @Html.LabelFor(model => model.Person, htmlAttributes: new { @class = "control-label col-md-4 inputLabel" })
+                <div class="col-md-10 formBox">
+                  @Html.DropDownList("CastMembers", (IEnumerable<SelectListItem>)ViewData["CastMembers"], htmlAttributes: new { @class = "form-control", @onchange = "GetPerson() " })
+
+                  <!-- this script takes the person name and populates it in character field if it is not Actor" -->
+                  <script type="text/javascript">
+                    function GetPerson() {
+                      var selectedmember = $('#CastMembers option:selected').text();
+                      var selectedType = $('#Type option:selected').text();
+                      if (selectedType !== "Actor")
+                        document.getElementById("Character").value = selectedmember;
+                    }         
+                    $(document).ready(GetPerson);
+                  </script>
+
+                  @Html.ValidationMessageFor(model => model.Person, "", new { @class = "text-danger" })
+                </div>
+              </div>
+              <div class="form-group">
+                @Html.LabelFor(model => model.Character, htmlAttributes: new { @class = "control-label col-md-4 inputLabel" })
+                <div class="col-md-10 formBox">
+                  @Html.EditorFor(model => model.Character, new { htmlAttributes = new { @class = "form-control" } })
+                  @Html.ValidationMessageFor(model => model.Character, "", new { @class = "text-danger" })
+                </div>
+              </div>
+
+              <div class="form-group">
+                @Html.LabelFor(model => model.Details, htmlAttributes: new { @class = "control-label col-md-4 inputLabel" })
+                <div class="col-md-10 formBox">
+                  @Html.EditorFor(model => model.Details, new { htmlAttributes = new { @class = "form-control" } })
+                  @Html.ValidationMessageFor(model => model.Details, "", new { @class = "text-danger" })
+                </div>
+              </div>
+
+              <div class="form-group">
+                <div class="col-md-offset-2 col-md-10 formBox">
+                  <input type="submit" value="Create" class="submitButton2" />
+                </div>
+              </div>
+            </div>
+        </div>
+    </div>
+    *@
+    }
+
+<div class="mt-4 form-row align-items-center justify-content-center form-group">
+    <button class="iconBtn" onclick="window.location.href ='@Url.Action("Index", "Part")'">
+        <i class="fa fa-hand-point-left fa-fw"></i>Back To List
+    </button>
+</div>
+    
+
+        

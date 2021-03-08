@@ -1,0 +1,202 @@
+﻿
+@model TheatreCMS.Models.RentalRequest
+
+
+
+@{
+    ViewBag.Title = "Create Rental Request";
+}
+
+
+
+<div>
+    <p id="rental_Page_heading">
+        Do you want a Private Event?
+    </p>
+
+
+    <p id="rental_page">
+        The Shoebox is an intimate black box theatre,
+        located in the in SE Industrial area of Portland, OR.<br>
+        Great for:<br>
+        <b>Performances | Rehearsals | Workshops | Events</b>
+        Questions about The Shoebox Theatre?<br>
+        Email us at <b>rentals@theatrevertigo.org</b>
+    </p>
+</div>
+
+
+
+
+
+<!--  modal button -->
+<div id="Rental_Button_Form">
+    <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal_RentalForm">Rental form</button>
+
+</div>
+    <!-- Modal -->
+    <div class="modal" id="myModal_RentalForm" >
+
+<div class="modal-dialog modal">
+            <!-- Modal content-->
+            <div class="modal-content">
+
+            </div>
+        </div>
+        <!--Step 1:Adding HTML-->
+        <p id="Rental_form">
+        @using (Html.BeginForm("Create", "RentalRequest", FormMethod.Post, null))
+            {
+
+                if (User.IsInRole("Admin"))
+                {
+                    <div class="text-center">
+                        <br />@Html.ActionLink("All Rental Requests", "Index")
+                    </div>
+                }
+                @Html.AntiForgeryToken()
+                <div class="formContainer2 ">
+                    <div class="form-horizontal">
+                        <h4 class="formHeader">Create Rental Request</h4>
+                        <hr />
+
+                        <div class="inputBox2">
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ContactPerson, htmlAttributes: new { @class = "control-label col-md-4 inputLabel" })
+                                <div class="col-md-10 formBox">
+                                    @Html.EditorFor(model => model.ContactPerson, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.ContactPerson, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ContactPhoneNumber, htmlAttributes: new { @class = "control-label col-md-4 inputLabel" })
+                                <div class="col-md-10 formBox">
+                                    @Html.EditorFor(model => model.ContactPhoneNumber, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.ContactPhoneNumber, "", new { @class = "text-white" })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ContactEmail, htmlAttributes: new { @class = "control-label col-md-4 inputLabel" })
+                                <div class="col-md-10 formBox">
+                                    @Html.EditorFor(model => model.ContactEmail, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.ContactEmail, "", new { @class = "text-white" })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Company, htmlAttributes: new { @class = "control-label col-md-4 inputLabel" })
+                                <div class="col-md-10 formBox">
+                                    @Html.EditorFor(model => model.Company, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.Company, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.StartTime, htmlAttributes: new { @class = "control-label col-md-4 inputLabel" })
+                                <div class="col-md-10 formBox">
+                                    @Html.EditorFor(model => model.StartTime, new { htmlAttributes = new { @class = "form-control", @type = "datetime-local" } })
+                                    @Html.ValidationMessageFor(model => model.StartTime, "", new { @class = "text-white" }) @*Changed to text white because of red background on page*@
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.EndTime, htmlAttributes: new { @class = "control-label col-md-4 inputLabel" })
+                                <div class="col-md-10 formBox">
+                                    @Html.EditorFor(model => model.EndTime, new { htmlAttributes = new { @class = "form-control", @type = "datetime-local" } })
+                                    @Html.ValidationMessageFor(model => model.EndTime, "", new { @class = "text-white" }) @*Changed to text white because of red background on page*@
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ProjectInfo, htmlAttributes: new { @class = "control-label col-md-4 inputLabel" })
+                                <div class="col-md-10 formBox">
+                                    @Html.EditorFor(model => model.ProjectInfo, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.ProjectInfo, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Requests, htmlAttributes: new { @class = "control-label col-md-4 inputLabel" })
+                                <div class="col-md-10 formBox">
+                                    @Html.EditorFor(model => model.Requests, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.Requests, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            @*<div class="form-group">
+                                @Html.LabelFor(model => model.Attachments, htmlAttributes: new { @class = "control-label col-md-2" })
+                                <div class="col-md-10">
+                                    @Html.TextBoxFor(x => x.Attachments, new { type = "file" })
+                                    @Html.ValidationMessageFor(x => x.Attachments)
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-md-offset-2 col-md-10">
+                                        <input type="submit" value="Upload" class="btn btn-main" /> <!-- btn-main originally btn-default, save for possible reversion -->
+                                    </div>
+                                </div>
+                                 </div>*@
+
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Accepted, htmlAttributes: new { @class = "control-label col-md-4 inputLabel" })
+                                <div class="col-md-10 formBox">
+                                    <div class="checkbox">
+                                        @Html.EditorFor(model => model.Accepted)
+                                        @Html.ValidationMessageFor(model => model.Accepted, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.ContractSigned, htmlAttributes: new { @class = "control-label col-md-4 inputLabel" })
+                                <div class="col-md-10 formBox">
+                                    <div class="checkbox">
+                                        @Html.EditorFor(model => model.ContractSigned)
+                                        @Html.ValidationMessageFor(model => model.ContractSigned, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-md-offset-2 col-md-10 formBox">
+                                    <input type="submit" value="Submit" class="submitButton2" />
+
+                                    <button type="button" class="btn btn-default" data-dismiss="modal"><b>|</b><u>Close without Completing Form</u><b>|</b></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+       
+
+    }
+
+        </div>
+
+
+
+
+
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+
+
+
+@*Html.DisplayFor(model => model.EndTime)
+    @{
+        if (Model.EndTime < Model.StartTime)
+        {
+            @Html.ValidationMessageFor(model => model.EndTime, "Please enter an end time at least an hour after start time", new { @class = "text-info" })
+        }
+        else
+        {
+            @Html.ValidationMessageFor(model => model.EndTime, "", new { @class = "text-info" })
+        }
+    }*@
+

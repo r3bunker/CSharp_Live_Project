@@ -1,0 +1,42 @@
+﻿@model TheatreCMS.Models.ContentSection
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>ContentSection</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.ContentType)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ContentType)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ContentId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ContentId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CssId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CssId)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.SectionId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

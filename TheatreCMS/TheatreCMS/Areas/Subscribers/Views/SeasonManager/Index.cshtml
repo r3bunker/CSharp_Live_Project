@@ -1,0 +1,105 @@
+﻿@model IEnumerable<TheatreCMS.Areas.Subscribers.Models.SeasonManager>
+
+@{
+    ViewBag.Title = "Index";
+}
+    <div class="banner-format-index nice-border col-sm-6 col-md-5">
+        <h2 class="underline">Season Managers</h2>
+        <p>
+            @Html.ActionLink("Create New", "Create")
+            &nbsp;&nbsp;@Html.ActionLink("Back to Dashboard", "../Dashboard/Index")
+        </p>
+    </div>
+
+                <div class="page-format-index">
+
+                    @foreach (var item in Model)
+                    {
+                    <div class="card container card-format nice-border mt-3 col-md-10">
+                        <h3 class="card-header banner-grey bold underline mt-3">Season @Html.DisplayFor(modelItem => item.Season) Manager</h3>    @*season manager title*@
+                        <div class="row">
+                            <div class="mt-3 mb-3 col-md-6">
+                                <h5 class="">Seats Available</h5>
+                                <div>
+                                    @Html.DisplayFor(modelItem => item.NumberSeats)
+                                </div>
+                            </div>
+                            <div class="mt-3 mb-3 col-md-6">
+                                <h5 class="">Currently Booked?</h5>
+                                <div class="big-checkbox">
+                                    @Html.DisplayFor(modelItem => item.BookedCurrent)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm mt-2">
+                                <div class="card b-on-g overflow-hidden">
+                                    <h4 class="card-header banner-grey underline">Fall Production</h4>
+
+                                    <h5 class="mt-2">Name</h5>
+                                    <div class="">
+                                        @Html.DisplayFor(modelItem => item.FallProd)
+                                    </div>
+                                    <h5 class="mt-2">Time</h5>
+                                    <div class="">
+                                        @Html.DisplayFor(modelItem => item.FallTime)
+                                    </div>
+                                    <h5 class="mt-2">Booked?</h5>
+                                    <div class="mb-3">
+                                        <div class="big-checkbox">
+                                            @Html.DisplayFor(modelItem => item.BookedFall)
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm mt-2">
+                                <div class="card b-on-g overflow-hidden">
+                                    <h4 class="card-header banner-grey underline">Winter Production</h4>
+                                    <h5 class="mt-2">Name</h5>
+                                    <div class="">
+                                        @Html.DisplayFor(modelItem => item.WinterProd)
+                                    </div>
+                                    <h5 class="mt-2">Time</h5>
+                                    <div class="">
+                                        @Html.DisplayFor(modelItem => item.WinterTime)
+                                    </div>
+                                    <h5 class="mt-2">Booked?</h5>
+                                    <div class="mb-3">
+                                        <div class="big-checkbox">
+                                            @Html.DisplayFor(modelItem => item.BookedWinter)
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm mt-2">
+                                <div class="card b-on-g overflow-hidden">
+                                    <h4 class="card-header banner-grey underline">Spring Production</h4>
+                                    <h5 class="mt-2">Name</h5>
+                                    <div class="">
+                                        @Html.DisplayFor(modelItem => item.SpringProd)
+                                    </div>
+                                    <h5 class="mt-2">Time</h5>
+                                    <div class="">
+                                        @Html.DisplayFor(modelItem => item.SpringTime)
+                                    </div>
+                                    <h5 class="mt-2">Booked?</h5>
+                                    <div class="mb-3">
+                                        <div class="big-checkbox">
+                                            @Html.DisplayFor(modelItem => item.BookedSpring)
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-4 mt-4">
+                            @Html.ActionLink("Edit", "Edit", new { id = item.SeasonManagerId }) |
+                            @Html.ActionLink("Details", "Details", new { id = item.SeasonManagerId }) |
+                            @Html.ActionLink("Delete", "Delete", new { id = item.SeasonManagerId })
+                        </div>
+
+                    </div>
+                    
+                    }
+                </div>
+     
+    

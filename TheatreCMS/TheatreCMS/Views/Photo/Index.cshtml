@@ -1,0 +1,74 @@
+﻿@model IEnumerable<TheatreCMS.Models.Photo>
+@{
+  ViewBag.Title = "Index";
+}
+
+    @*Create is for admin only*@
+    @*Create button to add new cast members*@
+    @if (User.IsInRole("Admin"))
+    {
+      <div class="text-center m-3">
+        <h3 class="d-inline-block"> Photos </h3>
+        <button class="iconBtn " onclick="location.href='@Url.Action("Create")'">
+        <i class="fa fa-plus-square fa-fw"></i>Create New
+        </button>
+      </div>
+    }
+
+
+    <div id="scroll-container"></div>
+    <table class="table-styling">
+      <tr class="tr-styling">
+        <th class="th-styling">
+          @Html.DisplayNameFor(model => model.PhotoFile)
+        </th>
+        <th class="th-styling">
+          @Html.DisplayNameFor(model => model.OriginalHeight)
+        </th>
+        <th class="th-styling">
+          @Html.DisplayNameFor(model => model.OriginalWidth)
+        </th>
+        <th class="th-styling">
+          @Html.DisplayNameFor(model => model.Title)
+        </th>
+        <th class=" th-styling">
+          Options
+        </th>
+      </tr>
+
+
+      @*below is the razor implementation used before the infinite scroll was added*@
+      @*the table is now populated in the site.js file*@
+
+      @*@foreach (var item in Model) {
+          <tr class="tr-styling">
+              <td class="td-styling">
+                  <img id="photo-index-img-@item.PhotoId" class="photo-index-image thumbnail_size photo-index-img"
+                           onclick="ShowModel(@item.PhotoId)" src='@Url.Action("DisplayPhoto", "Photo", new { id = item.PhotoId })' />
+              </td>
+              <td class="td-styling">
+                  @Html.DisplayFor(modelItem => item.OriginalHeight)
+              </td>
+              <td class="td-styling">
+                  @Html.DisplayFor(modelItem => item.OriginalWidth)
+              </td>
+              <td class="td-styling">
+                  @Html.DisplayFor(modelItem => item.Title)
+              </td>
+              <td class="td-styling">
+                  @Html.ActionLink("Edit", "Edit", new { id=item.PhotoId }) |
+                  @Html.ActionLink("Details", "Details", new { id=item.PhotoId }) |
+                  @Html.ActionLink("Delete", "Delete", new { id=item.PhotoId })
+              </td>
+          </tr>
+      }*@
+
+      @*Loading bar*@
+    </table>
+    @*Container for the photo modal*@
+    <div id="photo-modal" class="photo-modal">
+      <img id="photo-modal--content" class="photo-modal--content" />
+    </div>
+    <div id="progress" style="display:none">
+      <h4>Loading...</h4>
+    </div>

@@ -1,0 +1,149 @@
+﻿@model TheatreCMS.Areas.Subscribers.Models.SeasonManager
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+
+
+@*Commented out code below is to remove checkboxes from form. Commented it out instead of deleting it. - LR 1/21/20 *@
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="page-format-EditCreate nice-border col-md-8">
+        <h2 class="bold underline mt-2">Edit Season @Html.DisplayFor(modelItem => modelItem.Season) Manager</h2>
+        <br />
+        <br />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger text-center" })
+        @Html.HiddenFor(model => model.SeasonManagerId)
+
+        <div class="col-md-10 formGroup">
+            @Html.LabelFor(model => model.SeasonManagerPerson, htmlAttributes: new { @class = "control-label text-center" })
+            <div class="col-centered">
+                @Html.DropDownList("dbUsers", (IEnumerable<SelectListItem>)ViewData["dbUsers"], htmlAttributes: new { @class = "form-control" })
+            </div>
+        </div>
+
+        <div class="col-md-10 formGroup">
+            @Html.LabelFor(model => model.NumberSeats, htmlAttributes: new { @class = "control-label col-md-12" })
+            <div class="col-centered">
+                @Html.EditorFor(model => model.NumberSeats, new { htmlAttributes = new { @class = "form-control text-center" } })
+                @Html.ValidationMessageFor(model => model.NumberSeats, "", new { @class = "text-danger text-center" })
+            </div>
+        </div>
+
+        @*<div class="col-md-10 formGroup">
+            @Html.LabelFor(model => model.BookedCurrent, htmlAttributes: new { @class = "control-label col-md-12" })
+            <div class="col-centered">
+                <div class="big-checkbox">
+                    @Html.EditorFor(model => model.BookedCurrent)
+                    @Html.ValidationMessageFor(model => model.BookedCurrent, "", new { @class = "text-danger text-center" })
+                </div>
+            </div>
+        </div>*@
+        <br />
+        <h4 class="underline">Fall Production</h4>
+        <br />
+        <div class="col-md-10 formGroup">
+            @Html.LabelFor(model => model.FallProd, htmlAttributes: new { @class = "control-label col-md-12" })
+            <div class="col-centered">
+                @Html.EditorFor(model => model.FallProd, new { htmlAttributes = new { @class = "form-control text-center" } })
+                @Html.ValidationMessageFor(model => model.FallProd, "", new { @class = "text-danger text-center" })
+            </div>
+        </div>
+
+        <div class="col-md-10 formGroup">
+            @Html.LabelFor(model => model.FallTime, htmlAttributes: new { @class = "control-label col-md-12" })
+            <div class="col-centered">
+                @Html.EditorFor(model => model.FallTime, new { htmlAttributes = new { @class = "form-control text-center" } })
+                @Html.ValidationMessageFor(model => model.FallTime, "", new { @class = "text-danger text-center" })
+            </div>
+        </div>
+
+        @*<div class="form-group">
+            @Html.LabelFor(model => model.BookedFall, htmlAttributes: new { @class = "control-label col-md-12" })
+            <div class="col-md-10">
+                <div class="checkbox">
+                    @Html.EditorFor(model => model.BookedFall)
+                    @Html.ValidationMessageFor(model => model.BookedFall, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>*@
+        <br />
+        <h4 class="underline">Winter Production</h4>
+        <br />
+        <div class="col-md-10 formGroup">
+            @Html.LabelFor(model => model.WinterProd, htmlAttributes: new { @class = "control-label col-md-12" })
+            <div class="col-centered">
+                @Html.EditorFor(model => model.WinterProd, new { htmlAttributes = new { @class = "form-control text-center" } })
+                @Html.ValidationMessageFor(model => model.WinterProd, "", new { @class = "text-danger text-center" })
+            </div>
+        </div>
+
+        <div class="col-md-10 formGroup">
+            @Html.LabelFor(model => model.WinterTime, htmlAttributes: new { @class = "control-label col-md-12" })
+            <div class="col-centered">
+                @Html.EditorFor(model => model.WinterTime, new { htmlAttributes = new { @class = "form-control text-center" } })
+                @Html.ValidationMessageFor(model => model.WinterTime, "", new { @class = "text-danger text-center" })
+            </div>
+        </div>
+
+        @*<div class="form-group">
+            @Html.LabelFor(model => model.BookedWinter, htmlAttributes: new { @class = "control-label col-md-12" })
+            <div class="col-md-10">
+                <div class="checkbox">
+                    @Html.EditorFor(model => model.BookedWinter)
+                    @Html.ValidationMessageFor(model => model.BookedWinter, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>*@
+        <br />
+        <h4 class="underline">Spring Production</h4>
+        <br />
+        <div class="col-md-10 formGroup">
+            @Html.LabelFor(model => model.SpringProd, htmlAttributes: new { @class = "control-label col-md-12" })
+            <div class="col-centered">
+                @Html.EditorFor(model => model.SpringProd, new { htmlAttributes = new { @class = "form-control text-center" } })
+                @Html.ValidationMessageFor(model => model.SpringProd, "", new { @class = "text-danger text-center" })
+            </div>
+        </div>
+
+        <div class="col-md-10 formGroup">
+            @Html.LabelFor(model => model.SpringTime, htmlAttributes: new { @class = "control-label col-md-12" })
+            <div class="col-centered">
+                @Html.EditorFor(model => model.SpringTime, new { htmlAttributes = new { @class = "form-control text-center" } })
+                @Html.ValidationMessageFor(model => model.SpringTime, "", new { @class = "text-danger text-center" })
+            </div>
+        </div>
+
+        @*<div class="form-group">
+            @Html.LabelFor(model => model.BookedSpring, htmlAttributes: new { @class = "control-label col-md-12" })
+            <div class="col-md-10">
+                <div class="checkbox">
+                    @Html.EditorFor(model => model.BookedSpring)
+                    @Html.ValidationMessageFor(model => model.BookedSpring, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>*@
+        <br />
+        <br />
+        <div class="col-md-4 col-centered">
+            <button type="submit" class="SmBtn">
+                <i class="fa fa-save fa-fw"></i>Save <!-- This button is executes the save function -->
+            </button>
+        </div>
+        <div class="col-md-6 col-centered mb-2">
+            <br />
+            @Html.ActionLink("Back to List", "Index") |
+            @Html.ActionLink("Delete", "Delete", new { id = Model.SeasonManagerId })
+        </div>
+
+    </div>
+    }
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

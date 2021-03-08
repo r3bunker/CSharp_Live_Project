@@ -1,0 +1,6 @@
+﻿This text file exists to fix a bug where the App_Data folder doesn't get included properly in 
+newly cloned projects.
+
+DO NOT DELETE THIS FILE!!
+
+SERIOUSLY!

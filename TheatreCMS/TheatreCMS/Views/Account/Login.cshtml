@@ -1,0 +1,120 @@
+﻿@using TheatreCMS.Models
+@model LoginViewModel
+@{
+  ViewBag.Title = "Log in";
+}
+
+<div class="m-3 pl-3 pb-1">
+  @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form", id = "login" })) // Added id="loginto be used with EasyLogin Buttons --!!! PLEASE REMOVE BEFORE DEPLOYMENT !!!
+  {
+  <div class="row">
+    <div class="col-xl">
+      <h1 class="m-2 pl-1">@ViewBag.Title</h1>           @*Using Bootstrap classes to line up elements and create spacing between them*@
+      <h4 class="ml-2 pl-1 pt-5">Use a local account to log in</h4>
+      <div>
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+          @Html.LabelFor(m => m.Email, new { @class = "col-md-2 control-label" })
+          <div class="col-11 col-sm-7 col-md-5 col-lg-5 col-xl-5">
+            @*I changed the length of the input fields to account for additional sizes, which I also added*@
+            @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+          </div>
+        </div>
+        <div class="form-group">
+          @Html.LabelFor(m => m.Password, new { @class = "col-md-2 control-label" })
+          <div class="col-11 col-sm-7 col-md-5 col-lg-5 col-xl-5">
+            @*I changed the length of the input fields to account for additional sizes, which I also added*@
+            @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-md-offset-2 col-md-10">
+            <div class="checkbox">
+              @Html.CheckBoxFor(m => m.RememberMe)
+              @Html.LabelFor(m => m.RememberMe)
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+            @*<div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Log in" class="btn btn-main" />
+        </div>*@
+            <div class="iconBtnContainer">
+                <div class="loginhthree">
+                    <button class="iconBtn" type="submit">
+                        Login @*I removed the onclick event handler*@
+                    </button>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl">
+      @*Easy Login Buttons - for development purposes only. THIS MUST BE REMOVED BEFORE DEPLOYMENT*@
+      <div class="col-md-6 mt-3 ml-2 pl-1 pb-1">
+        <section class="loginpadding" id="loginForm">
+          <h2 class="m-1">Easy Login</h2>
+          <p class="m-1">This section exists for development purposes only. Please make sure that it is removed before deployment.</p>  THE TEXT SAYS IT ALL 
+          <hr />
+          <p><input type="button" class="iconBtn" value="Sign in as New User" id="UserBtn" /></p>
+          <p><input type="button" class="iconBtn" value="Sign in as an Administrator" id="AdminBtn" /></p>
+          <p><input type="button" class="iconBtn" value="Sign in as a Member" id="MemberBtn" /></p>
+          <p><input type="button" class="iconBtn" value="Sign in as a Subscriber" id="SubscriberBtn" /></p>
+        </section>
+      </div>
+      @*END Easy Login Buttons Section*@
+    </div>
+  </div>
+  <p class="col-sm-6 ">
+    @Html.ActionLink("Register as a new user", "Register")
+  </p>
+  <!--Enable this once you have account confirmation enabled for password reset functionality-->
+  <p class="col-sm-6 ">
+    @Html.ActionLink("Forgot your password?", "ForgotPassword")
+  </p>
+    @*<div class="col-md-4">
+        <section id="socialLoginForm">
+        @Html.Partial("_ExternalLoginsListPartial", new ExternalLoginListViewModel { ReturnUrl = ViewBag.ReturnUrl })
+        </section>
+    </div>*@
+  }
+</div>
+@section Scripts {
+  @Scripts.Render("~/bundles/jqueryval")
+}
+
+@*The JavaScript applies only to the Easy Login buttons, for the purposes of development. IT MUST BE REMOVED BEFORE DEPLOYMENT*@
+<script type="text/javascript">
+  document.getElementById("UserBtn").addEventListener('click', function() {
+    var email = document.getElementById('Email');
+    email.value = 'wubbalubbbadubdub@gmail.com';
+    var pass = document.getElementById('Password');
+    pass.value = '!Squanchie12';
+    document.getElementById("login").submit();
+  });
+  document.getElementById("AdminBtn").addEventListener('click', function () {
+    var email = document.getElementById('Email');
+    email.value = 'test@gmail.com';
+    var pass = document.getElementById('Password');
+    pass.value = 'Passw0rd!';
+    document.getElementById("login").submit();
+  });
+  document.getElementById("MemberBtn").addEventListener('click', function () {
+    var email = document.getElementById('Email');
+    email.value = 'member.test@gmail.com';
+    var pass = document.getElementById('Password');
+    pass.value = 'Ih@ve12cats';
+    document.getElementById("login").submit();
+  });
+  document.getElementById("SubscriberBtn").addEventListener('click', function () {
+    var email = document.getElementById('Email');
+    email.value = 'subscriber.test@gmail.com';
+    var pass = document.getElementById('Password');
+    pass.value = '100100St!';
+    document.getElementById("login").submit();
+  });
+</script>
+@*END Easy Login Buttons Javascript*@

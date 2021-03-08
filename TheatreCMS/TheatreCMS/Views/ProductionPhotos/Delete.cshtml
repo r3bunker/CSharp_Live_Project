@@ -1,0 +1,65 @@
+﻿@using TheatreCMS.Controllers
+@model TheatreCMS.Models.ProductionPhotos
+
+@{
+    ViewBag.Title = "Delete";
+}
+<div class="container">
+    <h2>Delete</h2>
+    <h3>Are you sure you want to delete this?</h3>
+    <div>
+        <h4>ProductionPhotos</h4>
+        <hr />
+        <div class="row">
+            <dl class="dl-horizontal justify-content-start col-md-9">
+                <dt>
+                    @Html.DisplayNameFor(model => model.Production)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Production.Title)
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Production.Season)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Production.Season)
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => model.PhotoId)
+                </dt>
+                <dd>
+                    @*@Html.DisplayFor(model => model.PhotoId)*@
+                    <td>
+                        <img src='@Url.Action("DisplayPhoto", "Photo", new { id = Model.PhotoId })' />                   
+                    </td>
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.Title)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Title)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.Description)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Description)
+                </dd>
+
+            </dl>
+        </div>
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+
+    <div class="form-actions no-color" style="padding-left: 100px">
+        <input type="submit" value="Delete" class="btn btn-danger btn-main" /> |<!-- btn-main originally btn-default, save for possible reversion -->
+        @Html.ActionLink("Back to List", "Index")
+    </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,245 @@
+﻿@model IEnumerable<TheatreCMS.Models.Production>
+@using TheatreCMS.Controllers
+@using TheatreCMS.Models
+
+@{
+    ViewBag.Title = "Home Page";
+    int i = 1; //counter for hash tag links
+    var productionPhotosList = ViewBag.ProductionPhotosList; //stores a list (productions) of lists (ProductionPhotos objects)
+    int productionIndex = 0; //iteration index for ViewBag.ProductionPhotosList
+    int photoIndex = 0;//iteration index for nested photo object list inside ViewBag.ProductionPhotosList
+}
+
+@*@Styles.Render("~/Content/Site.css")*@
+@*@Scripts.Render("~/Scripts/Site.js")*@
+
+
+<div class="home-body">
+    <main id="home-main">
+        <!--========== MAIN CONTENT - production carousels and info ==========-->
+        <div>
+            <!--===== LOOP EACH PRODUCTION =====-->
+            @foreach (var item in Model)
+            {
+                <!--===== PRODUCTION - Container for Carousel & Content =====-->
+                <div class="home-block">
+                    <div class="home-tint-overlay"></div>
+                    <!--===== CAROUSEL =====-->
+                    <div id="index-block-@i" class="carousel slide" data-interval="10000" data-ride="carousel">
+                        <!--===== CAROUSEL INDICATORS -->
+                        <ol class="carousel-indicators">
+                            @{
+                                <!--=== First slide -->
+                                <li data-target="#index-block-@i" data-slide-to="@photoIndex" class="active"></li>
+                                <!--=== More than one slide -->
+                                if (productionPhotosList[productionIndex].Count > 1)
+                                {
+                                    photoIndex++;
+                                    while (photoIndex < productionPhotosList[productionIndex].Count)
+                                    {
+                                        <li data-target="#index-block-@i" data-slide-to="@photoIndex"></li>
+                                        photoIndex++;
+                                    }
+                                    photoIndex = 0;
+                                }
+                            }
+                        </ol>
+                        <!--===== CAROUSEL SLIDE -->
+                        <div class="carousel-inner">
+                            @{
+                                <!--=== Check if photos -->
+                                if (productionPhotosList[productionIndex].Count == 0)
+                                {
+                                    <div class="carousel-item active">
+                                        <img class="d-block w-100" src="~/Content/Images/Unavailable.png" alt='@item.Title' />
+                                    </div>
+                                }
+                                else
+                                {
+                                    <!--=== First slide -->
+                                    <div class="carousel-item active">
+                                        <img class="d-block w-100" src='@Url.Action("DisplayPhoto", "Photo", new { id = productionPhotosList[productionIndex][photoIndex].PhotoId })' alt='@productionPhotosList[productionIndex][photoIndex].Description' />
+                                    </div>
+                                    <!--=== More than one slide -->
+                                    if (productionPhotosList[productionIndex].Count > 1)
+                                    {
+                                        photoIndex++;
+                                        while (photoIndex < productionPhotosList[productionIndex].Count)
+                                        {
+                                            <div class="carousel-item">
+                                                <img class="d-block w-100" src='@Url.Action("DisplayPhoto", "Photo", new { id = productionPhotosList[productionIndex][photoIndex].PhotoId })' alt='@productionPhotosList[productionIndex][photoIndex].Description' />
+                                            </div>
+                                            photoIndex++;
+                                        }
+                                        photoIndex = 0;
+                                    }
+                                }
+                            }
+                        </div>
+                        <!--===== CAROUSEL CONTROLS -->
+                        <a class="home-carousel-nav carousel-control-prev" href="#index-block-@i" role="button" data-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="sr-only">Previous</span>
+                        </a>
+                        <a class="home-carousel-nav carousel-control-next" href="#index-block-@i" role="button" data-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="sr-only">Next</span>
+                        </a>
+                    </div>
+
+                    <!--===== PRODUCTION - Content =====-->
+                    <div class="home-content">
+                        <div class="home-content-inner">
+                            <h2 class="home-title">@item.Title</h2>
+                            <p class="home-date">@item.OpeningDay.ToString("dddd, MMMM %d, yyyy") - @item.ClosingDay.ToString("dddd, MMMM %d, yyyy")</p>
+                            <a class="btn-main py-1 px-3 text-uppercase" href="@Url.Action("Details", "Productions", new { id = item.ProductionId })">Details</a>
+                        </div>
+                    </div>
+                </div>
+                i++;
+                productionIndex++;
+                @*
+                <div id="index-block-@i" class="home-block">
+
+                    <figure class="home-inner">
+                        <div class="home-tint-overlay"></div>
+                        @{
+                            if (item.DefaultPhoto != null)
+                            {
+                                <div class="home-img">
+                                    <div role="presentation" style="background-image: url(@Url.Action("DisplayPhoto", "Photo", new { id = productionPhotosList[productionIndex][photoIndex].PhotoId }))"></div>
+                                </div>
+                                <div class="home-mobile-img">
+                                    <div role="presentation" style="background-image: url(@Url.Action("DisplayPhoto", "Photo", new { id = productionPhotosList[productionIndex][photoIndex].PhotoId }))"></div>
+                                </div>
+                                if (item.OpeningDay <= DateTime.Now && item.ClosingDay >= DateTime.Now)
+                                {
+                                    <div class="corner-ribbon top-right main">On Stage</div>
+                                }
+                                else if (item.OpeningDay > DateTime.Now)
+                                {
+                                    <div class="corner-ribbon top-right main">Coming Soon</div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="home-img">
+                                    <div style="background-image: url(~/Content/Images/Unavailable.png)"></div>
+                                </div>
+                                <div class="home-mobile-img">
+                                    <div style="background-image: url(~/Content/Images/Unavailable.png)"></div>
+                                </div>
+                            }
+                        }
+                        <figcaption class="home-content">
+                            <div class="home-content-inner">
+                                @{
+                                    @*<h6 class="home-tag-line">Home Tag Line</h6>
+                                    <h2 role="heading" class="home-title">@item.Title</h2>
+                                    <p class="home-date">@item.OpeningDay.ToString("dddd, MMMM %d, yyyy") - @item.ClosingDay.ToString("dddd, MMMM %d, yyyy")</p>
+                                    <div class="home-btn">
+                                        <a class="btn-main text-uppercase font-weight-bold px-3" href="@Url.Action("Details", "Productions", new { id = item.ProductionId })">Details</a> <!-- additional styling for btn-main on homepage: uppercase, bold, and padding -->
+                                    </div>
+                                }
+                            </div>
+                        </figcaption>
+                    </figure>
+
+                </div>
+                i++;
+                productionIndex++;
+                *@
+            }
+        </div>
+        <!--========== NAV BAR - vertical page position ==========-->
+        <nav>
+            <ul id="home-nav">
+                @{ i = 1; }
+                @foreach (var item in Model)
+                {
+                    <li>
+                        <a class="home-nav-link" href="#index-block-@i"></a>
+                    </li>
+                    i++;
+                }
+            </ul>
+        </nav>
+    </main>
+</div>
+
+
+@Scripts.Render("~/bundles/jquery")
+<script src="~/Scripts/gumshoe.js"></script>
+<script>
+    $(document).ready(function () {
+        resizeTitle();
+
+        $(".home-nav-link").on('click', function (event) {
+
+            // Make sure this.hash has a value before overriding default behavior
+            if (this.hash !== "") {
+                // Prevent default anchor click behavior
+                event.preventDefault();
+
+                // Store hash
+                var hash = this.hash;
+
+                // Using jQuery's animate() method to add smooth page scroll
+                // The optional number (800) specifies the number of milliseconds it takes to scroll to the specified area
+                $('html, body').animate({
+                    scrollTop: $(hash).offset().top - 52 //Subtract offset for header
+                }, 500, function () {
+
+                });
+            } // End if
+        });
+        //Offset for fixed header
+        var spy = new Gumshoe('#home-nav a', {
+            offset: 52
+        });
+        //Check home-title text length and resize based on screen size
+        var textLength;
+        function resizeTitle() {
+            $('.home-title').each(function () {
+                textLength = ($(this).text().length);
+                if (window.matchMedia('(min-width: 80.0625em)').matches) {
+                    if (textLength >= 20 && textLength < 30) {
+                        $(this).css('font-size', '10rem');
+                    }
+                    if (textLength > 30) {
+                        $(this).css('font-size', '8rem');
+                    }
+                }
+
+                if (window.matchMedia('(max-width: 80em)').matches) {
+                    if (textLength >= 20 && textLength < 30) {
+                        $(this).css('font-size', '7rem');
+                    }
+                    if (textLength > 30) {
+                        $(this).css('font-size', '6rem');
+                    }
+
+                    if (window.matchMedia('(max-width: 64.0625em)').matches) {
+                        if (textLength >= 20 && textLength < 30) {
+                            $(this).css('font-size', '6.5rem');
+                        }
+                        if (textLength > 30) {
+                            $(this).css('font-size', '5.5rem');
+                        }
+
+                        if (window.matchMedia('(max-width: 48em)').matches) {
+                            if (textLength >= 20 && textLength < 30) {
+                                $(this).css('font-size', '2.75rem');
+                            }
+                            if (textLength > 30) {
+                                $(this).css('font-size', '2.75rem');
+                            }
+                        }
+                    }
+                }
+            })
+        }
+
+        $(window).resize(resizeTitle);
+    });
+</script>

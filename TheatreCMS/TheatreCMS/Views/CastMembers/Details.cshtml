@@ -1,0 +1,150 @@
+﻿@using TheatreCMS.Controllers
+@model TheatreCMS.Models.CastMember
+
+
+@{
+    ViewBag.Title = "Details";
+    var FavCastIds = ViewBag.FavCastIds;
+}
+
+
+<div class=" container-fluid">
+    <div class="detailsContainer">
+        <div id="Isaiah_details" class="topPadding"> @*Isaiah-details adds padding and a border in css*@
+            @*Using bootstraps grid system to layout this page*@
+            <div class="row">   @*This row is the main row it has two collumns in it that have nested rows in them*@
+                
+                <div class="col-md-4">
+                    @*This collumn holds everything on the left side of the page*@
+                    <h2 id="Isaiah_castname">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            int cmid = Model.CastMemberID;
+                            if (FavCastIds.Contains(cmid.ToString()))
+                            {
+                                <span class="fb-favorited" id="fb-@cmid" onclick="FavoriteCastMember(@cmid)"></span>
+                            }
+                            else
+                            {
+                                <span class="fb-not-favorited" id="fb-@cmid" onclick="FavoriteCastMember(@cmid)"></span>
+                            }
+                        }
+
+                        @Html.DisplayFor(model => model.Name)
+
+                    </h2> @*The id is for my javascript code*@
+
+                    @*Added an id for my javascript and bootstrap classes for reactive styling*@
+                    <img id="Isaiah_castImage" src="@Url.Action("DisplayPhoto", "Photo", new { id = Model.PhotoId })" class="img-fluid imgRouned w-100" />
+
+					<h6>
+						@*Display Username to Admin-only if the CastMember is associated with a User account*@
+						@if (User.IsInRole("Admin") && ViewBag.CurrentUser != null)
+						{
+                            <br /> @*ideal spacing after photo when Username is associated and displayed*@
+                            <span>Username: @ViewBag.CurrentUser</span>				
+						}
+					</h6>
+
+                    <div>   @*Holds and displays all of the cast members parts*@
+                        <h5>@Html.DisplayNameFor(model => model.Parts)</h5>
+                        @if (Model.Parts.Count() != 0)
+                        {
+                            foreach (var role in Model.Parts)
+                            {
+                                <div>
+                                    <h6><a class="Isaiah_castPart" href="/Part/Details/@role.PartID">@Html.DisplayFor(model => role.Character)</a></h6>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>  @*End of first collumn*@
+
+                <div class=" col-md-8">     @*This Collumn holds everything displayed on the right it is twice as big as the first collumn*@
+
+                    <div class="row-cols-1">    @*Displays actors role in its own row this is done so when the screen gets small the rows stack*@
+                        <h2 id="Isaiah_castRole">@Html.DisplayNameFor(model => model.MainRole): @Html.DisplayFor(model => model.MainRole)</h2>
+                    </div>
+
+                    <div id="Isaiah_castBio" class="row">   @*Displays the cast members bio*@
+                        <h5>&emsp;@Html.DisplayFor(model => model.Bio)</h5>
+                    </div>
+
+                    <div id="Isaiah_castrow" class="row"> @*This displays a line seperating the bio from what follows*@
+                        <hr class="Isaiah_castline" />
+                    </div>
+
+                    <div class="row">   @*displays year join and first checkbox*@
+                        <div id="Isaiah_castCol1" class="Isaiah_castCol col-xl-7 col-lg-7 col-md-7 col-sm-7 col-4"> @*Different collumn sizes for varying screen sizes*@
+                            <h6 id="Isaiah_casth6">Year Joined: @Html.DisplayFor(model => model.YearJoined)</h6>
+                        </div>
+                        <div class="Isaiah_castCol col-xl-5 col-lg-5 col-md-5 col-sm-5 col-8">  @*Different collumn sizes for varying screen sizes*@
+                            <h6 class="Isaiah_castCheck1">Associate Artist</h6><h6 class="Isaiah_castCheck2">@Html.DisplayFor(model => model.AssociateArtist)</h6>
+                        </div>
+                    </div>
+
+                    <div class="row">   @*displays year left and second checkbox*@
+                        <div id="Isaiah_castCol2" class="Isaiah_castCol col-xl-7 col-lg-7 col-md-7 col-sm-7 col-4"> @*Different collumn sizes for varying screen sizes*@
+                            <h6>Year Left: @Html.DisplayFor(model => model.CastYearLeft)</h6>
+                        </div>
+                        <div class="Isaiah_castCol col-xl-5 col-lg-5 col-md-5 col-sm-5 col-8">  @*Different collumn sizes for varying screen sizes*@
+                            <h6 class="Isaiah_castCheck1">Ensemble Member</h6><h6 class="Isaiah_castCheck2">@Html.DisplayFor(model => model.EnsembleMember)</h6>
+                        </div>
+                    </div>
+
+                    <div class="row">   @*displays debute year and third checkbox*@
+                        <div id="Isaiah_castCol3" class="Isaiah_castCol col-xl-7 col-lg-7 col-md-7 col-sm-7 col-4"> @*Different collumn sizes for varying screen sizes*@
+                            <h6>Debut Year: @Html.DisplayFor(model => model.DebutYear)</h6>
+                        </div>
+                        <div class="Isaiah_castCol col-xl-5 col-lg-5 col-md-5 col-sm-5 col-8">  @*Different collumn sizes for varying screen sizes*@
+                            <h6 class="Isaiah_castCheck1">Current Member</h6><h6 class="Isaiah_castCheck2">@Html.DisplayFor(model => model.CurrentMember)</h6>
+                        </div>
+                    </div>
+
+                    <div id="Isaiah_castBtns" class="row">  @*This holds the two btns for this page*@
+                    @if (User.IsInRole("Admin"))
+                    {
+                        @*This button will only show up when you are logged on as an admin and alows you to got to the cast member edit page*@
+                        <a id="Isaiah_castEdit" class="badge badge-pill mt-4" href='@Url.Action("Edit", "CastMembers", new { id = Model.CastMemberID })'> Edit </a>
+                    }
+                    @*This btn takes you back to the cast member index page*@
+                    <a id="Isaiah_castIndexbtn" class="badge badge-pill mt-4" href='@Url.Action("Index", "CastMembers")'> Back To List</a>
+                    </div>
+
+                </div>  @*End of right collumn*@
+
+            </div> @*End of main row*@
+
+        </div>
+    </div>
+</div>
+
+ @*This Script helps with sizing of certain elemens*@
+<script>
+    window.addEventListener("load", castDetails_sizing);    @*When this page loads it will run castDetails_sizing()*@
+    window.addEventListener("resize", castDetails_sizing); @* When this page gets resized it will run castDetails_sizing() *@
+    function castDetails_sizing() {
+        var x = document.getElementById("Isaiah_castImage").offsetHeight; @*Gets the height of the image and sets it to x*@
+        var y = document.getElementById("Isaiah_castname").offsetHeight; @*Gets the height of the cast name header and sets it to y*@
+        var z = document.getElementById("Isaiah_castrow").offsetHeight; @*Gets the height of the seperating line and sets it to z*@
+
+        if (window.innerWidth > 767) { @*This only hapens when the sreen size is big enough*@
+            document.getElementById("Isaiah_castBio").style.height = (x - z) + "px"; @*Resizes the cast bio to be the same height as the image minus the height of the line*@
+            document.getElementById("Isaiah_castRole").style.height = y + "px"; @*Resizes the cast role for spacing between the role and the bio*@
+            document.getElementById("Isaiah_castBio").style.paddingLeft = 5 + "vw"; @*Gives the bio padding*@
+            document.getElementById("Isaiah_castrow").style.paddingLeft = 5 + "vw"; @*Gives the line padding*@
+            document.getElementById("Isaiah_castCol1").style.paddingLeft = 5 + "vw"; 
+            document.getElementById("Isaiah_castCol2").style.paddingLeft = 5 + "vw";
+            document.getElementById("Isaiah_castCol3").style.paddingLeft = 5 + "vw"; 
+        }
+        else {
+            document.getElementById("Isaiah_castBio").style.height = "auto"; @*Resets the bio's height once the rows stack*@
+            document.getElementById("Isaiah_castRole").style.height = "auto"; @*Resets the roles height once the rows stack*@ @*******fixed typo******@
+            document.getElementById("Isaiah_castBio").style.paddingLeft = 0; @*Removes the bio's padding once the rows stack *@ 
+            document.getElementById("Isaiah_castrow").style.paddingLeft = 0; @* Removes the lines padding once the rows stack *@ 
+            document.getElementById("Isaiah_castCol1").style.paddingLeft = 0;
+            document.getElementById("Isaiah_castCol2").style.paddingLeft = 0;
+            document.getElementById("Isaiah_castCol3").style.paddingLeft = 0;
+        }
+    }
+</script>

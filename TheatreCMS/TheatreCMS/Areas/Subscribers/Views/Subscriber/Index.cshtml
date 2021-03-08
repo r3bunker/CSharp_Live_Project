@@ -1,0 +1,188 @@
+﻿@model IEnumerable<TheatreCMS.Areas.Subscribers.Models.Subscriber>
+
+@{
+    ViewBag.Title = "Index";
+}
+    <body class="subbody">
+        <h2 class="subback1">Subscribers Manager</h2>
+
+        <p>
+            <button class="subindexcreatebtn" style="border:1px solid var(--light-color)" onclick="location.href='@Url.Action("Create")'">
+                Create New
+            </button>
+        </p>
+        <div class="container-fluid">
+        @foreach (var item in Model)
+        {
+            <div class="subback2" style="padding-top:0; padding-bottom:0;">
+                <div class="row align-items-start accordion" style="padding-bottom:0;">
+                    <div class="col-auto">
+                        @Html.DisplayNameFor(model => model.SubscriberPerson.FirstName)
+                        <p class="text-body">
+                            @Html.DisplayFor(modelItem => item.SubscriberPerson.FirstName, new { htmlAttributes = new { @style = "text-decoration-color:black;" } })
+                        </p>
+                    </div>
+                    <div class="col-auto">
+                        @Html.DisplayNameFor(model => model.SubscriberPerson.LastName)
+                        <p class="text-body">
+                            @Html.DisplayFor(modelItem => item.SubscriberPerson.LastName)
+                        </p>
+                    </div>
+                    <div class="col-auto">
+                        @Html.DisplayNameFor(model => model.SubscriberPerson.UserName)
+                        <p class="text-body">
+                            @Html.DisplayFor(modelItem => item.SubscriberPerson.UserName)
+                        </p>
+                    </div>
+                    <div class="col-auto">
+                        @Html.DisplayNameFor(model => model.CurrentSubscriber)
+                        <p class="text-body">
+                            @Html.DisplayFor(modelItem => item.CurrentSubscriber)
+                        </p>
+                    </div>
+                    <div class="col-auto">
+                        @Html.DisplayNameFor(model => model.HasRenewed)
+                        <p class="text-body">
+                            @Html.DisplayFor(modelItem => item.HasRenewed)
+                        </p>
+                    </div>
+                    <div class="col-auto">
+                        @Html.DisplayNameFor(model => model.Newsletter)
+                        <p class="text-body">
+                            @Html.DisplayFor(modelItem => item.Newsletter)
+                        </p>
+                    </div>
+                    <div class="col-auto">
+                        @Html.DisplayNameFor(model => model.RecentDonor)
+                        <p class="text-body">
+                            @Html.DisplayFor(modelItem => item.RecentDonor)
+                        </p>
+                    </div>
+                </div>
+                <div class="row align-items-start">
+                    <div class="col-auto">
+                        @Html.DisplayNameFor(model => model.LastDonated)
+                        <p class="text-body accordion">
+                            @Html.DisplayFor(modelItem => item.LastDonated)
+                        </p>
+                    </div>
+                    <div class="col-auto">
+                        @Html.DisplayNameFor(model => model.LastDonationAmt)
+                        <p class="text-body">
+                            @Html.DisplayFor(modelItem => item.LastDonationAmt)
+                        </p>
+                    </div>
+                    <div class="col-auto">
+                        @Html.DisplayNameFor(model => model.SpecialRequests)
+                        <p>
+                            @Html.TextAreaFor(modelItem => item.SpecialRequests)
+                        </p>                       
+                    </div>
+                    <div class="col-auto">
+                        @Html.DisplayNameFor(model => model.Notes)
+                        <p>
+                            @Html.TextAreaFor(modelItem => item.Notes)
+                        </p>
+                    </div>
+                    <div class="col-auto">
+                        <button class="subindexbtn" onclick="location.href='@Url.Action("Edit", new { id = item.SubscriberId })'">Edit</button>
+                        <button class="subindexbtn" onclick="location.href='@Url.Action("Details", new { id = item.SubscriberId })'">Details</button>
+                        <button class="subindexbtn" onclick="location.href='@Url.Action("Delete", new { id = item.SubscriberId })'">Delete</button>
+                    </div>
+                </div>
+            </div>
+        }
+        </div>
+    </body>
+
+    @*     
+    <h2>Index</h2>
+
+    <p>
+    @Html.ActionLink("Create New", "Create")
+    &nbsp;&nbsp;@Html.ActionLink("Back to Dashboard", "../Dashboard/Index")
+    </p>
+        
+    <table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.SubscriberPerson.FirstName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.SubscriberPerson.LastName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.SubscriberPerson.UserName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CurrentSubscriber)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.HasRenewed)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Newsletter)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.RecentDonor)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.LastDonated)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.LastDonationAmt)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.SpecialRequests)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Notes)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.SubscriberPerson.FirstName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SubscriberPerson.LastName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SubscriberPerson.UserName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CurrentSubscriber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.HasRenewed)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Newsletter)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RecentDonor)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LastDonated)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LastDonationAmt)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SpecialRequests)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Notes)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.SubscriberId }) |
+                @Html.ActionLink("Details", "Details", new { id = item.SubscriberId }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.SubscriberId })
+            </td>
+        </tr>
+    }
+
+</table>*@

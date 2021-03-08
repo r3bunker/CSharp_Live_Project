@@ -1,0 +1,297 @@
+﻿@model TheatreCMS.Models.Production
+@using TheatreCMS.Controllers
+@{
+  ViewBag.Title = "Edit";
+}
+
+@Styles.Render("~/Content/Site.css")
+
+<h2 class="pt-3">Edit</h2> <!-- pt-3 to increase padding along the top -->
+
+
+@using (Html.BeginForm("Edit", "Productions", null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+  @Html.AntiForgeryToken()
+  <div class="formContainer2">
+    <div class="form-horizontal">
+      <h4>Production</h4>
+      <hr />
+      @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+      @Html.HiddenFor(model => model.ProductionId)
+      @if (Model.DefaultPhoto != null)
+      {
+        @Html.Hidden("DefaultProPhotoId", Model.DefaultPhoto.ProPhotoId)
+      }
+      else
+      {
+        @Html.Hidden("DefaultProPhotoId", "")
+      }
+
+      <div class="form-group">
+        @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label col-md-2 inputLabel" })
+        <div class="col-md-10 formBox">
+          @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control" } })
+          @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
+        </div>
+      </div>
+
+      <div class="form-group">
+        @Html.LabelFor(model => model.Playwright, htmlAttributes: new { @class = "control-label col-md-2 inputLabel" })
+        <div class="col-md-10 formBox">
+          @Html.EditorFor(model => model.Playwright, new { htmlAttributes = new { @class = "form-control" } })
+          @Html.ValidationMessageFor(model => model.Playwright, "", new { @class = "text-danger" })
+        </div>
+      </div>
+
+      <div class="form-group">
+        @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2 inputLabel" })
+        <div class="col-md-10 formBox">
+          @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+          @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+        </div>
+      </div>
+
+      <div class="form-group">
+        @Html.LabelFor(model => model.Runtime, htmlAttributes: new { @class = "control-label col-md-2 inputLabel" })
+        <div class="col-md-10 formBox">
+          @Html.EditorFor(model => model.Runtime, new { htmlAttributes = new { @class = "form-control" } })
+          @Html.ValidationMessageFor(model => model.Runtime, "", new { @class = "text-danger" })
+        </div>
+      </div>
+
+      <div class="form-group">
+        @Html.LabelFor(model => model.OpeningDay, htmlAttributes: new { @class = "control-label col-md-2 inputLabel" })
+        <div class="col-md-10 formBox">
+          @Html.EditorFor(model => model.OpeningDay, new { htmlAttributes = new { @class = "form-control" } })
+          @Html.ValidationMessageFor(model => model.OpeningDay, "", new { @class = "text-danger" })
+        </div>
+      </div>
+
+      <div class="form-group">
+        @Html.LabelFor(model => model.ClosingDay, htmlAttributes: new { @class = "control-label col-md-2 inputLabel" })
+        <div class="col-md-10 formBox">
+          @Html.EditorFor(model => model.ClosingDay, new { htmlAttributes = new { @class = "form-control" } })
+          @Html.ValidationMessageFor(model => model.ClosingDay, "", new { @class = "text-danger" })
+        </div>
+      </div>
+
+
+      <!-- PHOTO MODAL-->
+
+      <div class="form-group">
+        @if (Model.DefaultPhoto != null)
+        {
+          @Html.LabelFor(model => model.DefaultPhoto, htmlAttributes: new { @class = "control-label col-md-4 inputLabel" })
+          <div class="container">
+
+            <a href="#prod-photo-default-modal" data-toggle="modal">
+              <img id="prod-photo-default-thumbnail" class="card-img-top medium_size" src="@Url.Action("DisplayPhoto", "Photo", new { id = Model.DefaultPhoto.PhotoId })" alt="Card image cap" data-photo="@Model.DefaultPhoto.PhotoId">
+            </a>
+            <div>
+              <input type="button" value="Update Default Promo Photo" class="btn btn-main mt-3" data-target="#prod-photo-default-modal" data-toggle="modal" /> <!-- Removed id="prod-photo-default-modal-btn" as it interfered with the styling of the button. Added mt-2 to increase space between photo and button.  -->
+            </div>
+
+
+          </div>
+        }
+        else
+
+        {
+          @Html.LabelFor(model => model.DefaultPhoto, htmlAttributes: new { @class = "control-label col-md-4 inputLabel" })
+          <div class="container">
+            <p class="text-black">There are no Production Photos associated with this Production.</p>
+            <input type="button" value="Add Production Photo" class="iconBtn" data-target="#addProdPhoto" data-toggle="modal" />
+          </div>
+        }
+
+        <!-- Modal -->
+        <div id="prod-photo-default-modal" class="modal fade" role="dialog">
+
+          <div class="modal-dialog modal-lg">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+              </div>
+
+              @if (Model.ProductionPhotos != null)
+              {
+                <div class="modal-body">
+                  <div class="card-columns">
+
+                    @foreach (var item in Model.ProductionPhotos)
+                    {
+                      <div class="card">
+                        <div class="card-body p-0">
+                          <img id="@item.PhotoId" class="card-img-bottom card-img-bottom-prod-photo-default @(Model.DefaultPhoto != null &&
+                                item.PhotoId == Model.DefaultPhoto.PhotoId ? "selected-prod-photo" : "")" src="@Url.Action("DisplayPhoto", "Photo", new { id = item.PhotoId })" alt="Production Photo" data-photo="@item.ProPhotoId" />
+                        </div>
+                      </div>
+                    }
+
+                  </div>
+                </div>
+              }
+
+              <div class="modal-footer">
+                <button id="prod-photo-default-modal-btn" type="button" class="btn btn-main" data-dismiss="modal">Save Selection</button> <!-- btn-main originally btn-default, save for possible reversion -->
+              </div>
+
+            </div>
+          </div>
+        </div>
+        @Html.ValidationMessageFor(model => model.DefaultPhoto.ProPhotoId, "", new { @class = "text-danger" })
+      </div>
+
+      <!-- END PHOTO MODAL-->
+
+      <div class="form-group">
+        @Html.LabelFor(model => model.ShowtimeEve, htmlAttributes: new { @class = "control-label col-md-2 inputLabel" })
+        <div class="col-md-10 formBox">
+          @Html.EditorFor(model => model.ShowtimeEve, new { htmlAttributes = new { @class = "form-control" } })
+          @Html.ValidationMessageFor(model => model.ShowtimeEve, "", new { @class = "text-danger" })
+        </div>
+      </div>
+
+      <div class="form-group">
+        @Html.LabelFor(model => model.ShowtimeMat, htmlAttributes: new { @class = "control-label col-md-2 inputLabel" })
+        <div class="col-md-10 formBox">
+          @Html.EditorFor(model => model.ShowtimeMat, new { htmlAttributes = new { @class = "form-control" } })
+          @Html.ValidationMessageFor(model => model.ShowtimeMat, "", new { @class = "text-danger" })
+        </div>
+      </div>
+
+      <div class="form-group">
+        @Html.LabelFor(model => model.TicketLink, htmlAttributes: new { @class = "control-label col-md-2 inputLabel" })
+        <div class="col-md-10 formBox">
+          @Html.EditorFor(model => model.TicketLink, new { htmlAttributes = new { @class = "form-control" } })
+          @Html.ValidationMessageFor(model => model.TicketLink, "", new { @class = "text-danger" })
+        </div>
+      </div>
+
+      <div class="form-group">
+        @Html.LabelFor(model => model.Season, htmlAttributes: new { @class = "control-label col-md-2 inputLabel" })
+        <div class="col-md-10 formBox">
+          @Html.EditorFor(model => model.Season, new { htmlAttributes = new { @class = "form-control" } })
+          @Html.ValidationMessageFor(model => model.Season, "", new { @class = "text-danger" })
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label col-md-10 inputLabel" for="@Model.IsCurrentlyShowing()">Current Show</label>
+        @*@Html.LabelFor(model => model.IsCurrentlyShowing(), htmlAttributes: new { @class = "control-label col-md-2 inputLabel" })*@
+        <div class="col-md-10 formBox">
+          <div class="checkbox">
+            <input class="check-box" id="IsCurrent" disabled="disabled" type="checkbox" @(Model.IsCurrentlyShowing() ? "checked" : "") />
+            @*@Html.EditorFor(model => model.IsCurrentlyShowing())
+              @Html.ValidationMessageFor(model => model.IsCurrentlyShowing(), "", new { @class = "text-danger" })*@
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        @Html.LabelFor(model => model.IsWorldPremiere, htmlAttributes: new { @class = "control-label col-md-2 inputLabel" })
+        <div class="col-md-10 formBox">
+          <div class="checkbox">
+            @Html.EditorFor(model => model.IsWorldPremiere)
+            @Html.ValidationMessageFor(model => model.IsWorldPremiere, "", new { @class = "text-danger" })
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="col-md-offset-2 col-md-10 formBox">
+          <input type="submit" value="Save" class="btn btn-main" /> <!-- btn-main originally btn-default, save for possible reversion -->
+        </div>
+      </div>
+    </div>
+  </div>
+}
+
+<!--Add Photo Modal-->
+<div id="addProdPhoto" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-body">
+        @using (Html.BeginForm("AddProductionPhoto", "Productions", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+          @Html.AntiForgeryToken()
+          <div class="AddProductionPhotoModalContainer">
+            <div>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="form-horizontal">
+              <div class="inputBox2">
+                @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+                <div class="inputBox2">
+                  @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+                  <div class="form-group">
+                    @Html.DisplayNameFor(model => model.ProductionPhotos.First().Production): @Html.DisplayFor(model => model.Title)
+                    <div class="col-md-10 formBox">
+                      @Html.HiddenFor(model => model.ProductionId)
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    @Html.LabelFor(model => model.ProductionPhotos.First().PhotoId, htmlAttributes: new { @class = "control-label col-md-4 inputLabel" })
+                    <div class="col-md-10 formBox">
+                      <input type="file" name="file" required />
+                      @Html.ValidationMessageFor(model => model.ProductionPhotos.First().PhotoId, "", new { @class = "text-danger" })
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label col-md-4 inputLabel" })
+                    <div class="col-md-10 formBox">
+                      @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control" } })
+                      @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-4 inputLabel" })
+                    <div class="col-md-10 formBox">
+                      @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+                      @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10 formBox">
+                      <input type="submit" value="Create" class="btn btn-main" />
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+<!--END ADD PHOTO MODAL-->
+
+<div>
+  @Html.ActionLink("Current Productions", "Current") |
+  @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+  @Scripts.Render("~/bundles/jqueryval")
+}
+
+<script>
+  $(document).ready(function () {
+    $(".card-img-bottom-prod-photo-default").click(function () {
+      $('.selected-prod-photo').removeClass('selected-prod-photo'); // removes the previous selected class
+      $(this).addClass('selected-prod-photo'); // adds the class to the clicked image
+      console.log($(this).data("photo")); //for testing purposes in browser
+      $("#DefaultProPhotoId").val($(this).data("photo"));
+      $("#prod-photo-default-thumbnail").attr("src", "/Photo/DisplayPhoto/" + $(this).attr("id"));
+    });
+  });
+</script>

@@ -1,0 +1,160 @@
+﻿
+@model IEnumerable<TheatreCMS.Areas.Subscribers.Models.Subscriber>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Donor List";
+
+
+}
+
+  <div class="table-donor-container">
+    <div class="header-donor-list">
+      <!--Title-->
+      <h2 class="donor-title">Donor List</h2>
+      <p>
+        @Html.ActionLink("Back to Dashboard", "./Dashboard")
+      </p>
+
+      <!--Modal Button-->
+      <div class="donorDetails">
+        <button class="iconBtn" data-toggle="modal" data-target="#detailsModal" href="#sitecss" aria-expanded="false" aria-controls="sitecss">
+          <i class="fa fa-info-circle fa-fw"></i>Details
+        </button>
+      </div>
+    </div>
+
+    <!--Display First Name, Last Name, and User Name on the Admin/Donorlist index page-->
+    <table class="table admin-donorlist-table">
+      <tr>
+        <th>
+          @Html.DisplayNameFor(model => model.SubscriberPerson.FirstName)
+        </th>
+        <th>
+          @Html.DisplayNameFor(model => model.SubscriberPerson.LastName)
+        </th>
+        <th>
+          @Html.DisplayNameFor(model => model.SubscriberPerson.UserName)
+        </th>
+        <th></th>
+      </tr>
+
+      @foreach (var item in Model)
+      {
+        <tr>
+          <td>
+            @Html.DisplayFor(modelItem => item.SubscriberPerson.FirstName)
+          </td>
+          <td>
+            @Html.DisplayFor(modelItem => item.SubscriberPerson.LastName)
+          </td>
+          <td>
+            @Html.DisplayFor(modelItem => item.SubscriberPerson.UserName)
+          </td>
+          <td>
+
+            <!--Edit Button-->
+            <button class="iconBtn donorButtons" data-toggle="collapse" onclick="location.href='@Url.Action("subscriber/Edit", "Subscribers", new { id = item.SubscriberId })'">
+              <i class="fa fa-edit fa-fw"></i>Edit
+            </button>
+
+            <!--Delete Button-->
+            <button class="iconBtn donorButtons" data-toggle="collapse" onclick="location.href='@Url.Action("subscriber/Delete", "Subscribers", new { id = item.SubscriberId })'">
+              <i class="fa fa-trash-alt fa-fw"></i>Delete
+            </button>
+          </td>
+        </tr>
+      }
+    </table>
+
+
+    <!-- Modal -->
+    <div class="donor-modal-container">
+      <div class="modal fade bs-example-modal-xl custom-modal" id="detailsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl donor-modal" role="document">
+          <div class="modal-content donor-content">
+            <div class="modal-header">
+              <h5 class="modal-title donor-modal-title" id="exampleModalLabel">Donor Details</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="donor-data">
+                <!--Data and Titles displayed in Modal-->
+                <table>
+                  <tr>
+                    <th></th>
+                    <th>
+                      Name &nbsp;
+                    </th>
+                    <th>
+                      Subscribed? &nbsp;
+                    </th>
+                    <th>
+                      Renewed? &nbsp;
+                    </th>
+                    <th>
+                      Newsletter &nbsp;
+                    </th>
+                    <th>
+                      Recent-Donor? &nbsp;
+                    </th>
+                    <th>
+                      Last-Donation &nbsp;
+                    </th>
+                    <th>
+                      Donation &nbsp;
+                    </th>
+                    <th>
+                      Requests? &nbsp;
+                    </th>
+                    <th>
+                      Notes &nbsp;
+                    </th>
+                  </tr>
+                  @foreach (var item in Model)
+                  {
+                    <tr>
+                      <th></th>
+                      <td>
+                        @Html.DisplayFor(modelItem => item.SubscriberPerson.FirstName)
+                      </td>
+                      <td>
+                        @Html.DisplayFor(modelItem => item.CurrentSubscriber)
+                      </td>
+                      <td>
+                        @Html.DisplayFor(modelItem => item.HasRenewed)
+                      </td>
+                      <td>
+                        @Html.DisplayFor(modelItem => item.Newsletter)
+                      </td>
+                      <td>
+                        @Html.DisplayFor(modelItem => item.RecentDonor)
+                      </td>
+                      <td>
+                        @Html.DisplayFor(modelItem => item.LastDonated)
+                      </td>
+                      <td>
+                        @Html.DisplayFor(modelItem => item.LastDonationAmt)
+                      </td>
+                      <td>
+                        @Html.DisplayFor(modelItem => item.SpecialRequests)
+                      </td>
+                      <td>
+                        @Html.DisplayFor(modelItem => item.Notes)
+                      </td>
+                    </tr>
+                  }
+                </table>
+              </div>
+            </div>
+            <!--Modal Footer-->
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

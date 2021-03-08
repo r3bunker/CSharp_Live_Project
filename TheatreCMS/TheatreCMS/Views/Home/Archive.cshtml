@@ -1,0 +1,558 @@
+﻿@using TheatreCMS.Models
+@using TheatreCMS.Helpers
+@model IEnumerable<Production>
+    @{
+        ViewBag.Title = "Archive";
+    }
+
+
+    <!--Jumbotron header-->
+    <div class="jumbotron jumbotron-fluid bgimage">
+        <div class="container">
+            <h1 class="display-4">
+              @ViewData["maintitle"]
+            </h1>
+            <p class="">
+               @Html.Raw(ViewData["subtitle"])
+            </p>
+        </div>
+    </div>
+
+    <!--Seach Bar/ Actors,parts, and productions dropdown-->
+    <div class="archive-search-container">
+        @using (Html.BeginForm("Archive", "Home", FormMethod.Post))
+    {
+        <div class="archive-input-container">
+            <select id="SearchByCategory" name="SearchByCategory">
+                <option class="search-dropdown" value="SearchAll">Search All</option>
+                <option class="search-dropdown option" value="SearchCastMembers">Cast Member</option>
+                <option class="search-dropdown option" value="SearchProductions">Production</option>
+                <option class="search-dropdown option" value="SearchParts">Part</option>
+            </select>
+            @Html.TextBox("searchKey", "", new { placeholder = "Search" })
+            <button class="search-btn btn btn-lg btn-circle fa fa-search" type="submit" value="search"></button>
+        </div>
+    }
+    </div>
+
+    @*<div class="container" style="align-content:center">
+            <nav class="navbar navbar-expand-xl">
+                <form class="form-inline">
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse justify-content-center" id="navbarSupportedContent">
+
+                        <input class="form-control mr-2" type="search" placeholder="Search" aria-label="Search">
+                        <div class="dropdown">
+                            <button class="btn btn-main dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Search by category
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a class="dropdown-item" href="#Cast_Member">Cast Member</a>
+                                <a class="dropdown-item" href="#Part">Part</a>
+                                <a class="dropdown-item" href="#Production">Production</a>
+                            </div>
+                            <button class="btn btn-main" type="submit">Search</button>
+                        </div>
+                    </div>
+                </form>
+            </nav>
+        </div>*@
+
+
+    <!--Search results-->
+    <h3 id="archiveResultsTitle">Results</h3>
+
+    <div class="resultsContainer">
+        @if (ViewData["ResultsCast"] != null || ViewData["ResultsProduction"] != null || ViewData["ResultsPart"] != null)
+    {
+        switch (ViewBag.Category)
+        {
+            case "SearchAll":  //This case combines the three lower cases.
+        <table class="table table-borderless table-hover results">
+            @if (ViewData["ResultsCast"] != null)
+                    {
+            <thead>
+                <tr class="d-flex">
+                    <th scope="col" class="col-lg-2">Cast Member</th>
+                    <th scope="col" class="col-lg-2">Year Joined</th>
+                    <th scope="col" class="col-lg-8">Bio</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @for (int i = 0; i < ViewBag.ResultsCast.Count; i++)  //This is a for instead of a for each, because YearJoined is a separate list from ResultsCast.
+                            {
+                <tr class="d-flex">
+                    <td class="col-lg-2">
+                        <a href="/CastMembers/Details/@ViewBag.ResultsCast[i].CastMemberID">@Html.Raw(ViewBag.ResultsCast[i].Name)</a>
+                    </td>
+                    <td class="col-lg-2">
+                        <a href="/CastMembers/Details/@ViewBag.ResultsCast[i].CastMemberID">@Html.Raw(ViewBag.YearJoined[i])</a>
+                    </td>
+                    <td class="col-lg-8">
+                        <a href="/CastMembers/Details/@ViewBag.ResultsCast[i].CastMemberID">@Html.Raw(ViewBag.ResultsCast[i].Bio)</a>
+                    </td>
+                </tr>
+                            }
+            </tbody>
+                    }
+            @if (ViewData["ResultsProduction"] != null)
+                    {
+            <tr class="d-flex">
+                <th scope="col" class="col-lg-2">Production</th>
+                <th scope="col" class="col-lg-2">Playwright</th>
+                <th scope="col" class="col-lg-8">Description</th>
+            </tr>
+                        foreach (var item in ViewData["ResultsProduction"] as List<Production>)
+                        {
+            <tr class="d-flex">
+                <td class="col-lg-2">
+                    <a href="/Productions/Details/@item.ProductionId">@Html.Raw(@item.Title)</a>
+                </td>
+                <td class="col-lg-2">
+                    <a href="/Productions/Details/@item.ProductionId">@Html.Raw(@item.Playwright)</a>
+                </td>
+                <td class="col-lg-8">
+                    <a href="/Productions/Details/@item.ProductionId">@Html.Raw(@item.Description)</a>
+                </td>
+            </tr>
+                        }
+                    }
+            @if (ViewData["ResultsPart"] != null)
+                    {
+            <tr class="d-flex">
+                <th scope="col" class="col-lg-2">Part</th>
+                <th scope="col" class="col-lg-2">Production</th>
+                <th scope="col" class="col-lg-8">Cast Member</th>
+            </tr>
+                        foreach (var item in ViewData["ResultsPart"] as List<Part>)
+                        {
+            <tr class="d-flex">
+                <td class="col-lg-2">
+                    <a href="/Part/Details/@item.PartID">@Html.Raw(@item.Character)</a>
+                </td>
+                <td class="col-lg-2">
+                    <a href="/Part/Details/@item.PartID">@Html.Raw(@item.Production.Title)</a>
+                </td>
+                <td class="col-lg-8">
+                    <a href="/Part/Details/@item.PartID">@Html.Raw(@item.Person.Name)</a>
+                </td>
+            </tr>
+                        }
+                    }
+        </table>
+        <p>@ViewBag.Message</p>
+
+                break;
+            case "SearchCastMembers":
+        <table class="table table-borderless table-hover results">
+            <tr class="d-flex">
+                <th scope="col" class="col-lg-2">Cast Member</th>
+                <th scope="col" class="col-lg-2">Year Joined</th>
+                <th scope="col" class="col-lg-8">Bio</th>
+            </tr>
+            @for (int i = 0; i < ViewBag.ResultsCast.Count; i++)  //This is a for instead of a for each, because YearJoined is a separate list from ResultsCast.
+                    {
+            <tr class="d-flex">
+                <td class="col-lg-2">
+                    <a href="/CastMembers/Details/@ViewBag.ResultsCast[i].CastMemberID">@Html.Raw(ViewBag.ResultsCast[i].Name)</a>
+                </td>
+                <td class="col-lg-2">
+                    <a href="/CastMembers/Details/@ViewBag.ResultsCast[i].CastMemberID">@Html.Raw(ViewBag.YearJoined[i])</a>
+                </td>
+                <td class="col-lg-8">
+                    <a href="/CastMembers/Details/@ViewBag.ResultsCast[i].CastMemberID">@Html.Raw(ViewBag.ResultsCast[i].Bio)</a>
+                </td>
+            </tr>
+                    }
+            <caption>@ViewBag.Message</caption>
+        </table>
+                break;
+            case "SearchProductions":
+        <table class="table table-borderless table-hover results">
+            <tr class="d-flex">
+                <th scope="col" class="col-lg-2">Production</th>
+                <th scope="col" class="col-lg-2">Playwright</th>
+                <th scope="col" class="col-lg-8">Description</th>
+            </tr>
+            @foreach (var item in ViewData["ResultsProduction"] as List<Production>)
+                    {
+            <tr class="d-flex">
+                <td class="col-lg-2">
+                    <a href="/Productions/Details/@item.ProductionId">@Html.Raw(@item.Title)</a>
+                </td>
+                <td class="col-lg-2">
+                    <a href="/Productions/Details/@item.ProductionId">@Html.Raw(@item.Playwright)</a>
+                </td>
+                <td class="col-lg-8">
+                    <a href="/Productions/Details/@item.ProductionId">@Html.Raw(@item.Description)</a>
+                </td>
+            </tr>
+                    }
+            <caption>@ViewBag.Message</caption>
+        </table>
+                break;
+            case "SearchParts":
+        <table class="table table-borderless table-hover results">
+            <tr class="d-flex">
+                <th scope="col" class="col-lg-2">Part</th>
+                <th scope="col" class="col-lg-2">Production</th>
+                <th scope="col" class="col-lg-8">Cast Member</th>
+            </tr>
+            @foreach (var item in ViewData["ResultsPart"] as List<Part>)
+                    {
+            <tr class="d-flex">
+                <td class="col-lg-2">
+                    <a href="/Part/Details/@item.PartID">@Html.Raw(@item.Character)</a>
+                </td>
+                <td class="col-lg-2">
+                    <a href="/Part/Details/@item.PartID">@Html.Raw(@item.Production.Title)</a>
+                </td>
+                <td class="col-lg-8">
+                    <a href="/Part/Details/@item.PartID">@Html.Raw(@item.Person.Name)</a>
+                </td>
+            </tr>
+                    }
+        </table>
+        <caption>@ViewBag.Message</caption>
+                break;
+        }
+    }
+    </div>
+
+    <hr />
+
+    <!--Current Productions referencing database-->
+    <div class="mt-5" id="current-productions">
+        <h4>Current Productions</h4>
+        <div class="card-deck mt-5 ml-3 mr-3 bg-black">
+            <!-- added mt-5 class to create spacing between header and content -->
+            @{
+            var currentSettings = AdminSettingsReader.CurrentSettings();            // Grabs AdminSettings JSON
+            int currentSeason = currentSettings.current_season;                     // Initialize currentSeason and set using "current_season" from JSON
+
+            foreach (var item in Model)
+            {
+                if (item.Season == currentSeason)
+                {
+                <div class="card mx-auto archivecard bg-black">
+                    @{
+                            if (item.DefaultPhoto != null)
+                            {
+                        @*<a href="@Url.Action("Details", "Productions", new { id = item.ProductionId })">
+                            <img class="card-img-top production-index-img current-production-img bg-black" src="@Url.Action("DisplayPhoto", "Photo", new { id = item.DefaultPhoto.PhotoId })" alt="@Url.Action(item.Title)">
+                            </a>*@<!-- removed mt-5 from img class -->
+
+                        <a href="@Url.Action("Details", "Productions", new { id = item.ProductionId })">
+                            <!-- reinsert current-production-img into <img> -->
+                            <img class="card-img-top production-index-img current-production-img bg-black" src="@Url.Action("DisplayPhoto", "Photo", new { id = item.DefaultPhoto.PhotoId })" alt="@item.Title"> <!-- replace Url.Action which displayed the link and not the string itself --><!-- removed mt-5 from img class -->
+                        </a>
+                            }
+                            else
+                            {
+                        @*<a href="@Url.Action("Details", "Productions", new { id = item.ProductionId })">
+                              <img class="card-img-top production-index-img current-production-img bg-black" src="~/Content/Images/Unavailable.png" alt="@Url.Action(item.Title)">
+                            </a>*@<!-- removed mt-5 from img class -->
+
+                        <a href="@Url.Action("Details", "Productions", new { id = item.ProductionId })">
+                            <!-- reinsert current-production-img into <img> -->
+                            <img class="card-img-top production-index-img current-production-img bg-black" src="~/Content/Images/Unavailable.png" alt="@item.Title)"> <!-- replace Url.Action which displayed the link and not the string itself --><!-- removed mt-5 from img class -->
+                        </a>
+                            }
+                    }
+                    <div class="card-body production-index-card-inner justify-content-center">
+                        <table>
+                            <!-- create a table to divide the line into two elements of different sizes-->
+                            <tr>
+                                <!-- table has a single row corresponding to the title line-->
+                                <td>
+                                    <div align="left"><h5 class="card-title">@item.Title &nbsp;</h5></div> <!-- first cell has the production title in a larger font-->
+                                </td>
+                                <td>
+                                    <div><h6 class="badge badge-pill badge-primary">Season: @item.Season</h6></div><!-- the second cell has the season number in a pill of smaller size -->
+                                </td>
+                            </tr>
+                        </table>
+                        <!--Adding playwright subtitle below season above item desc.-->
+
+                        <p class="card-subtitle text-muted font-italic">@item.Playwright</p><!--text-muted for the grey color, font-italic and card title for sizing/style. -->
+                        @*<h5 class="card-title">
+                            @item.Title
+                            <span class="badge badge-pill badge-primary">Season: @item.Season</span>
+                            </h5>*@
+                        <p class="card-text">@item.Description</p>
+                    </div>
+                    <div class="card-footer align-bottom">
+                        <button type="button" class="btn btn-block btn-main" disabled>Get Tickets</button>
+                    </div>
+                </div>
+                }
+            }
+            }
+        </div>
+    </div>
+
+    <!--Current Productions-->
+    @*<div id="current-productions">
+            <h4>Current Productions</h4>
+            <div class="card-deck mt-5 bg-black"> <!-- added mt-5 class to create spacing between header and content -->
+                <div class="card bg-black">
+                    <img src="~/Content/Images/Stupid-ghost.png" class="card-img-top bg-black current-production-img" alt="Ghost">
+                    <div class="card-body">
+                        <h5 class="card-title">Stupid Ghost</h5>
+                        <p class="card-text">A clumsy ghost that stubs his toe everynight, spooking the new tenants.</p>
+                    </div>
+                    <div class="card-footer">
+                        <button type="button" class="btn btn-block btn-main" disabled>Get Tickets</button>
+                    </div>
+                </div>
+                <div class="card bg-black">
+                    <img src="~/Content/Images/Midas-gold.jpg" class=" img-fluid card-img-top bg-black current-production-img" alt="Midas">
+                    <div class="card-body">
+                        <h5 class="card-title">Everything You Touch</h5>
+                        <p class="card-text">A cursed man that ruins everything he touches.</p>
+                    </div>
+                    <div class="card-footer">
+                        <button type="button" class="btn btn-block btn-main" disabled>Get Tickets</button>
+                    </div>
+                </div>
+                <div class="card bg-black">
+                    <img src="~/Content/Images/venice.jpg" class="card-img-top bg-black current-production-img" alt="Merchant">
+                    <div class="card-body">
+                        <h5 class="card-title">Merchant of Venice</h5>
+                        <p class="card-text">A Merchant in Venice struggles to pay off his student loans.</p>
+                    </div>
+                    <div class="card-footer">
+                        <button type="button" class="btn btn-block btn-main" disabled>Get Tickets</button>
+                    </div>
+                </div>
+            </div>
+            <hr />
+        </div>*@
+
+
+    <!--Future Productions referencing database-->
+
+    <div id="future-productions">
+        <h4>Future Productions</h4>
+        <div class="card-deck mt-5 ml-3 mr-3 bg-black">
+            <!-- added mt-5 class to create spacing between header and content -->
+            @{
+            foreach (var item in Model)
+            {
+                if (item.Season > currentSeason)
+                {
+                <div class="card mx-auto archivecard bg-black">
+                    <!-- add mx-auto to center cards -->
+                    @{
+
+                            if (item.DefaultPhoto != null)
+                            {
+                        @*<a href="@Url.Action("Details", "Productions", new { id = item.ProductionId })">
+                              <img class="card-img-top production-index-img bg-black" src="@Url.Action("DisplayPhoto", "Photo", new { id = item.DefaultPhoto.PhotoId })" alt="@Url.Action(item.Title)">
+                            </a>*@<!-- removed mt-5 from img class -->
+
+                        <a href="@Url.Action("Details", "Productions", new { id = item.ProductionId })">
+                            <!-- reinsert future-production-img into <img> -->
+                            <img class="card-img-top production-index-img future-production-img bg-black" src="@Url.Action("DisplayPhoto", "Photo", new { id = item.DefaultPhoto.PhotoId })" alt="@item.Title)"> <!-- replace Url.Action which displayed the link and not the string itself --><!-- removed mt-5 from img class -->
+                        </a>
+                            }
+                            else
+                            {
+                        @*<a href="@Url.Action("Details", "Productions", new { id = item.ProductionId })">
+                            <img class="card-img-top production-index-img mt-5 bg-black" src="~/Content/Images/Unavailable.png" alt="@Url.Action(item.Title)">*@
+
+                        <a href="@Url.Action("Details", "Productions", new { id = item.ProductionId })">
+                            <!-- reinsert future-production-img into <img> -->
+                            <img class="card-img-top production-index-img future-production-img bg-black" src="~/Content/Images/Unavailable.png" alt="@item.Title)"> <!-- replace Url.Action which displayed the link and not the string itself --><!-- removed mt-5 from img class -->
+                        </a>
+                            }
+                    }
+                    <div class="card-body production-index-card-inner justify-content-center">
+                        <table>
+                            <!-- create a table to divide the line into two elements of different sizes-->
+                            <tr>
+                                <!-- table has a single row corresponding to the title line-->
+                                <td>
+                                    <div align="left"><h5 class="card-title">@item.Title &nbsp;</h5></div> <!-- first cell has the production title in a larger font-->
+                                </td>
+                                <td>
+                                    <div><h6 class="badge badge-pill badge-primary">Season: @item.Season</h6></div><!-- the second cell has the season number in a pill of smaller size -->
+                                </td>
+                            </tr>
+                        </table>
+                        <!--Adding playwright subtitle-->
+                        <p class="card-subtitle text-muted font-italic">@item.Playwright</p><!--text-muted for the grey color, font-italic and card title for sizing/style. -->
+                        @*<h5 class="card-title">
+                              @item.Title
+                              <span class="badge badge-pill badge-primary">Season: @item.Season</span>
+                            </h5>*@
+                        <p class="card-text">@item.Description</p>
+                    </div>
+                    @*<div class="card-footer align-bottom">
+                            <button type="button" class="btn btn-block btn-main" disabled>Get Tickets</button>
+                        </div>*@
+                </div>
+                }
+            }
+            }
+        </div>
+    </div>
+
+    <hr />
+
+    <!--Past Productions-->
+    @{
+    //var currentSettings = AdminSettingsReader.CurrentSettings();            // Grabs AdminSettings JSON
+    //int currentSeason = currentSettings.current_season;                     // Initialize currentSeason and set using "current_season" from JSON
+    int firstYear = 1997;
+    int secondYear = 1998;
+    Dictionary<int, string> seasonYears = new Dictionary<int, string>();    // Create Dictionary containing Seasons and their years
+    for (int i = 1; i <= currentSeason; i++)
+    {
+        seasonYears.Add(i, firstYear.ToString() + " - " + secondYear.ToString());
+        firstYear++;
+        secondYear++;
+    }
+    }
+    <div class="container">
+        <div class="h4 text-center">Past Productions</div>
+        <div class="accordian" id="pastProductions">
+            <!-- Begin for loop to populate years-->
+            @for (int i = currentSeason; i >= 1; i--)
+        {
+            string currentHeading = "heading" + i.ToString();
+            string currentBody = "season" + i.ToString();
+            <div class="card bg-black">
+                <!-- header  -->
+                <div class="card-header text-center" id="@currentHeading">
+                    @if (Model.Any(x => x.Season == i))
+                    {
+                    <h2 class="mb-0">
+                        <button class="btn btn-main" type="button" data-toggle="collapse" data-target="@('#' + currentBody)" aria-expanded="false" aria-controls="@currentBody">
+                            @seasonYears[i]
+                        </button>
+                    </h2>
+                    }
+                    else
+                    {
+                    <h2 class="mb-0">
+                        <button disabled class="btn btn-main">
+                            @seasonYears[i]
+                        </button>
+                    </h2>
+                    }
+
+                </div>
+                <!-- Collapsable body -->
+                <div id="@currentBody" class="collapse" aria-labelledby="@currentHeading" data-parent="#pastProductions">
+                    <div class="card-body">
+                        <div class="ml-3 mr-3 justify-content-center pa-card-deck">
+                            @*Added custom deck*@
+                            <!-- Iterate through Productions and populate cards-->
+                            @foreach (var item in Model)
+                            {
+                                if (item.Season == i)
+                                {
+                            <div class="mb-4 align-items-center pa-card">
+                                @*Added custom card*@
+                                @if (item.DefaultPhoto != null)
+                                        {
+                                <div class="embed-responsive-4by3">
+                                    <img src="@Url.Action("DisplayPhoto", "Photo", new { id = item.DefaultPhoto.PhotoId })" class="card-img-top arch-card-img bg-black" alt="@Url.Action(item.Title)">
+                                </div>
+                                        }
+                                        else
+                                        {
+                                <div class="embed-responsive-4by3">
+                                    <img src="~/Content/Images/Unavailable.png" class="card-img-top arch-card-img bg-black">
+                                </div>
+                                        }
+                                <div class="card-body">
+                                    @*<h5 class="card-title">@Html.DisplayFor(modelItem => item.Title)</h5>*@
+                                    <h5 class="card-title">
+                                        @item.Title
+                                        <span class="badge badge-pill badge-info">Season: @item.Season</span>
+                                    </h5>
+
+                                    <!--Adding in playwright subtitle-->
+
+                                    <p class="card-subtitle text-muted font-italic">@item.Playwright</p><!--text-muted for the grey color, font-italic and card title for sizing/style. -->
+
+                                    <p class="card-text" id="desc">
+                                        @*Limit Description to 30 words*@
+                                        @{
+                                            // Using ?? operator assigns 
+                                            // the value of a value type 
+                                            // and also you are allowed  
+                                            // to use method with ?? operator 
+                                            //With the help of ?? operator you can prevent InvalidOperationException.
+                                            //and replace if-else statements
+
+                                            var finalText = " ";
+                                            var text = @item.Description ?? "";
+
+                                            var text2 = text.Replace("  ", " ");
+                                            var text3 = text2.Split(' ');
+                                            var numberOfWords = text3.Length;
+                                        }
+                                        @if (numberOfWords > 30)
+                                        {
+                                            for (int k = 0; k < 30; k++)
+                                            {
+                                                finalText = finalText + text3[k] + " ";
+                                            }
+                                        @Html.Raw(finalText + '…');
+                                                    }
+                                                    else
+                                                    {
+                                        @Html.Raw(text);
+                                                    }
+
+
+                                    </p>
+
+                                    <a href="@Url.Action("Details", "Productions", new { id = item.ProductionId })" class="stretched-link"></a>
+                                </div>
+                            </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        </div>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    <script>
+      $(document).ready(function () {
+        @* Swap search button for mobile view, if > 900px use fontawesome magnifying glass, if < 900 use standard "Search" button" *@
+        function changeSearchBtn() {
+          if (window.matchMedia('(max-width: 899px)').matches) { @* matchMedia syncs with CSS media query *@
+            $(".search-btn").each(function (i) {
+              $(this).replaceWith('<button class="search-btn btn btn-main mobile-search-btn" type="submit" value="search">' + 'Search' + '</button>');
+            });
+          } else {
+            $(".mobile-search-btn").each(function (i) {
+              $(this).replaceWith('<button class="search-btn btn btn-lg btn-circle fa fa-search color" type="submit" value="search"></button>');
+            });
+          }
+        }
+
+        @* Call changeSearchBtn() when page is loaded *@
+        changeSearchBtn();
+
+        @* If window is resized, call changeSearchBtn()*@
+        window.onresize = function (event) {
+          changeSearchBtn();
+        };
+
+      });
+    </script>
